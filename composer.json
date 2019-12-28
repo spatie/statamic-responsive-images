@@ -1,0 +1,22 @@
+{
+    "name": "rias/statamic-responsive-images",
+    "license": "MIT",
+    "type": "statamic-addon",
+    "description": "Responsive Images for Statamic 3",
+    "autoload": {
+        "psr-4": {
+            "Rias\\ResponsiveImages\\": "src"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Responsive Images",
+            "description": "Responsive Images for Statamic 3"
+        },
+        "laravel": {
+            "providers": [
+                "Rias\\ResponsiveImages\\ServiceProvider"
+            ]
+        }
+    }
+}
