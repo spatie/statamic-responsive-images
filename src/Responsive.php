@@ -63,22 +63,14 @@ class Responsive extends Tags
 
     private function svg(Asset $asset): string
     {
-        $oldConfigValue = config('statamic.assets.image_manipulation.cache');
-        config()->set('statamic.assets.image_manipulation.cache', true);
-
-        // Make sure to build the image first, otherwise Glide won't find it
-        $this->getManipulator($asset)->width(32)->blur(5)->build();
-
-        /** @var Server $glideServer */
-        $glideServer = app(Server::class);
-        $placeholder = $glideServer->getImageAsBase64($asset->path(), ['w' => 32, 'blur' => 5]);
-
-        config()->set('statamic.assets.image_manipulation.cache', $oldConfigValue);
+        $smallImage = URL::makeAbsolute($this->getManipulator($asset)->width(32)->blur(5)->build());
+        $imageContents = file_get_contents($smallImage);
+        $base64Placeholder = base64_encode($imageContents);
 
         return view('responsive-images::placeholderSvg', [
             'width' => $asset->width(),
             'height' => $asset->height(),
-            'image' => "data:image/jpeg;base64,{$placeholder}",
+            'image' => "data:image/jpeg;base64,{$base64Placeholder}",
         ])->render();
     }
 
