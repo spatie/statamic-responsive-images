@@ -12,6 +12,7 @@ class ServiceProvider extends AddonServiceProvider
 
     protected $publishables = [
         __DIR__.'/../resources/views/responsiveImageWithPlaceholder.antlers.html',
+        __DIR__.'/../resources/views/responsiveImage.antlers.html',
     ];
 
     public function boot()

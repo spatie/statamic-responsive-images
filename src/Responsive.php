@@ -2,75 +2,79 @@
 
 namespace Rias\ResponsiveImages;
 
+use Illuminate\Support\Collection;
 use League\Glide\Server;
 use Statamic\Assets\Asset;
 use Statamic\Facades\Image;
 use Statamic\Facades\URL;
 use Statamic\Imaging\GlideImageManipulator;
-use Statamic\Support\Str;
+use Statamic\Imaging\ImageGenerator;
 use Statamic\Tags\Tags;
 
 class Responsive extends Tags
 {
+    /** @var \League\Glide\Server */
+    private $server;
+
+    /** @var \Statamic\Imaging\ImageGenerator */
+    private $imageGenerator;
+
+    /** @var \Rias\ResponsiveImages\WidthCalculator */
+    private $widthCalculator;
+
+    public function __construct(Server $server, ImageGenerator $imageGenerator, WidthCalculator $widthCalculator)
+    {
+        $this->server = $server;
+        $this->imageGenerator = $imageGenerator;
+        $this->widthCalculator = $widthCalculator;
+    }
+
     public function __call($method, $args)
     {
         $tag = explode(':', $this->tag, 2)[1];
-        $item = $this->context->get($tag);
+        $includePlaceholder = $this->params['placeholder'] ?? true;
+        $includeWebp = $this->params['webp'] ?? true;
 
         /** @var Asset $asset */
-        $asset = Asset::find($item);
+        $asset = Asset::find($this->context->get($tag));
+        $widths = $this->widthCalculator->calculateWidthsFromAsset($asset)->sort();
 
-        $base64Svg = base64_encode($this->svg($asset));
-        $placeholder = "data:image/svg+xml;base64,{$base64Svg} 32w";
+        if ($includePlaceholder) {
+            $base64Svg = base64_encode($this->svg($asset));
+            $placeholder = "data:image/svg+xml;base64,{$base64Svg} 32w";
 
-        $widths = (new WidthCalculator())
-            ->calculateWidthsFromAsset($asset)
-            ->sort();
+            return view('responsive-images::responsiveImageWithPlaceholder', [
+                'attributeString' => $this->getAttributeString(),
+                'src' => $asset->url(),
+                'srcSet' =>  $this->buildSrcSet($widths, $asset, $placeholder),
+                'srcSetWebp' => $includeWebp ? $this->buildSrcSet($widths, $asset, $placeholder, 'webp') : null,
+                'width' => $asset->width(),
+            ])->render();
+        }
 
-        $srcSet = $widths
-            ->map(function (int $width) use ($asset) {
-                $src = URL::makeRelative($this->getManipulator($asset)->width($width)->build());
-
-                return "{$src} {$width}w";
-            })
-            ->prepend($placeholder)
-            ->implode(', ');
-
-        $srcSetWebp = $widths
-            ->map(function (int $width) use ($asset) {
-                $webpBuilder = $this->getManipulator($asset);
-                $webpBuilder->setParam('fm', 'webp');
-                $srcWebp = URL::makeRelative($webpBuilder->width($width)->build());
-
-                return "{$srcWebp} {$width}w";
-            })
-            ->prepend($placeholder)
-            ->implode(', ');
-
-        $attributeString = collect($this->params)
-            ->map(function ($value, $name) {
-                return $name.'="'.$value.'"';
-            })->implode(' ');
-
-        return view('responsive-images::responsiveImageWithPlaceholder', [
-            'attributeString' => $attributeString,
+        return view('responsive-images::responsiveImage', [
+            'attributeString' => $this->getAttributeString(),
             'src' => $asset->url(),
-            'srcSet' => $srcSet,
-            'srcSetWebp' => $srcSetWebp,
+            'srcSet' =>  $this->buildSrcSet($widths, $asset),
+            'srcSetWebp' => $includeWebp ? $this->buildSrcSet($widths, $asset, null, 'webp') : null,
             'width' => $asset->width(),
         ])->render();
     }
 
     private function svg(Asset $asset): string
     {
-        $smallImage = URL::makeAbsolute($this->getManipulator($asset)->width(32)->blur(5)->build());
-        $imageContents = file_get_contents($smallImage);
-        $base64Placeholder = base64_encode($imageContents);
+        $path = $this->imageGenerator->generateByAsset($asset, [
+            'w' => 32,
+            'blur' => 5,
+        ]);
+
+        $source = base64_encode($this->server->getCache()->read($path));
+        $base64Placeholder = "data:{$this->server->getCache()->getMimetype($path)};base64,{$source}";
 
         return view('responsive-images::placeholderSvg', [
             'width' => $asset->width(),
             'height' => $asset->height(),
-            'image' => "data:image/jpeg;base64,{$base64Placeholder}",
+            'image' => $base64Placeholder,
         ])->render();
     }
 
@@ -78,4 +82,33 @@ class Responsive extends Tags
     {
         return Image::manipulate($asset);
     }
+
+    private function getAttributeString(): string
+    {
+        return collect($this->params)
+            ->except(['placeholder', 'webp'])
+            ->map(function ($value, $name) {
+                return $name . '="' . $value . '"';
+            })->implode(' ');
+    }
+
+    private function buildSrcSet(Collection $widths, Asset $asset, string $placeholder = null, string $format = null): string
+    {
+        return $widths
+            ->map(function (int $width) use ($asset, $format) {
+                $manipulator = $this->getManipulator($asset);
+
+                if ($format) {
+                    $manipulator->setParam('fm', $format);
+                }
+
+                $src = URL::makeRelative($manipulator->width($width)->build());
+
+                return "{$src} {$width}w";
+            })
+            ->when($placeholder, function (Collection $widths) use ($placeholder) {
+                return $widths->prepend($placeholder);
+            })
+            ->implode(', ');
+}
 }

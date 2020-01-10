@@ -6,7 +6,7 @@
 
 > Responsive Images for Statamic 3.
 
-This Addon provides responsive images with a placeholder inspired by [Spatie's Medialibrary](https://github.com/spatie/laravel-medialibrary).
+This Addon provides responsive images inspired by [Spatie's Medialibrary](https://github.com/spatie/laravel-medialibrary).
 
 ## Installation
 
@@ -21,7 +21,31 @@ composer require rias/statamic-responsive-images
 Pass an image to the `responsive` tag.
 
 ```twig
-{{{ responsive:image_field }}
+{{ responsive:image_field }}
+```
+
+## Responsive placeholder
+
+By default, responsive images generates a small base64 encoded placeholder to show while your image loads. If you want to disable this you can pass `placeholder="false"` to the tag.
+
+```twig
+{{ responsive:image_field placeholder="false" }}
+```
+
+## Webp image generation
+
+By default, responsive images generates webp variants of your image, these are usually smaller. If you want to disable this functionality you can pass `webp="false"` to your tag.
+
+```twig
+{{ responsive:image_field alt="{title}" webp="false" }}
+```
+
+## HTML Attributes
+
+If you want to add additional attributes (for example a title attribute) to your image, you can add them as parameters to the tag, any attributes will be added to the image.
+
+```twig
+{{ responsive:image_field alt="{title}" class="my-class" }}
 ```
 
 ---
