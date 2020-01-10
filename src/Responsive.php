@@ -46,7 +46,7 @@ class Responsive extends Tags
             return view('responsive-images::responsiveImageWithPlaceholder', [
                 'attributeString' => $this->getAttributeString(),
                 'src' => $asset->url(),
-                'srcSet' =>  $this->buildSrcSet($widths, $asset, $placeholder),
+                'srcSet' => $this->buildSrcSet($widths, $asset, $placeholder),
                 'srcSetWebp' => $includeWebp ? $this->buildSrcSet($widths, $asset, $placeholder, 'webp') : null,
                 'width' => $asset->width(),
             ])->render();
@@ -55,7 +55,7 @@ class Responsive extends Tags
         return view('responsive-images::responsiveImage', [
             'attributeString' => $this->getAttributeString(),
             'src' => $asset->url(),
-            'srcSet' =>  $this->buildSrcSet($widths, $asset),
+            'srcSet' => $this->buildSrcSet($widths, $asset),
             'srcSetWebp' => $includeWebp ? $this->buildSrcSet($widths, $asset, null, 'webp') : null,
             'width' => $asset->width(),
         ])->render();
@@ -110,5 +110,5 @@ class Responsive extends Tags
                 return $widths->prepend($placeholder);
             })
             ->implode(', ');
-}
+    }
 }
