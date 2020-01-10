@@ -3,9 +3,7 @@ $finder = Symfony\Component\Finder\Finder::create()
     ->notPath('docs/*')
     ->notPath('vendor')
     ->in([
-        __DIR__.'/config',
         __DIR__.'/src',
-        __DIR__.'/tests',
     ])
     ->name('*.php')
     ->ignoreDotFiles(true)
