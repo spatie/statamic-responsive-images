@@ -1,0 +1,22 @@
+{
+    "name": "spatie/statamic-responsive-images",
+    "license": "MIT",
+    "type": "statamic-addon",
+    "description": "Responsive Images for Statamic 3",
+    "autoload": {
+        "psr-4": {
+            "Spatie\\ResponsiveImages\\": "src"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Responsive Images",
+            "description": "Responsive Images for Statamic 3"
+        },
+        "laravel": {
+            "providers": [
+                "Spatie\\ResponsiveImages\\ServiceProvider"
+            ]
+        }
+    }
+}
