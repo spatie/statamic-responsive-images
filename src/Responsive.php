@@ -37,6 +37,17 @@ class Responsive extends Tags
 
         /** @var Asset $asset */
         $asset = Asset::find($this->context->get($tag));
+
+        if ($asset->extension() === "svg") {
+            return view('responsive-images::responsiveImage', [
+                'attributeString' => $this->getAttributeString(),
+                'src' => $asset->url(),
+                'srcSet' => '',
+                'srcSetWebp' => '',
+                'width' => $asset->width(),
+            ])->render();
+        }
+
         $widths = $this->widthCalculator->calculateWidthsFromAsset($asset)->sort();
 
         if ($includePlaceholder) {
