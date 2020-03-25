@@ -4,6 +4,7 @@ namespace Spatie\ResponsiveImages;
 
 use Illuminate\Support\Collection;
 use League\Glide\Server;
+use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Statamic\Assets\Asset;
 use Statamic\Facades\Image;
 use Statamic\Facades\URL;
@@ -107,13 +108,7 @@ class Responsive extends Tags
     {
         return $widths
             ->map(function (int $width) use ($asset, $format) {
-                $manipulator = $this->getManipulator($asset);
-
-                if ($format) {
-                    $manipulator->setParam('fm', $format);
-                }
-
-                $src = URL::makeRelative($manipulator->width($width)->build());
+                $src = URL::makeRelative((new GenerateImageJob($asset, $width, $format))->handle());
 
                 return "{$src} {$width}w";
             })

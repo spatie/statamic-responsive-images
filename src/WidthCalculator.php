@@ -3,7 +3,7 @@
 namespace Spatie\ResponsiveImages;
 
 use Illuminate\Support\Collection;
-use Statamic\Assets\Asset;
+use Statamic\Contracts\Assets\Asset;
 
 class WidthCalculator
 {
