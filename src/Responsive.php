@@ -10,6 +10,7 @@ use Statamic\Facades\Image;
 use Statamic\Facades\URL;
 use Statamic\Imaging\GlideImageManipulator;
 use Statamic\Imaging\ImageGenerator;
+use Statamic\Support\Str;
 use Statamic\Tags\Tags;
 
 class Responsive extends Tags
@@ -23,6 +24,9 @@ class Responsive extends Tags
     /** @var \Spatie\ResponsiveImages\WidthCalculator */
     private $widthCalculator;
 
+    /** @var float|null */
+    private $ratio;
+
     public function __construct(Server $server, ImageGenerator $imageGenerator, WidthCalculator $widthCalculator)
     {
         $this->server = $server;
@@ -35,6 +39,12 @@ class Responsive extends Tags
         $tag = explode(':', $this->tag, 2)[1];
         $includePlaceholder = $this->params['placeholder'] ?? true;
         $includeWebp = $this->params['webp'] ?? true;
+        $this->ratio = $this->params['ratio'] ?? null;
+
+        if (Str::contains($this->ratio, '/')) {
+            [$width, $height] = explode('/', $this->ratio);
+            $this->ratio = (int) $width / (int) $height;
+        }
 
         /** @var Asset $asset */
         $asset = Asset::find($this->context->get($tag));
@@ -46,6 +56,7 @@ class Responsive extends Tags
                 'srcSet' => '',
                 'srcSetWebp' => '',
                 'width' => $asset->width(),
+                'height' => $this->ratio ? $asset->width() / (float) $this->ratio : $asset->height(),
             ])->render();
         }
 
@@ -61,6 +72,7 @@ class Responsive extends Tags
                 'srcSet' => $this->buildSrcSet($widths, $asset, $placeholder),
                 'srcSetWebp' => $includeWebp ? $this->buildSrcSet($widths, $asset, $placeholder, 'webp') : null,
                 'width' => $asset->width(),
+                'height' => $this->ratio ? $asset->width() / (float) $this->ratio : $asset->height(),
             ])->render();
         }
 
@@ -70,6 +82,7 @@ class Responsive extends Tags
             'srcSet' => $this->buildSrcSet($widths, $asset),
             'srcSetWebp' => $includeWebp ? $this->buildSrcSet($widths, $asset, null, 'webp') : null,
             'width' => $asset->width(),
+            'height' => $this->ratio ? $asset->width() / (float) $this->ratio : $asset->height(),
         ])->render();
     }
 
@@ -85,20 +98,18 @@ class Responsive extends Tags
 
         return view('responsive-images::placeholderSvg', [
             'width' => $asset->width(),
-            'height' => $asset->height(),
+            'height' => $this->ratio ? $asset->width() / (float) $this->ratio : $asset->height(),
             'image' => $base64Placeholder,
         ])->render();
-    }
-
-    private function getManipulator(Asset $asset): GlideImageManipulator
-    {
-        return Image::manipulate($asset);
     }
 
     private function getAttributeString(): string
     {
         return collect($this->params)
-            ->except(['placeholder', 'webp'])
+            ->except(['placeholder', 'webp', 'ratio'])
+            ->reject(function ($value, $name) {
+                return Str::contains($name, 'glide:');
+            })
             ->map(function ($value, $name) {
                 return $name . '="' . $value . '"';
             })->implode(' ');
@@ -106,15 +117,52 @@ class Responsive extends Tags
 
     private function buildSrcSet(Collection $widths, Asset $asset, string $placeholder = null, string $format = null): string
     {
-        return $widths
-            ->map(function (int $width) use ($asset, $format) {
-                $src = URL::makeRelative((new GenerateImageJob($asset, $width, $format))->handle());
+        $params = $this->getGlideParams();
 
-                return "{$src} {$width}w";
+        if ($format) {
+            $params['fm'] = $format;
+        }
+
+        /* We don't want any heights specified other than our own */
+        unset($params['height']);
+        unset($params['h']);
+
+        return $widths
+            /* If a width is specified, consider it a max width */
+            ->when(isset($params['width']) || isset($params['w']), function ($widths) use ($params) {
+                return $widths->filter(function (int $width) use ($params) {
+                    return $width <= $params['width'] ?? $params['w'];
+                });
+            })
+            ->map(function (int $width) use ($params, $asset) {
+                return "{$this->buildImage($asset, $width)} {$width}w";
             })
             ->when($placeholder, function (Collection $widths) use ($placeholder) {
                 return $widths->prepend($placeholder);
             })
             ->implode(', ');
+    }
+
+    private function getGlideParams(): array
+    {
+        return collect($this->params)
+            ->filter(function ($value, $name) {
+                return Str::contains($name, 'glide:');
+            })
+            ->mapWithKeys(function ($value, $name) {
+                return [str_replace('glide:', '', $name) => $value];
+            })
+            ->toArray();
+    }
+
+    private function buildImage(Asset $asset, int $width)
+    {
+        $params['width'] = $width;
+
+        if ($this->ratio) {
+            $params['height'] = $width / (float) $this->ratio;
+        }
+
+        return URL::makeRelative((new GenerateImageJob($asset, $params))->handle());
     }
 }

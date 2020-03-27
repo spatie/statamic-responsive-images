@@ -38,6 +38,14 @@ Pass an image to the `responsive` tag.
 {{ responsive:image_field }}
 ```
 
+## Image ratio
+
+You can make sure images are a certain ratio by passing a `ratio` parameter, either as a string `16/10` or as a float `1.6`.
+
+```twig
+{{ responsive:image_field ratio="16/9" }}
+```
+
 ## Responsive placeholder
 
 By default, responsive images generates a small base64 encoded placeholder to show while your image loads. If you want to disable this you can pass `placeholder="false"` to the tag.
@@ -52,6 +60,15 @@ By default, responsive images generates webp variants in addition to jpg or png 
 
 ```twig
 {{ responsive:image_field webp="false" }}
+```
+
+## Glide parameters
+
+You can still pass any parameters from the Glide tag that you would want to, just make sure to prefix them with `glide:`.
+Passing `glide:width` will consider the width as a max width, which can prevent unnecessary large images from being generated.
+
+```twig
+{{ responsive:image_field glide:blur="20" glide:width="1600" }}
 ```
 
 ## HTML Attributes

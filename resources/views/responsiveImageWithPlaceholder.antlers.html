@@ -5,6 +5,7 @@
         {{ attributeString }}
         src="{{ src }}"
         width="{{ width }}"
+        {{ if height }}height="{{ height }}"{{ /if }}
         onload="
             this.onload=null;
             var imgWidth = this.getBoundingClientRect().width;

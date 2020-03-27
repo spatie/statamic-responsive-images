@@ -41,8 +41,8 @@ class RegenerateResponsiveVersionsCommand extends Command
             (new WidthCalculator())
                 ->calculateWidthsFromAsset($asset)
                 ->map(function (int $width) use ($asset) {
-                    dispatch(new GenerateImageJob($asset, $width));
-                    dispatch(new GenerateImageJob($asset, $width, 'webp'));
+                    dispatch(new GenerateImageJob($asset, ['width' => $width]));
+                    dispatch(new GenerateImageJob($asset, ['width' => $width, 'fm' => 'webp']));
                 });
 
             $this->getOutput()->progressAdvance();

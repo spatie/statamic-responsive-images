@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Statamic\Contracts\Assets\Asset;
 use Statamic\Facades\Image;
 use Statamic\Imaging\GlideImageManipulator;
@@ -18,28 +19,24 @@ class GenerateImageJob implements ShouldQueue
     /** @var \Statamic\Contracts\Assets\Asset */
     protected $asset;
 
-    /** @var int */
-    private $width;
+    /** @var array */
+    private $glideParams;
 
-    /** @var string|null */
-    private $format;
-
-    public function __construct(Asset $asset, int $width, string $format = null)
+    public function __construct(Asset $asset, array $glideParams = [])
     {
         $this->asset = $asset;
-        $this->width = $width;
-        $this->format = $format;
+        $this->glideParams = $glideParams;
     }
 
     public function handle(): string
     {
         $manipulator = $this->getManipulator($this->asset);
 
-        if ($this->format) {
-            $manipulator->setParam('fm', $this->format);
+        foreach ($this->glideParams as $param => $value) {
+            $manipulator->$param($value);
         }
 
-        return $manipulator->width($this->width)->build();
+        return $manipulator->build();
     }
 
     private function getManipulator(Asset $asset): GlideImageManipulator
