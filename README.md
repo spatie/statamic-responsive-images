@@ -1,5 +1,3 @@
-![Icon](icon.png)
-
 [![Latest Version](https://img.shields.io/github/release/spatie/statamic-responsive-images.svg?style=flat-square)](https://github.com/spatie/statamic-responsive-images/releases)
 
 # Responsive Images
