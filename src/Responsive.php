@@ -135,7 +135,7 @@ class Responsive extends Tags
                 });
             })
             ->map(function (int $width) use ($params, $asset) {
-                return "{$this->buildImage($asset, $width)} {$width}w";
+                return "{$this->buildImage($asset, $width, $params)} {$width}w";
             })
             ->when($placeholder, function (Collection $widths) use ($placeholder) {
                 return $widths->prepend($placeholder);
@@ -155,7 +155,7 @@ class Responsive extends Tags
             ->toArray();
     }
 
-    private function buildImage(Asset $asset, int $width)
+    private function buildImage(Asset $asset, int $width, array $params)
     {
         $params['width'] = $width;
 
