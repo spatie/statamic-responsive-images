@@ -27,7 +27,7 @@ composer require spatie/statamic-responsive-images
 
 ## Using Responsive Images
 
-Responsive Images will generate responsive versions of the images whenever a new asset is uploaded. If you need to regenerate the responsive images for a reason, you can use the `regenerate` command which will clear the Glide cache and regenerate the versions:
+Responsive Images will generate responsive versions of the images whenever a new asset is uploaded. These presets are determined by this package and not by your own Glide presets. If you need to regenerate the responsive images for a reason, you can use the `regenerate` command which will clear the Glide cache and regenerate the versions:
 
 ```bash
 php please responsive:regenerate
@@ -40,6 +40,8 @@ Pass an image to the `responsive` tag.
 ```twig
 {{ responsive:image_field }}
 ```
+
+This will render an image tag with the default srcsets. The tag uses JS to define the value of the sizes attribute. This way the browser will always download the correct image.
 
 ## Image ratio
 
