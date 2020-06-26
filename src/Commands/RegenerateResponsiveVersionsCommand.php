@@ -22,6 +22,7 @@ class RegenerateResponsiveVersionsCommand extends Command
     {
         if (! config('statamic.assets.image_manipulation.cache')) {
             $this->error('Caching is not enabled for image manipulations, generating them will have no benefit.');
+
             return;
         }
 

@@ -7,7 +7,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Collection;
 use Statamic\Contracts\Assets\Asset;
 use Statamic\Facades\Image;
 use Statamic\Imaging\GlideImageManipulator;
