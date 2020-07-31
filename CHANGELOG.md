@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 1.2.2 - 2020-07-31
+
+- [fix] Fix compatibility with latest Statamic Beta
+
 ## 1.2.1 - 2020-06-20
 
 - [fix] Fix a bug where webp images weren't being shown
