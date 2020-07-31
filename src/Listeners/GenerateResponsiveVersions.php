@@ -4,7 +4,7 @@ namespace Spatie\ResponsiveImages\Listeners;
 
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Spatie\ResponsiveImages\WidthCalculator;
-use Statamic\Events\Data\AssetUploaded;
+use Statamic\Events\AssetUploaded;
 
 class GenerateResponsiveVersions
 {
