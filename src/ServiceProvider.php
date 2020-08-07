@@ -15,10 +15,6 @@ class ServiceProvider extends AddonServiceProvider
         Responsive::class,
     ];
 
-    protected $publishables = [
-        __DIR__.'/../resources/views' => '../../../resources/views/vendor/statamic-responsive-images',
-    ];
-
     protected $listen = [
         AssetUploaded::class => [
             GenerateResponsiveVersions::class,
@@ -33,6 +29,17 @@ class ServiceProvider extends AddonServiceProvider
     {
         parent::boot();
 
+        $this->bootAddonViews();
+    }
+
+    protected function bootAddonViews()
+    {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'responsive-images');
+
+        $this->publishes([
+            __DIR__.'/../resources/views' => resource_path('views/vendor/responsive-images'),
+        ], 'responsive-images-views');
+
+        return $this;
     }
 }
