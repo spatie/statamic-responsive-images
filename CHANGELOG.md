@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 1.2.3 - 2020-08-07
+
+- [fix] Fix publishing & loading of the views
+
 ## 1.2.2 - 2020-07-31
 
 - [fix] Fix compatibility with latest Statamic Beta
