@@ -34,7 +34,7 @@ php please responsive:regenerate
 ```
 
 If you are using a service, like Horizon, for queues then jobs will be queued to handle the image resizing.
-By default, the job is queued under the 'default' queue. This can be changed via the `images` config key under `responsive-images.php`
+By default, the job is queued under the 'default' queue. This can be changed via the `queue` config key under `responsive-images.php`
 
 ## Templating
 
