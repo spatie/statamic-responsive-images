@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## Unpublished
+
+- [new] Added GenerateImageJob queue specification via config
+
 ## 1.2.3 - 2020-08-07
 
 - [fix] Fix publishing & loading of the views

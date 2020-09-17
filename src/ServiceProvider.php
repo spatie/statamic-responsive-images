@@ -29,7 +29,8 @@ class ServiceProvider extends AddonServiceProvider
     {
         parent::boot();
 
-        $this->bootAddonViews();
+        $this->bootAddonViews()
+            ->bootAddonConfig();
     }
 
     protected function bootAddonViews()
@@ -39,6 +40,17 @@ class ServiceProvider extends AddonServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/responsive-images'),
         ], 'responsive-images-views');
+
+        return $this;
+    }
+
+    protected function bootAddonConfig()
+    {
+        $this->mergeConfigFrom(__DIR__.'/../config/responsive-images.php', 'responsive-images');
+        
+        $this->publishes([
+            __DIR__.'/../config/responsive-images.php' => config_path('statamic/responsive-images.php'),
+        ], 'responsive-images-config');
 
         return $this;
     }

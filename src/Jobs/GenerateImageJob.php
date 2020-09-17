@@ -25,6 +25,8 @@ class GenerateImageJob implements ShouldQueue
     {
         $this->asset = $asset;
         $this->glideParams = $glideParams;
+
+        $this->queue = config('statamic.responsive-images.queue', 'default');
     }
 
     public function handle(): string
