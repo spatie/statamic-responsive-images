@@ -2,7 +2,7 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
-## Unpublished
+## 1.3.0 - 2020-10-05
 
 - [new] Added GenerateImageJob queue specification via config
 
