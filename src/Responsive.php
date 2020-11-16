@@ -88,9 +88,10 @@ class Responsive extends Tags
     {
         $path = $this->imageGenerator->generateByAsset($asset, [
             'w' => 32,
+            'h' => $this->ratio ? 32 / (float) $this->ratio : null,
             'blur' => 5,
         ]);
-
+        
         $source = base64_encode($this->server->getCache()->read($path));
         $base64Placeholder = "data:{$this->server->getCache()->getMimetype($path)};base64,{$source}";
 
