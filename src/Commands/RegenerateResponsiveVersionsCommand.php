@@ -2,6 +2,7 @@
 
 namespace Spatie\ResponsiveImages\Commands;
 
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
@@ -42,8 +43,19 @@ class RegenerateResponsiveVersionsCommand extends Command
             (new WidthCalculator())
                 ->calculateWidthsFromAsset($asset)
                 ->map(function (int $width) use ($asset) {
-                    dispatch(new GenerateImageJob($asset, ['width' => $width]));
-                    dispatch(new GenerateImageJob($asset, ['width' => $width, 'fm' => 'webp']));
+                    try {
+                        dispatch(new GenerateImageJob($asset, ['width' => $width]));
+                    } catch (Exception $e) {
+                        $this->error("Exception while generating responsive asset {$asset->filename()}: {$e->getMessage()}");
+                        logger($e);
+                    }
+
+                    try {
+                        dispatch(new GenerateImageJob($asset, ['width' => $width, 'fm' => 'webp']));
+                    } catch (Exception $e) {
+                        $this->error("Exception while generating WEBP for asset {$asset->filename()}: {$e->getMessage()}");
+                        logger($e);
+                    }
                 });
 
             $this->getOutput()->progressAdvance();
