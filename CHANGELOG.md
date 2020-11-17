@@ -2,6 +2,11 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 1.3.1 - 2020-11-17
+
+- [fix] Fix an issue with small images
+- [fix] Make sure the placeholder respects the image ratio
+
 ## 1.3.0 - 2020-10-05
 
 - [new] Added GenerateImageJob queue specification via config
