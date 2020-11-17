@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 1.4.0 - 2020-11-17
+
+- [new] Share the `asset` data with the views
+
 ## 1.3.2 - 2020-11-17
 
 - [fix] Improve exception handling in command

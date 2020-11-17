@@ -55,6 +55,7 @@ class Responsive extends Tags
                 'srcSetWebp' => '',
                 'width' => $asset->width(),
                 'height' => $this->ratio ? $asset->width() / (float) $this->ratio : $asset->height(),
+                'asset' => $asset->toAugmentedArray(),
             ])->render();
         }
 
@@ -71,6 +72,7 @@ class Responsive extends Tags
                 'srcSetWebp' => $includeWebp ? $this->buildSrcSet($widths, $asset, $placeholder, 'webp') : null,
                 'width' => $asset->width(),
                 'height' => $this->ratio ? $asset->width() / (float) $this->ratio : $asset->height(),
+                'asset' => $asset->toAugmentedArray(),
             ])->render();
         }
 
@@ -81,6 +83,7 @@ class Responsive extends Tags
             'srcSetWebp' => $includeWebp ? $this->buildSrcSet($widths, $asset, null, 'webp') : null,
             'width' => $asset->width(),
             'height' => $this->ratio ? $asset->width() / (float) $this->ratio : $asset->height(),
+            'asset' => $asset->toAugmentedArray(),
         ])->render();
     }
 
@@ -99,6 +102,7 @@ class Responsive extends Tags
             'width' => $asset->width(),
             'height' => $this->ratio ? $asset->width() / (float) $this->ratio : $asset->height(),
             'image' => $base64Placeholder,
+            'asset' => $asset->toAugmentedArray(),
         ])->render();
     }
 
