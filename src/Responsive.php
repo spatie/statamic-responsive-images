@@ -128,9 +128,16 @@ class Responsive extends Tags
         return $widths
             /* If a width is specified, consider it a max width */
             ->when(isset($params['width']) || isset($params['w']), function ($widths) use ($params) {
-                return $widths->filter(function (int $width) use ($params) {
+                $filtered = $widths->filter(function (int $width) use ($params) {
                     return $width <= $params['width'] ?? $params['w'];
                 });
+
+                /* We want at least one width to be returned */
+                if (! $filtered->count()) {
+                    $filtered = collect($widths->first());
+                }
+
+                return $filtered;
             })
             ->map(function (int $width) use ($params, $asset) {
                 return "{$this->buildImage($asset, $width, $params)} {$width}w";
