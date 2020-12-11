@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 1.5.0 - 2020-12-11
+
+- [new] Adds a `generate` command to generate responsive images without clearing the glide cache
+
 ## 1.4.0 - 2020-11-17
 
 - [new] Share the `asset` data with the views

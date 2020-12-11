@@ -18,5 +18,8 @@
                 "Spatie\\ResponsiveImages\\ServiceProvider"
             ]
         }
+    },
+    "require": {
+        "statamic/cms": "^3.0"
     }
 }
