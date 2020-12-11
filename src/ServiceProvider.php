@@ -2,6 +2,7 @@
 
 namespace Spatie\ResponsiveImages;
 
+use Spatie\ResponsiveImages\Commands\GenerateResponsiveVersionsCommand;
 use Spatie\ResponsiveImages\Commands\RegenerateResponsiveVersionsCommand;
 use Spatie\ResponsiveImages\Listeners\GenerateResponsiveVersions;
 use Statamic\Events\AssetUploaded;
@@ -22,6 +23,7 @@ class ServiceProvider extends AddonServiceProvider
     ];
 
     protected $commands = [
+        GenerateResponsiveVersionsCommand::class,
         RegenerateResponsiveVersionsCommand::class,
     ];
 
