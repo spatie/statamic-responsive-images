@@ -4,7 +4,6 @@ namespace Spatie\ResponsiveImages\Commands;
 
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Spatie\ResponsiveImages\WidthCalculator;
 use Statamic\Console\RunsInPlease;
