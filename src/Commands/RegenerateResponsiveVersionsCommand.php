@@ -21,7 +21,7 @@ class RegenerateResponsiveVersionsCommand extends Command
 
     public function handle(AssetRepository $assets)
     {
-        if (! config('statamic.assets.image_manipulation.cache')) {
+        if (!config('statamic.assets.image_manipulation.cache')) {
             $this->error('Caching is not enabled for image manipulations, generating them will have no benefit.');
 
             return;
@@ -32,4 +32,5 @@ class RegenerateResponsiveVersionsCommand extends Command
         Artisan::call('statamic:glide:clear');
 
         Artisan::call('statamic:responsive:generate');
+    }
 }
