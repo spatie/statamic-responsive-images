@@ -2,6 +2,12 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 1.6.0 - 2020-12-14
+
+- [new] Added a `Responsive::render()` function
+- [new] Added a `@responsive` Blade directive
+- [new] You can now pass an asset url as parameter instead of needing to pass an asset object
+
 ## 1.5.1 - 2020-12-11
 
 - [fix] Register the command

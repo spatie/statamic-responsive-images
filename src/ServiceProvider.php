@@ -2,6 +2,7 @@
 
 namespace Spatie\ResponsiveImages;
 
+use Illuminate\Support\Facades\Blade;
 use Spatie\ResponsiveImages\Commands\GenerateResponsiveVersionsCommand;
 use Spatie\ResponsiveImages\Commands\RegenerateResponsiveVersionsCommand;
 use Spatie\ResponsiveImages\Listeners\GenerateResponsiveVersions;
@@ -32,7 +33,8 @@ class ServiceProvider extends AddonServiceProvider
         parent::boot();
 
         $this->bootAddonViews()
-            ->bootAddonConfig();
+            ->bootAddonConfig()
+            ->bootDirectives();
     }
 
     protected function bootAddonViews()
@@ -53,6 +55,15 @@ class ServiceProvider extends AddonServiceProvider
         $this->publishes([
             __DIR__.'/../config/responsive-images.php' => config_path('statamic/responsive-images.php'),
         ], 'responsive-images-config');
+
+        return $this;
+    }
+
+    protected function bootDirectives()
+    {
+        Blade::directive('responsive', function ($arguments) {
+            return "<?php echo \Spatie\ResponsiveImages\Responsive::render({$arguments}) ?>";
+        });
 
         return $this;
     }

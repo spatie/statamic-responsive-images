@@ -7,6 +7,7 @@ use League\Glide\Server;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Statamic\Assets\Asset;
 use Statamic\Facades\URL;
+use Statamic\Fields\Value;
 use Statamic\Imaging\ImageGenerator;
 use Statamic\Support\Str;
 use Statamic\Tags\Tags;
@@ -32,6 +33,20 @@ class Responsive extends Tags
         $this->widthCalculator = $widthCalculator;
     }
 
+    public static function render(...$arguments)
+    {
+        $asset = $arguments[0];
+        $parameters = $arguments[1] ?? [];
+
+        /** @var \Spatie\ResponsiveImages\Responsive $responsive */
+        $responsive = app(Responsive::class);
+        $responsive->setContext(['url' => $asset]);
+        $responsive->tag = 'responsive:url';
+        $responsive->setParameters($parameters);
+
+        return $responsive->__call('responsive:url', []);
+    }
+
     public function __call($method, $args)
     {
         $tag = explode(':', $this->tag, 2)[1];
@@ -39,13 +54,28 @@ class Responsive extends Tags
         $includeWebp = $this->params['webp'] ?? true;
         $this->ratio = $this->params['ratio'] ?? null;
 
+        $asset = $this->context->get($tag);
+
+        if (is_string($asset)) {
+            $asset = \Statamic\Facades\Asset::findByUrl($asset);
+        }
+
+        if ($asset instanceof Value) {
+            $asset = $asset->value();
+
+            if ($asset instanceof Collection) {
+                $asset = $asset->first();
+            }
+        }
+
+        if (! $asset) {
+            return '';
+        }
+
         if (Str::contains($this->ratio, '/')) {
             [$width, $height] = explode('/', $this->ratio);
             $this->ratio = (int) $width / (int) $height;
         }
-
-        /** @var Asset $asset */
-        $asset = Asset::find($this->context->get($tag));
 
         if ($asset->extension() === "svg") {
             return view('responsive-images::responsiveImage', [
