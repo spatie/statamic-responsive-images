@@ -74,7 +74,7 @@ class Responsive extends Tags
 
         if (Str::contains($this->ratio, '/')) {
             [$width, $height] = explode('/', $this->ratio);
-            $this->ratio = (int) $width / (int) $height;
+            $this->ratio = (float) $width / (float) $height;
         }
 
         if ($asset->extension() === "svg") {
