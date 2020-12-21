@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 1.7.0
+
+- [new] Allow non-integer ratios
+
 ## 1.6.0 - 2020-12-14
 
 - [new] Added a `Responsive::render()` function
