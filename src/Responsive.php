@@ -163,15 +163,15 @@ class Responsive extends Tags
         return $widths
             /* If a width is specified, consider it a max width */
             ->when(isset($params['width']) || isset($params['w']), function ($widths) use ($params) {
-                $max_width = $params['width'] ?? $params['w'];
+                $maxWidth = $params['width'] ?? $params['w'];
 
-                $filtered = $widths->filter(function (int $width) use ($max_width) {
-                    return $width <= $max_width;
+                $filtered = $widths->filter(function (int $width) use ($maxWidth) {
+                    return $width <= $maxWidth;
                 });
 
                 /* We want at least one width to be returned */
                 if (! $filtered->count()) {
-                    $filtered = collect($max_width);
+                    $filtered = collect($maxWidth);
                 }
 
                 return $filtered;
