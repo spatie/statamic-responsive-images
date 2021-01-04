@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 1.7.1
+
+- [fix] The max width parameter now generates an image correctly when only 1 size was calculated [#27]
+
 ## 1.7.0
 
 - [new] Allow non-integer ratios
