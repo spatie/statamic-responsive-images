@@ -1,4 +1,4 @@
-<picture>
+<picture {{ pictureAttributeString }}>
     {{ if srcSetWebp }}<source type="image/webp" srcset="{{ srcSetWebp }}" sizes="1px" />{{ /if }}
     <source srcset="{{ srcSet }}" sizes="1px" />
     <img

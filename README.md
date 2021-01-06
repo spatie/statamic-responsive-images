@@ -85,6 +85,12 @@ If you want to add additional attributes (for example a title attribute) to your
 {{ responsive:image_field alt="{title}" class="my-class" }}
 ```
 
+Additional attributes prefixed with `picture:` will be added to the picture tag.
+
+```twig
+{{ responsive:image_field picture:class="my-class" picture:data-stuff="hello" }}
+```
+
 ## Customizing the generated html
 
 If you want to customize the generated html, you can publish the views using

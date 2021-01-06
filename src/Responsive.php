@@ -80,6 +80,7 @@ class Responsive extends Tags
         if ($asset->extension() === "svg") {
             return view('responsive-images::responsiveImage', [
                 'attributeString' => $this->getAttributeString(),
+                'pictureAttributeString' => $this->getPictureAttributeString(),
                 'src' => $asset->url(),
                 'srcSet' => '',
                 'srcSetWebp' => '',
@@ -97,6 +98,7 @@ class Responsive extends Tags
 
             return view('responsive-images::responsiveImageWithPlaceholder', [
                 'attributeString' => $this->getAttributeString(),
+                'pictureAttributeString' => $this->getPictureAttributeString(),
                 'src' => $asset->url(),
                 'srcSet' => $this->buildSrcSet($widths, $asset, $placeholder),
                 'srcSetWebp' => $includeWebp ? $this->buildSrcSet($widths, $asset, $placeholder, 'webp') : null,
@@ -108,6 +110,7 @@ class Responsive extends Tags
 
         return view('responsive-images::responsiveImage', [
             'attributeString' => $this->getAttributeString(),
+            'pictureAttributeString' => $this->getPictureAttributeString(),
             'src' => $asset->url(),
             'srcSet' => $this->buildSrcSet($widths, $asset),
             'srcSetWebp' => $includeWebp ? $this->buildSrcSet($widths, $asset, null, 'webp') : null,
@@ -141,10 +144,21 @@ class Responsive extends Tags
         return collect($this->params)
             ->except(['placeholder', 'webp', 'ratio'])
             ->reject(function ($value, $name) {
-                return Str::contains($name, 'glide:');
+                return Str::contains($name, ['glide:', 'picture:']);
             })
             ->map(function ($value, $name) {
                 return $name . '="' . $value . '"';
+            })->implode(' ');
+    }
+
+    private function getPictureAttributeString(): string
+    {
+        return collect($this->params)
+            ->filter(function ($value, $name) {
+                return Str::contains($name, 'picture:');
+            })
+            ->map(function ($value, $name) {
+                return str_replace('picture:', '', $name) . '="' . $value . '"';
             })->implode(' ');
     }
 
