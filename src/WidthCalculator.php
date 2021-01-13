@@ -34,13 +34,17 @@ class WidthCalculator
             $newWidth = (int) floor(sqrt(($predictedFileSize / $pixelPrice) / $ratio));
 
             if ($this->finishedCalculating($predictedFileSize, $newWidth)) {
+                if (config('statamic.responsive-images.max_width')) {
+                    $targetWidths = $targetWidths->filter(function ($width) {
+                        return $width <= config('statamic.responsive-images.max_width');
+                    });
+                }
+
                 return $targetWidths;
             }
 
             $targetWidths->push($newWidth);
         }
-
-        return $targetWidths;
     }
 
     protected function finishedCalculating(int $predictedFileSize, int $newWidth): bool

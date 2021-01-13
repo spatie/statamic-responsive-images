@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 1.8.0 - 2021-01-13
+
+- [new] Added a config option for a global max width on generated images
+
 ## 1.7.1
 
 - [fix] The max width parameter now generates an image correctly when only 1 size was calculated [#27]
