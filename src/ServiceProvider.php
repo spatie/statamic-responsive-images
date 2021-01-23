@@ -50,8 +50,8 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function bootAddonConfig()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/responsive-images.php', 'responsive-images');
-        
+        $this->mergeConfigFrom(__DIR__.'/../config/responsive-images.php', 'statamic.responsive-images');
+
         $this->publishes([
             __DIR__.'/../config/responsive-images.php' => config_path('statamic/responsive-images.php'),
         ], 'responsive-images-config');
