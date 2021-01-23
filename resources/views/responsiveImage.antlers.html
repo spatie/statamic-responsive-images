@@ -7,12 +7,14 @@
                 type="image/webp"
                 {{ if media }}media="{{ media }}"{{ /if }}
                 srcset="{{ srcSetWebp }}"
+                {{ if placeholder }}sizes="1px"{{ /if }}
             >
         {{ /if }}
 
         <source
             {{ if media }}media="{{ media }}"{{ /if }}
             srcset="{{ srcSet }}"
+            {{ if placeholder }}sizes="1px"{{ /if }}
         >
 
     {{ /sources }}

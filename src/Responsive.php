@@ -87,19 +87,9 @@ class Responsive extends Tags
 
         $this->widths = $this->widthCalculator->calculateWidthsFromAsset($this->asset)->sort();
 
-        if ($this->includePlaceholder) {
-            return view('responsive-images::responsiveImageWithPlaceholder', [
-                'attributeString' => $this->getAttributeString(),
-                'src' => $this->asset->url(),
-                'sources' => $this->buildSources(),
-                'width' => $this->asset->width(),
-                'height' => $this->assetHeight(),
-                'asset' => $this->asset->toAugmentedArray(),
-            ])->render();
-        }
-
         return view('responsive-images::responsiveImage', [
             'attributeString' => $this->getAttributeString(),
+            'placeholder' => $this->includePlaceholder,
             'src' => $this->asset->url(),
             'sources' => $this->buildSources(),
             'width' => $this->asset->width(),
