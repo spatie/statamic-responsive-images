@@ -22,6 +22,14 @@
         src="{{ src }}"
         {{ if width }}width="{{ width }}"{{ /if }}
         {{ if height }}height="{{ height }}"{{ /if }}
+        onload="
+            this.onload=null;
+            var imgWidth = this.getBoundingClientRect().width;
+            this.parentNode.querySelectorAll('source')
+                .forEach(function (source) {
+                    source.sizes=Math.ceil(imgWidth/window.innerWidth*100)+'vw';
+                });
+        "
     >
 
 </picture>
