@@ -5,7 +5,6 @@ namespace Spatie\ResponsiveImages;
 use Illuminate\Support\Collection;
 use League\Glide\Server;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
-use Statamic\Assets\Asset;
 use Statamic\Facades\URL;
 use Statamic\Fields\Value;
 use Statamic\Imaging\ImageGenerator;
@@ -23,8 +22,14 @@ class Responsive extends Tags
     /** @var \Spatie\ResponsiveImages\WidthCalculator */
     private $widthCalculator;
 
-    /** @var float|null */
-    private $ratio;
+    /** @var \Statamic\Assets\Asset */
+    private $asset;
+
+    /** @var bool */
+    private $includePlaceholder;
+
+    /** @var bool */
+    private $includeWebp;
 
     public function __construct(Server $server, ImageGenerator $imageGenerator, WidthCalculator $widthCalculator)
     {
@@ -50,96 +55,63 @@ class Responsive extends Tags
     public function __call($method, $args)
     {
         $tag = explode(':', $this->tag, 2)[1];
-        $includePlaceholder = $this->params['placeholder'] ?? true;
-        $includeWebp = $this->params['webp'] ?? true;
-        $this->ratio = $this->params['ratio'] ?? null;
+        $this->asset = $this->context->get($tag);
+        $this->includePlaceholder = $this->params['placeholder'] ?? true;
+        $this->includeWebp = $this->params['webp'] ?? true;
 
-        $asset = $this->context->get($tag);
-
-        if (is_string($asset)) {
-            $asset = \Statamic\Facades\Asset::findByUrl($asset);
+        if (is_string($this->asset)) {
+            $this->asset = \Statamic\Facades\Asset::findByUrl($this->asset);
         }
 
-        if ($asset instanceof Value) {
-            $asset = $asset->value();
+        if ($this->asset instanceof Value) {
+            $this->asset = $this->asset->value();
 
-            if ($asset instanceof Collection) {
-                $asset = $asset->first();
+            if ($this->asset instanceof Collection) {
+                $this->asset = $this->asset->first();
             }
         }
 
-        if (! $asset) {
+        if (! $this->asset) {
             return '';
         }
 
-        if (Str::contains($this->ratio, '/')) {
-            [$width, $height] = explode('/', $this->ratio);
-            $this->ratio = (float) $width / (float) $height;
-        }
-
-        if ($asset->extension() === "svg") {
+        if ($this->asset->extension() === "svg") {
             return view('responsive-images::responsiveImage', [
                 'attributeString' => $this->getAttributeString(),
-                'src' => $asset->url(),
-                'srcSet' => '',
-                'srcSetWebp' => '',
-                'width' => $asset->width(),
-                'height' => $this->ratio ? $asset->width() / (float) $this->ratio : $asset->height(),
-                'asset' => $asset->toAugmentedArray(),
+                'src' => $this->asset->url(),
+                'width' => $this->asset->width(),
+                'height' => $this->assetHeight(),
+                'asset' => $this->asset->toAugmentedArray(),
             ])->render();
         }
 
-        $widths = $this->widthCalculator->calculateWidthsFromAsset($asset)->sort();
+        $this->widths = $this->widthCalculator->calculateWidthsFromAsset($this->asset)->sort();
 
-        if ($includePlaceholder) {
-            $base64Svg = base64_encode($this->svg($asset));
-            $placeholder = "data:image/svg+xml;base64,{$base64Svg} 32w";
-
+        if ($this->includePlaceholder) {
             return view('responsive-images::responsiveImageWithPlaceholder', [
                 'attributeString' => $this->getAttributeString(),
-                'src' => $asset->url(),
-                'srcSet' => $this->buildSrcSet($widths, $asset, $placeholder),
-                'srcSetWebp' => $includeWebp ? $this->buildSrcSet($widths, $asset, $placeholder, 'webp') : null,
-                'width' => $asset->width(),
-                'height' => $this->ratio ? $asset->width() / (float) $this->ratio : $asset->height(),
-                'asset' => $asset->toAugmentedArray(),
+                'src' => $this->asset->url(),
+                'sources' => $this->buildSources(),
+                'width' => $this->asset->width(),
+                'height' => $this->assetHeight(),
+                'asset' => $this->asset->toAugmentedArray(),
             ])->render();
         }
 
         return view('responsive-images::responsiveImage', [
             'attributeString' => $this->getAttributeString(),
-            'src' => $asset->url(),
-            'srcSet' => $this->buildSrcSet($widths, $asset),
-            'srcSetWebp' => $includeWebp ? $this->buildSrcSet($widths, $asset, null, 'webp') : null,
-            'width' => $asset->width(),
-            'height' => $this->ratio ? $asset->width() / (float) $this->ratio : $asset->height(),
-            'asset' => $asset->toAugmentedArray(),
-        ])->render();
-    }
-
-    private function svg(Asset $asset): string
-    {
-        $path = $this->imageGenerator->generateByAsset($asset, [
-            'w' => 32,
-            'h' => $this->ratio ? 32 / (float) $this->ratio : null,
-            'blur' => 5,
-        ]);
-        
-        $source = base64_encode($this->server->getCache()->read($path));
-        $base64Placeholder = "data:{$this->server->getCache()->getMimetype($path)};base64,{$source}";
-
-        return view('responsive-images::placeholderSvg', [
-            'width' => $asset->width(),
-            'height' => $this->ratio ? $asset->width() / (float) $this->ratio : $asset->height(),
-            'image' => $base64Placeholder,
-            'asset' => $asset->toAugmentedArray(),
+            'src' => $this->asset->url(),
+            'sources' => $this->buildSources(),
+            'width' => $this->asset->width(),
+            'height' => $this->assetHeight(),
+            'asset' => $this->asset->toAugmentedArray(),
         ])->render();
     }
 
     private function getAttributeString(): string
     {
         return collect($this->params)
-            ->except(['placeholder', 'webp', 'ratio'])
+            ->except($this->ratioParams()->keys()->merge(['placeholder', 'webp']))
             ->reject(function ($value, $name) {
                 return Str::contains($name, 'glide:');
             })
@@ -148,7 +120,108 @@ class Responsive extends Tags
             })->implode(' ');
     }
 
-    private function buildSrcSet(Collection $widths, Asset $asset, string $placeholder = null, string $format = null): string
+    private function ratioParams(): Collection
+    {
+        return $this->params->filter(function ($value, $key) {
+            return Str::endsWith($key, 'ratio');
+        });
+    }
+
+    private function ratios(): Collection
+    {
+        $ratios = $this->ratioParams()->mapWithKeys(function ($ratio, $param) {
+            $breakpoint = Str::contains($param, ':') ? Str::before($param, ':') : 'default';
+
+            if (Str::contains($ratio, '/')) {
+                [$width, $height] = explode('/', $ratio);
+                $ratio = (float) $width / (float) $height;
+            }
+
+            return [$breakpoint => (float) $ratio];
+        });
+
+        if (! $ratios->has('default')) {
+            $ratios->put('default', $this->assetRatio());
+        }
+
+        return $ratios;
+    }
+
+    private function assetRatio(): float
+    {
+        return $this->asset->width() / $this->asset->height();
+    }
+
+    private function assetHeight(): ?float
+    {
+        if (! $this->asset->width()) {
+            return null;
+        }
+
+        return $this->asset->width() / $this->ratios()->get('default');
+    }
+
+    private function media(string $breakpoint): ?string
+    {
+        $screenSize = config("statamic.responsive-images.breakpoints.$breakpoint");
+        $breakpointUnit = config("statamic.responsive-images.breakpoint_unit");
+
+        return $screenSize ? "(min-width: {$screenSize}{$breakpointUnit})" : null;
+    }
+
+    private function sources(): Collection
+    {
+        return $this->ratios()->map(function ($ratio, $breakpoint) {
+            return [
+                'breakpoint' => config("statamic.responsive-images.breakpoints.$breakpoint"),
+                'media' => $this->media($breakpoint),
+                'ratio' => $ratio,
+            ];
+        })->sortByDesc('breakpoint');
+    }
+
+    private function buildSources(): array
+    {
+        return $this->sources()->map(function ($item) {
+            return [
+                'media' => $item['media'],
+                'srcSet' => $this->buildSrcSet($item['ratio'], $this->placeholder($item['ratio'])),
+                'srcSetWebp' => $this->includeWebp ? $this->buildSrcSet($item['ratio'], $this->placeholder($item['ratio']), 'webp') : null,
+            ];
+        })->values()->toArray();
+    }
+
+    private function placeholder(string $ratio): ?string
+    {
+        if (! $this->includePlaceholder) {
+            return null;
+        }
+
+        $base64Svg = base64_encode($this->placeholderSvg($ratio));
+
+        return "data:image/svg+xml;base64,{$base64Svg} 32w";
+    }
+
+    private function placeholderSvg(float $ratio): string
+    {
+        $path = $this->imageGenerator->generateByAsset($this->asset, [
+            'w' => 32,
+            'h' => 32 / $ratio,
+            'blur' => 5,
+        ]);
+
+        $source = base64_encode($this->server->getCache()->read($path));
+        $base64Placeholder = "data:{$this->server->getCache()->getMimetype($path)};base64,{$source}";
+
+        return view('responsive-images::placeholderSvg', [
+            'width' => $this->asset->width(),
+            'height' => $this->asset->width() / $ratio,
+            'image' => $base64Placeholder,
+            'asset' => $this->asset->toAugmentedArray(),
+        ])->render();
+    }
+
+    private function buildSrcSet(float $ratio = null, string $placeholder = null, string $format = null): string
     {
         $params = $this->getGlideParams();
 
@@ -160,7 +233,7 @@ class Responsive extends Tags
         unset($params['height']);
         unset($params['h']);
 
-        return $widths
+        return $this->widths
             /* If a width is specified, consider it a max width */
             ->when(isset($params['width']) || isset($params['w']), function ($widths) use ($params) {
                 $maxWidth = $params['width'] ?? $params['w'];
@@ -176,8 +249,8 @@ class Responsive extends Tags
 
                 return $filtered;
             })
-            ->map(function (int $width) use ($params, $asset) {
-                return "{$this->buildImage($asset, $width, $params)} {$width}w";
+            ->map(function (int $width) use ($ratio, $params) {
+                return "{$this->buildImage($width, $ratio, $params)} {$width}w";
             })
             ->when($placeholder, function (Collection $widths) use ($placeholder) {
                 return $widths->prepend($placeholder);
@@ -197,14 +270,14 @@ class Responsive extends Tags
             ->toArray();
     }
 
-    private function buildImage(Asset $asset, int $width, array $params)
+    private function buildImage(int $width, float $ratio = null, array $params)
     {
         $params['width'] = $width;
 
-        if ($this->ratio) {
-            $params['height'] = $width / (float) $this->ratio;
+        if ($ratio) {
+            $params['height'] = $width / $ratio;
         }
 
-        return URL::makeRelative((new GenerateImageJob($asset, $params))->handle());
+        return URL::makeRelative((new GenerateImageJob($this->asset, $params))->handle());
     }
 }

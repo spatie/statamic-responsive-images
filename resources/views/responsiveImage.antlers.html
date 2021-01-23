@@ -1,10 +1,27 @@
 <picture>
-    {{ if srcSetWebp }}<source type="image/webp" srcset="{{ srcSetWebp }}" />{{ /if }}
-    <source srcset="{{ srcSet }}" />
+
+    {{ sources }}
+
+        {{ if srcSetWebp }}
+            <source
+                type="image/webp"
+                {{ if media }}media="{{ media }}"{{ /if }}
+                srcset="{{ srcSetWebp }}"
+            >
+        {{ /if }}
+
+        <source
+            {{ if media }}media="{{ media }}"{{ /if }}
+            srcset="{{ srcSet }}"
+        >
+
+    {{ /sources }}
+
     <img
         {{ attributeString }}
         src="{{ src }}"
-        width="{{ width }}"
+        {{ if width }}width="{{ width }}"{{ /if }}
         {{ if height }}height="{{ height }}"{{ /if }}
     >
+
 </picture>
