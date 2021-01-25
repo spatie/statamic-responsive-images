@@ -85,8 +85,6 @@ class Responsive extends Tags
             ])->render();
         }
 
-        $this->widths = $this->widthCalculator->calculateWidthsFromAsset($this->asset)->sort();
-
         return view('responsive-images::responsiveImage', [
             'attributeString' => $this->getAttributeString(),
             'placeholder' => $this->includePlaceholder,
@@ -172,11 +170,13 @@ class Responsive extends Tags
 
     private function buildSources(): array
     {
-        return $this->sources()->map(function ($source) {
+        $widths = $this->widthCalculator->calculateWidthsFromAsset($this->asset)->sort();
+
+        return $this->sources()->map(function ($source) use ($widths) {
             return [
                 'media' => $source['media'],
-                'srcSet' => $this->buildSrcSet($source['ratio'], $this->placeholder($source['ratio'])),
-                'srcSetWebp' => $this->includeWebp ? $this->buildSrcSet($source['ratio'], $this->placeholder($source['ratio']), 'webp') : null,
+                'srcSet' => $this->buildSrcSet($widths, $source['ratio'], $this->placeholder($source['ratio'])),
+                'srcSetWebp' => $this->includeWebp ? $this->buildSrcSet($widths, $source['ratio'], $this->placeholder($source['ratio']), 'webp') : null,
             ];
         })->values()->toArray();
     }
@@ -211,7 +211,7 @@ class Responsive extends Tags
         ])->render();
     }
 
-    private function buildSrcSet(float $ratio = null, string $placeholder = null, string $format = null): string
+    private function buildSrcSet(Collection $widths, float $ratio = null, string $placeholder = null, string $format = null): string
     {
         $params = $this->getGlideParams();
 
@@ -223,7 +223,7 @@ class Responsive extends Tags
         unset($params['height']);
         unset($params['h']);
 
-        return $this->widths
+        return $widths
             /* If a width is specified, consider it a max width */
             ->when(isset($params['width']) || isset($params['w']), function ($widths) use ($params) {
                 $maxWidth = $params['width'] ?? $params['w'];
