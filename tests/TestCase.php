@@ -25,6 +25,8 @@ class TestCase extends OrchestraTestCase
         $this->faker = $this->makeFaker();
 
         $this->setUpTempTestFiles();
+
+        config()->set('statamic.assets.image_manipulation.driver', 'imagick');
     }
 
     protected function getPackageProviders($app)
