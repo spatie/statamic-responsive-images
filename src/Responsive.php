@@ -172,11 +172,11 @@ class Responsive extends Tags
 
     private function buildSources(): array
     {
-        return $this->sources()->map(function ($item) {
+        return $this->sources()->map(function ($source) {
             return [
-                'media' => $item['media'],
-                'srcSet' => $this->buildSrcSet($item['ratio'], $this->placeholder($item['ratio'])),
-                'srcSetWebp' => $this->includeWebp ? $this->buildSrcSet($item['ratio'], $this->placeholder($item['ratio']), 'webp') : null,
+                'media' => $source['media'],
+                'srcSet' => $this->buildSrcSet($source['ratio'], $this->placeholder($source['ratio'])),
+                'srcSetWebp' => $this->includeWebp ? $this->buildSrcSet($source['ratio'], $this->placeholder($source['ratio']), 'webp') : null,
             ];
         })->values()->toArray();
     }
