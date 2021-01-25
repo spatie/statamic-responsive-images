@@ -13,7 +13,7 @@ class WidthCalculator
         $height = $asset->height();
         $fileSize = $asset->size();
 
-        return $this->calculateWidths($fileSize, $width, $height);
+        return $this->calculateWidths($fileSize, $width, $height)->sort();
     }
 
     public function calculateWidths(int $fileSize, int $width, int $height): Collection

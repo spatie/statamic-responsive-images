@@ -14,7 +14,7 @@ class ServiceProvider extends AddonServiceProvider
     protected $publishAfterInstall = false;
 
     protected $tags = [
-        Responsive::class,
+        ResponsiveTag::class,
     ];
 
     protected $listen = [
