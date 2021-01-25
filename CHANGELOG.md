@@ -2,6 +2,17 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.0.0 - 2021-01-25
+
+### Breaking
+
+- The `\Spatie\ResponsiveImages\Responsive` class has been renamed to `\Spatie\ResponsiveImages\ResponsiveTag`
+- The views have been changed to Blade views instead of Antlers views.
+
+### Changes
+
+- [new] Added the possibility for Art Direction [#32]
+
 ## 1.8.0 - 2021-01-13
 
 - [new] Added a config option for a global max width on generated images
