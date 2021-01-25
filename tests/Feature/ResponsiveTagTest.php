@@ -66,13 +66,13 @@ class ResponsiveTagTest extends TestCase
     /** @test */
     public function it_generates_responsive_images()
     {
-        $this->assertMatchesSnapshot(ResponsiveTag::render($this->asset));
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset));
     }
 
     /** @test */
     public function it_generates_no_conversions_for_svgs()
     {
-        $this->assertMatchesSnapshot(ResponsiveTag::render($this->svgAsset));
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->svgAsset));
     }
 
     /** @test */
@@ -84,7 +84,7 @@ class ResponsiveTagTest extends TestCase
     /** @test */
     public function it_generates_responsive_images_with_parameters()
     {
-        $this->assertMatchesSnapshot(ResponsiveTag::render($this->asset, [
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
             'ratio' => 1,
         ]));
     }
@@ -92,7 +92,7 @@ class ResponsiveTagTest extends TestCase
     /** @test */
     public function it_generates_responsive_images_with_breakpoint_parameters()
     {
-        $this->assertMatchesSnapshot(ResponsiveTag::render($this->asset, [
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
             'ratio' => 1,
             'lg:ratio' => 1.5,
         ]));
@@ -101,7 +101,7 @@ class ResponsiveTagTest extends TestCase
     /** @test */
     public function it_generates_responsive_images_without_webp()
     {
-        $this->assertMatchesSnapshot(ResponsiveTag::render($this->asset, [
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
             'webp' => false,
         ]));
     }
@@ -109,7 +109,7 @@ class ResponsiveTagTest extends TestCase
     /** @test */
     public function it_generates_responsive_images_with_breakpoints_without_webp()
     {
-        $this->assertMatchesSnapshot(ResponsiveTag::render($this->asset, [
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
             'webp' => false,
             'lg:ratio' => 1,
         ]));
@@ -118,7 +118,7 @@ class ResponsiveTagTest extends TestCase
     /** @test */
     public function it_generates_responsive_images_without_a_placeholder()
     {
-        $this->assertMatchesSnapshot(ResponsiveTag::render($this->asset, [
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
             'placeholder' => false,
         ]));
     }
@@ -126,7 +126,7 @@ class ResponsiveTagTest extends TestCase
     /** @test */
     public function it_can_add_custom_glide_parameters()
     {
-        $this->assertMatchesSnapshot(ResponsiveTag::render($this->asset, [
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
             'glide:blur' => 10,
         ]));
     }
@@ -134,7 +134,7 @@ class ResponsiveTagTest extends TestCase
     /** @test */
     public function it_adds_custom_parameters_to_the_attribute_string()
     {
-        $this->assertMatchesSnapshot(ResponsiveTag::render($this->asset, [
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
             'alt' => 'Some alt tag',
         ]));
     }
@@ -142,8 +142,14 @@ class ResponsiveTagTest extends TestCase
     /** @test */
     public function a_glide_width_parameter_counts_as_max_width()
     {
-        $this->assertMatchesSnapshot(ResponsiveTag::render($this->asset, [
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
             'glide:width' => '50',
         ]));
+    }
+
+    private function assertMatchesSnapshotWithoutSvg($value)
+    {
+        $value = preg_replace('/data:image\/svg\+xml(.*) 32w/', '', $value);
+        $this->assertMatchesSnapshot($value);
     }
 }
