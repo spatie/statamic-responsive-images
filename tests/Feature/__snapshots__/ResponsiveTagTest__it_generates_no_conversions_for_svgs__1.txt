@@ -1,0 +1,7 @@
+<picture>
+    
+    <img
+        
+        src="/test/test.svg"
+                            >
+</picture>

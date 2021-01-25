@@ -8,6 +8,11 @@
             "Spatie\\ResponsiveImages\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Spatie\\ResponsiveImages\\Tests\\": "tests"
+        }
+    },
     "extra": {
         "statamic": {
             "name": "Responsive Images",
@@ -21,5 +26,10 @@
     },
     "require": {
         "statamic/cms": "^3.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.9",
+        "phpunit/phpunit": "^9.5",
+        "spatie/phpunit-snapshot-assertions": "^4.2"
     }
 }
