@@ -12,6 +12,8 @@ use Statamic\Tags\Tags;
 
 class ResponsiveTag extends Tags
 {
+    protected static $handle = 'responsive';
+
     /** @var \League\Glide\Server */
     private $server;
 
