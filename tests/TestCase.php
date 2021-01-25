@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\File;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Statamic\Console\Commands\GlideClear;
 use Statamic\Extend\Manifest;
 use Statamic\Statamic;
 
@@ -26,7 +27,7 @@ class TestCase extends OrchestraTestCase
 
         $this->setUpTempTestFiles();
 
-        config()->set('statamic.assets.image_manipulation.driver', 'imagick');
+        $this->artisan(GlideClear::class);
     }
 
     protected function getPackageProviders($app)
@@ -78,6 +79,8 @@ class TestCase extends OrchestraTestCase
 
         // Define config settings for all of our tests
         $app['config']->set("statamic.responsive-images", require(__DIR__ . "/../config/responsive-images.php"));
+
+        $app['config']->set('statamic.assets.image_manipulation.driver', 'imagick');
     }
 
     protected function setUpTempTestFiles()
