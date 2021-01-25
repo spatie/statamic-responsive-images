@@ -25,6 +25,7 @@ class Responsive
 
         if ($assetParam instanceof Asset) {
             $this->asset = $assetParam;
+
             return;
         }
 
