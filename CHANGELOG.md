@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.0.1 - 2021-01-26
+
+- [fix] Fix the order of picture sources
+
 ## 2.0.0 - 2021-01-25
 
 ### Breaking

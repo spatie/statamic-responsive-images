@@ -1,11 +1,11 @@
 <picture>
             
         <source
-             media=""             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=237&amp;h=195.17647058824&amp;s=5f279c6423bff49fb0d948fafed2a008 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=284&amp;h=233.88235294118&amp;s=5a8688aa9c2d3e962a0660d7a794f606 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=280&amp;s=6ccad3dd4358725c8a63ee40bf6bd89b 340w"
+             media="(min-width: 1024px)"             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=237&amp;h=237&amp;s=44393a023c319a0682bdd54514e0f023 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=284&amp;h=284&amp;s=b99d408d6e5b9310db88c812500237c6 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=340&amp;s=17f7533fe7c2d620c61e3f2ae758f422 340w"
              sizes="1px"         >
             
         <source
-             media="(min-width: 1024px)"             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=237&amp;h=237&amp;s=44393a023c319a0682bdd54514e0f023 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=284&amp;h=284&amp;s=b99d408d6e5b9310db88c812500237c6 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=340&amp;s=17f7533fe7c2d620c61e3f2ae758f422 340w"
+             media=""             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=237&amp;h=195.17647058824&amp;s=5f279c6423bff49fb0d948fafed2a008 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=284&amp;h=233.88235294118&amp;s=5a8688aa9c2d3e962a0660d7a794f606 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=280&amp;s=6ccad3dd4358725c8a63ee40bf6bd89b 340w"
              sizes="1px"         >
     
     <img

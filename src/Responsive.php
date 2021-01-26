@@ -82,7 +82,9 @@ class Responsive
             $breakpoints->prepend(new Breakpoint('default', 0, $this->asset->width() / $this->asset->height()));
         }
 
-        return $breakpoints;
+        return $breakpoints->sortByDesc(function (Breakpoint $breakpoint) {
+            return $breakpoint->value;
+        });
     }
 
     public function defaultBreakpoint(): Breakpoint
