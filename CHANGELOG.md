@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.1.1 - 2021-01-26
+
+- [new] Responsive images now supports true Art direction with the possibility to add a different `src` for each breakpoint.
+
 ## 2.0.1 - 2021-01-26
 
 - [fix] Fix the order of picture sources

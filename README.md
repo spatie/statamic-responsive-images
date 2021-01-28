@@ -52,12 +52,6 @@ You can make sure images are a certain ratio by passing a `ratio` parameter, eit
 {{ responsive:image_field ratio="16/9" }}
 ```
 
-You can also apply a different ratio based on breakpoints.
-
-```twig
-{{ responsive:image_field ratio="1/1" lg:ratio="16/9" 2xl:ratio="2/1" }}
-```
-
 This will apply a default ratio of `1/1`. From breakpoint `lg` up to `2xl`, the ratio will be `16/9`. From `2xl` up, the ratio will be `2/1`.
 The breakpoints can be configured in the config and default to the breakpoints of Tailwind CSS.
 
@@ -93,6 +87,24 @@ If you want to add additional attributes (for example a title attribute) to your
 ```twig
 {{ responsive:image_field alt="{title}" class="my-class" }}
 ```
+
+## Breakpoints & Art direction
+
+You can define breakpoints in the config file, by default the breakpoints of TailwindCSS are used.
+
+Breakpoints allow you to use, for exmample, different ratios:
+
+```twig
+{{ responsive:image_field ratio="1/1" lg:ratio="16/9" 2xl:ratio="2/1" }}
+```
+
+Or different assets:
+
+```twig
+{{ responsive:image_field :lg:src="image_field_lg" :2xl:src="image_field_2xl" }}
+```
+
+Breakpoints support the `ratio`, `src` and `glide` parameters.
 
 ## Customizing the generated html
 

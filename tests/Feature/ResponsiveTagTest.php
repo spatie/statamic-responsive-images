@@ -25,6 +25,9 @@ class ResponsiveTagTest extends TestCase
     private $asset;
 
     /** @var \Statamic\Assets\Asset */
+    private $asset2;
+
+    /** @var \Statamic\Assets\Asset */
     private $svgAsset;
 
     protected function setUp(): void
@@ -48,6 +51,10 @@ class ResponsiveTagTest extends TestCase
         $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
         $this->asset = $assetContainer->makeAsset($path)->upload($file);
+
+        $file = new UploadedFile($this->getTestJpg(), 'test2.jpg');
+        $path = ltrim('/'.$file->getClientOriginalName(), '/');
+        $this->asset2 = $assetContainer->makeAsset($path)->upload($file);
 
         $svg = new UploadedFile($this->getTestJpg(), 'test.svg');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
@@ -103,6 +110,16 @@ class ResponsiveTagTest extends TestCase
     {
         $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
             'webp' => false,
+        ]));
+    }
+
+    /** @test */
+    public function the_source_image_can_change_with_breakpoints()
+    {
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
+            'ratio' => 1,
+            'lg:src' => $this->asset2->url(),
+            'lg:ratio' => 1.5,
         ]));
     }
 

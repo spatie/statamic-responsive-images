@@ -1,0 +1,31 @@
+<picture>
+                        <source
+                type="image/webp"
+                 media="(min-width: 1024px)"                 srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdDIuanBn?fm=webp&amp;w=237&amp;h=158&amp;s=1845adc3b25ca0b7da6832da21bc7583 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdDIuanBn?fm=webp&amp;w=284&amp;h=189.33333333333&amp;s=ad650fcee0c6ad53c67b57cf058b7338 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdDIuanBn?fm=webp&amp;w=340&amp;h=226.66666666667&amp;s=c1f0de494c4ec7f2233b488687284af9 340w"
+                 sizes="1px"             >
+        
+        <source
+             media="(min-width: 1024px)"             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdDIuanBn?w=237&amp;h=158&amp;s=ab44b182a6d2ddc2e84528a16a0a9281 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdDIuanBn?w=284&amp;h=189.33333333333&amp;s=d9b944d500ca7cb29db0b6f258621862 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdDIuanBn?w=340&amp;h=226.66666666667&amp;s=81e019776ba0129bf3829c62169c8736 340w"
+             sizes="1px"         >
+                        <source
+                type="image/webp"
+                 media=""                 srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?fm=webp&amp;w=237&amp;h=237&amp;s=3bb8f56ec97a14301c633df1b99f1aff 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?fm=webp&amp;w=284&amp;h=284&amp;s=00efb1adaa53b6fa43b76209e299a418 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?fm=webp&amp;w=340&amp;h=340&amp;s=0ab01b0d8c5ffbbc508400a067a1ead3 340w"
+                 sizes="1px"             >
+        
+        <source
+             media=""             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=237&amp;h=237&amp;s=44393a023c319a0682bdd54514e0f023 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=284&amp;h=284&amp;s=b99d408d6e5b9310db88c812500237c6 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=340&amp;s=17f7533fe7c2d620c61e3f2ae758f422 340w"
+             sizes="1px"         >
+    
+    <img
+        
+        src="/test/test.jpg"
+         width="340"          height="340"                 onload="
+            this.onload=null;
+            var imgWidth = this.getBoundingClientRect().width;
+            this.parentNode.querySelectorAll('source')
+                .forEach(function (source) {
+                    source.sizes=Math.ceil(imgWidth/window.innerWidth*100)+'vw';
+                });
+        "
+            >
+</picture>

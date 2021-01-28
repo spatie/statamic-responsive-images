@@ -13,6 +13,7 @@ use Spatie\ResponsiveImages\Tests\TestCase;
 use Statamic\Assets\AssetContainer;
 use Statamic\Facades\Stache;
 use Statamic\Fields\Value;
+use Statamic\Tags\Parameters;
 
 class ResponsiveTest extends TestCase
 {
@@ -54,7 +55,7 @@ class ResponsiveTest extends TestCase
     /** @test * */
     public function it_can_initialize_using_an_asset()
     {
-        $responsive = new Responsive($this->asset, collect());
+        $responsive = new Responsive($this->asset, new Parameters());
 
         $this->assertEquals($this->asset->id(), $responsive->asset->id());
     }
@@ -62,7 +63,7 @@ class ResponsiveTest extends TestCase
     /** @test * */
     public function it_can_initialize_using_the_assets_path()
     {
-        $responsive = new Responsive($this->asset->resolvedPath(), collect());
+        $responsive = new Responsive($this->asset->resolvedPath(), new Parameters());
 
         $this->assertEquals($this->asset->id(), $responsive->asset->id());
     }
@@ -70,7 +71,7 @@ class ResponsiveTest extends TestCase
     /** @test * */
     public function it_can_initialize_using_the_assets_url()
     {
-        $responsive = new Responsive($this->asset->url(), collect());
+        $responsive = new Responsive($this->asset->url(), new Parameters());
 
         $this->assertEquals($this->asset->id(), $responsive->asset->id());
     }
@@ -80,7 +81,7 @@ class ResponsiveTest extends TestCase
     {
         $value = new Value($this->asset);
 
-        $responsive = new Responsive($value, collect());
+        $responsive = new Responsive($value, new Parameters());
 
         $this->assertEquals($this->asset->id(), $responsive->asset->id());
     }
@@ -90,7 +91,7 @@ class ResponsiveTest extends TestCase
     {
         $value = new Value(new Collection([$this->asset]));
 
-        $responsive = new Responsive($value, collect());
+        $responsive = new Responsive($value, new Parameters());
 
         $this->assertEquals($this->asset->id(), $responsive->asset->id());
     }
@@ -100,117 +101,87 @@ class ResponsiveTest extends TestCase
     {
         $this->expectException(AssetNotFoundException::class);
 
-        new Responsive('doesnt-exist', collect());
+        new Responsive('doesnt-exist', new Parameters());
     }
 
     /** @test * */
-    public function it_can_generate_a_set_of_ratios_for_an_asset()
+    public function it_can_generate_a_set_of_breakpoints_for_an_asset()
     {
-        $responsive = new Responsive($this->asset, collect([
+        $responsive = new Responsive($this->asset, new Parameters([
             'ratio' => 1,
             'lg:ratio' => 1.5,
         ]));
 
         $this->assertEquals([
-            ['label' => 'default', 'value' => 0, 'ratio' => 1.0, 'unit' => 'px', 'media' => ''],
-            ['label' => 'lg', 'value' => 1024, 'ratio' => 1.5, 'unit' => 'px', 'media' => '(min-width: 1024px)'],
+            ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'unit' => 'px', 'media' => '(min-width: 1024px)', 'parameters' => ['ratio' => 1.5]],
+            ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'unit' => 'px', 'media' => '', 'parameters' => ['ratio' => 1]],
         ], $responsive->breakPoints()->toArray());
     }
 
     /** @test * */
     public function it_can_parse_a_basic_fraction()
     {
-        $responsive = new Responsive($this->asset, collect([
+        $responsive = new Responsive($this->asset, new Parameters([
             'ratio' => 1,
             'lg:ratio' => '1 / 2',
         ]));
 
         $this->assertEquals([
-            ['label' => 'default', 'value' => 0, 'ratio' => 1.0, 'unit' => 'px', 'media' => ''],
-            ['label' => 'lg', 'value' => 1024, 'ratio' => 1 / 2, 'unit' => 'px', 'media' => '(min-width: 1024px)'],
+            ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'parameters' => ['ratio' => 1 / 2], 'unit' => 'px', 'media' => '(min-width: 1024px)'],
+            ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'parameters' => ['ratio' => 1.0], 'unit' => 'px', 'media' => ''],
         ], $responsive->breakPoints()->toArray());
     }
 
     /** @test * */
     public function it_uses_the_default_asset_ratio_if_a_default_isnt_provided()
     {
-        $responsive = new Responsive($this->asset, collect([
+        $responsive = new Responsive($this->asset, new Parameters([
             'lg:ratio' => 1.5,
         ]));
 
         $this->assertEquals([
-            ['label' => 'default', 'value' => 0, 'ratio' => 1.2142857142857142, 'unit' => 'px', 'media' => ''],
-            ['label' => 'lg', 'value' => 1024, 'ratio' => 1.5, 'unit' => 'px', 'media' => '(min-width: 1024px)'],
+            ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'parameters' => ['ratio' => 1.5], 'unit' => 'px', 'media' => '(min-width: 1024px)'],
+            ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'parameters' => ['ratio' => 1.2142857142857142], 'unit' => 'px', 'media' => ''],
         ], $responsive->breakPoints()->toArray());
     }
 
     /** @test * */
     public function unknown_breakpoints_get_ignored()
     {
-        $responsive = new Responsive($this->asset, collect([
+        $responsive = new Responsive($this->asset, new Parameters([
             'lg:ratio' => 1.5,
             'bla:ratio' => 2,
         ]));
 
         $this->assertEquals([
-            ['label' => 'default', 'value' => 0, 'ratio' => 1.2142857142857142, 'unit' => 'px', 'media' => ''],
-            ['label' => 'lg', 'value' => 1024, 'ratio' => 1.5, 'unit' => 'px', 'media' => '(min-width: 1024px)'],
+            ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'parameters' => ['ratio' => 1.5, 'bla:ratio' => 2], 'unit' => 'px', 'media' => '(min-width: 1024px)'],
+            ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'parameters' => ['ratio' => 1.2142857142857142, 'bla:ratio' => 2], 'unit' => 'px', 'media' => ''],
         ], $responsive->breakPoints()->toArray());
     }
 
     /** @test * */
     public function it_can_retrieve_the_default_breakpoint()
     {
-        $responsive = new Responsive($this->asset, collect([
+        $responsive = new Responsive($this->asset, new Parameters([
             'lg:ratio' => 1.5,
         ]));
 
         $this->assertEquals([
+            'asset' => $this->asset,
             'label' => 'default',
             'value' => 0,
-            'ratio' => 1.2142857142857142,
+            'parameters' => [
+                'ratio' => 1.2142857142857142,
+            ],
             'unit' => 'px',
             'media' => ''
         ], $responsive->defaultBreakpoint()->toArray());
     }
 
     /** @test * */
-    public function it_can_build_an_image()
-    {
-        $responsive = new Responsive($this->asset, collect());
-
-        $this->assertStringContainsString(
-            '?w=100',
-            $responsive->buildImage(100)
-        );
-    }
-
-    /** @test * */
-    public function it_can_build_an_image_with_parameters()
-    {
-        $responsive = new Responsive($this->asset, collect());
-
-        $this->assertStringContainsString(
-            '?fm=webp&w=100',
-            $responsive->buildImage(100, ['fm' => 'webp'])
-        );
-    }
-
-    /** @test * */
-    public function it_can_build_an_image_with_a_ratio()
-    {
-        $responsive = new Responsive($this->asset, collect());
-
-        $this->assertStringContainsString(
-            '?fm=webp&w=100&h=100',
-            $responsive->buildImage(100, ['fm' => 'webp'], 1.0)
-        );
-    }
-
-    /** @test * */
     public function it_can_retrieve_the_height_of_an_image_for_a_ratio()
     {
-        $responsive = new Responsive($this->asset, collect());
+        $responsive = new Responsive($this->asset, new Parameters());
 
         $this->assertEquals(280.0, $responsive->assetHeight());
     }
@@ -218,7 +189,7 @@ class ResponsiveTest extends TestCase
     /** @test * */
     public function it_can_retrieve_the_height_of_an_image_for_a_breakpoint_ratio()
     {
-        $responsive = new Responsive($this->asset, collect([
+        $responsive = new Responsive($this->asset, new Parameters([
             'lg:ratio' => 2 / 1,
         ]));
 
@@ -229,7 +200,7 @@ class ResponsiveTest extends TestCase
     /** @test * */
     public function it_returns_null_for_a_non_existent_breakpoint()
     {
-        $responsive = new Responsive($this->asset, collect([
+        $responsive = new Responsive($this->asset, new Parameters([
             'lg:ratio' => 2 / 1,
         ]));
 
