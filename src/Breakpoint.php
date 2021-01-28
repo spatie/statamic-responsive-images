@@ -7,7 +7,6 @@ use Illuminate\Support\Collection;
 use League\Flysystem\FileNotFoundException;
 use League\Glide\Server;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
-use Spatie\ResponsiveImages\WidthCalculator;
 use Statamic\Assets\Asset;
 use Statamic\Facades\URL;
 use Statamic\Imaging\ImageGenerator;

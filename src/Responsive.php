@@ -4,7 +4,6 @@ namespace Spatie\ResponsiveImages;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Spatie\ResponsiveImages\Breakpoint;
 use Statamic\Assets\Asset;
 use Statamic\Facades\Asset as AssetFacade;
 use Statamic\Fields\Value;

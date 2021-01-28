@@ -2,7 +2,6 @@
 
 namespace Spatie\ResponsiveImages;
 
-use Spatie\ResponsiveImages\Breakpoint;
 use Statamic\Support\Str;
 use Statamic\Tags\Tags;
 
