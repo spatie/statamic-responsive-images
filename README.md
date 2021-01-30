@@ -92,7 +92,7 @@ If you want to add additional attributes (for example a title attribute) to your
 
 You can define breakpoints in the config file, by default the breakpoints of TailwindCSS are used.
 
-Breakpoints allow you to use, for exmample, different ratios:
+Breakpoints allow you to use, for example, different ratios:
 
 ```twig
 {{ responsive:image_field ratio="1/1" lg:ratio="16/9" 2xl:ratio="2/1" }}
