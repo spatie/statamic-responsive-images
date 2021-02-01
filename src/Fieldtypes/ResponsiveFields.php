@@ -4,7 +4,7 @@ namespace Spatie\ResponsiveImages\Fieldtypes;
 
 class ResponsiveFields
 {
-    /** @var array|null  */
+    /** @var array|null */
     protected $config;
 
     public function __construct(?array $config = null)
@@ -45,7 +45,7 @@ class ResponsiveFields
                         'instructions' => $index === 0 ? __('Set the default settings.') : __("Previous breakpoint’s choices will be used when empty."),
                         'type' => 'section',
                         'width' => $this->config['allow_fit'] ? 25 : 33,
-                    ]
+                    ],
                 ];
             }
 
@@ -67,7 +67,7 @@ class ResponsiveFields
                         ? ($this->config['allow_ratio'] ? ($this->config['allow_fit'] ? 25 : 33) : 66)
                         : ($this->config['allow_ratio'] ? ($this->config['allow_fit'] ? 50 : 66) : 100),
                     'required' => $index === 0,
-                ]
+                ],
             ];
 
             if ($this->config['allow_ratio']) {
@@ -82,7 +82,7 @@ class ResponsiveFields
                             : '',
                         'type' => 'text',
                         'width' => $this->config['allow_fit'] ? 25 : 33,
-                    ]
+                    ],
                 ];
 
                 if ($this->config['allow_fit']) {
@@ -106,7 +106,7 @@ class ResponsiveFields
                                 'crop' => __('Crop'),
                             ],
                             'width' => 25,
-                        ]
+                        ],
                     ];
                 }
             }

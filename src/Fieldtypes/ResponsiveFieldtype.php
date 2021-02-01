@@ -2,10 +2,10 @@
 
 namespace Spatie\ResponsiveImages\Fieldtypes;
 
-use Statamic\Facades\Blueprint;
-use Statamic\Fields\Fieldtype;
-use Statamic\Fields\Fields as BlueprintFields;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFields as ResponsiveFields;
+use Statamic\Facades\Blueprint;
+use Statamic\Fields\Fields as BlueprintFields;
+use Statamic\Fields\Fieldtype;
 use Statamic\Support\Arr;
 
 class ResponsiveFieldtype extends Fieldtype
@@ -13,8 +13,11 @@ class ResponsiveFieldtype extends Fieldtype
     protected static $handle = 'responsive';
 
     protected $categories = ['media', 'relationship'];
+
     protected $defaultValue = [];
+
     protected $defaultable = false;
+
     protected $icon = 'assets';
 
     protected function configFieldItems(): array
@@ -132,5 +135,4 @@ class ResponsiveFieldtype extends Fieldtype
             ->only(array_keys($data))
             ->all();
     }
-
 }
