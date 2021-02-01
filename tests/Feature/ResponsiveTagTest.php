@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Spatie\ResponsiveImages\AssetNotFoundException;
 use Spatie\ResponsiveImages\Responsive;
-use Spatie\ResponsiveImages\ResponsiveTag;
+use Spatie\ResponsiveImages\Tags\ResponsiveTag;
 use Spatie\ResponsiveImages\Tests\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 use Statamic\Assets\AssetContainer;

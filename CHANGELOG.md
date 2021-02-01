@@ -2,6 +2,11 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.2.0 - 2021-02-01
+
+### What's new
+- Added a fieldtype that allows full art direction.
+
 ## 2.1.1 - 2021-01-26
 
 - [new] Responsive images now supports true Art direction with the possibility to add a different `src` for each breakpoint.

@@ -4,6 +4,7 @@ namespace Spatie\ResponsiveImages;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Statamic\Assets\Asset;
 use Statamic\Facades\Asset as AssetFacade;
 use Statamic\Fields\Value;
@@ -21,6 +22,15 @@ class Responsive
     public function __construct($assetParam, Parameters $parameters)
     {
         $this->parameters = $parameters;
+
+        if ($assetParam instanceof Value && $assetParam->fieldtype() instanceof ResponsiveFieldtype) {
+            $this->parameters = collect($assetParam->value())->map(function ($value) {
+                return $value instanceof Value ? $value->value() : $value;
+            })->merge($this->parameters->toArray());
+
+            $assetParam = $assetParam->value()['src'];
+        }
+
         $this->asset = $this->retrieveAsset($assetParam);
     }
 

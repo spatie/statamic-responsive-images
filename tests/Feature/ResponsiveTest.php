@@ -8,10 +8,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Spatie\ResponsiveImages\AssetNotFoundException;
+use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Spatie\ResponsiveImages\Responsive;
 use Spatie\ResponsiveImages\Tests\TestCase;
 use Statamic\Assets\AssetContainer;
 use Statamic\Facades\Stache;
+use Statamic\Fields\Field;
 use Statamic\Fields\Value;
 use Statamic\Tags\Parameters;
 
@@ -90,6 +92,30 @@ class ResponsiveTest extends TestCase
     public function it_can_initialize_using_a_collection_value()
     {
         $value = new Value(new Collection([$this->asset]));
+
+        $responsive = new Responsive($value, new Parameters());
+
+        $this->assertEquals($this->asset->id(), $responsive->asset->id());
+    }
+
+    /** @test * */
+    public function it_can_initialize_using_values_from_the_fieldtype()
+    {
+        $fieldtype = new ResponsiveFieldtype();
+
+        $field = new Field('image', [
+            'breakpoints' => [],
+            'use_breakpoints' => false,
+            'container' => $this->asset->containerHandle(),
+            'allow_uploads' => true,
+            'allow_ratio' => true,
+            'allow_fit' => true,
+        ]);
+        $fieldtype->setField($field);
+
+        $value = new Value([
+            'src' => $this->asset->path(),
+        ], 'image', $fieldtype);
 
         $responsive = new Responsive($value, new Parameters());
 

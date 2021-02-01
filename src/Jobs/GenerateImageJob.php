@@ -34,6 +34,10 @@ class GenerateImageJob implements ShouldQueue
         $manipulator = $this->getManipulator($this->asset);
 
         foreach ($this->glideParams as $param => $value) {
+            if (is_array($value)) {
+                $value = $value['value'] ?? $value[0] ?? null;
+            }
+
             $manipulator->$param($value);
         }
 

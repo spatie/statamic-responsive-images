@@ -5,7 +5,9 @@ namespace Spatie\ResponsiveImages;
 use Illuminate\Support\Facades\Blade;
 use Spatie\ResponsiveImages\Commands\GenerateResponsiveVersionsCommand;
 use Spatie\ResponsiveImages\Commands\RegenerateResponsiveVersionsCommand;
+use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Spatie\ResponsiveImages\Listeners\GenerateResponsiveVersions;
+use Spatie\ResponsiveImages\Tags\ResponsiveTag;
 use Statamic\Events\AssetUploaded;
 use Statamic\Providers\AddonServiceProvider;
 
@@ -15,6 +17,18 @@ class ServiceProvider extends AddonServiceProvider
 
     protected $tags = [
         ResponsiveTag::class,
+    ];
+
+    protected $fieldtypes = [
+        ResponsiveFieldtype::class,
+    ];
+
+    protected $stylesheets = [
+        __DIR__.'/../dist/css/responsive.css',
+    ];
+
+    protected $scripts = [
+        __DIR__.'/../dist/js/responsive.js',
     ];
 
     protected $listen = [

@@ -1,6 +1,5 @@
 node_modules
 vendor
-dist
 mix-manifest.json
 composer.lock
 .phpunit.result.cache

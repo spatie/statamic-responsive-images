@@ -1,7 +1,10 @@
 <?php
 
-namespace Spatie\ResponsiveImages;
+namespace Spatie\ResponsiveImages\Tags;
 
+use Spatie\ResponsiveImages\AssetNotFoundException;
+use Spatie\ResponsiveImages\Breakpoint;
+use Spatie\ResponsiveImages\Responsive;
 use Statamic\Support\Str;
 use Statamic\Tags\Tags;
 
@@ -14,7 +17,7 @@ class ResponsiveTag extends Tags
         $asset = $arguments[0];
         $parameters = $arguments[1] ?? [];
 
-        /** @var \Spatie\ResponsiveImages\ResponsiveTag $responsive */
+        /** @var \Spatie\ResponsiveImages\Tags\ResponsiveTag $responsive */
         $responsive = app(ResponsiveTag::class);
         $responsive->setContext(['url' => $asset]);
         $responsive->tag = 'responsive:url';

@@ -23,6 +23,43 @@ Require it using Composer.
 composer require spatie/statamic-responsive-images
 ```
 
+## Fieldtype
+
+This addon includes a fieldtype that allows for full Art direction with responsive images.
+
+![fieldtype](./docs/fieldtype.png)
+
+This fieldtype is configured with the following yaml configuration:
+
+```yaml
+-
+    handle: image
+    field:
+      use_breakpoints: true
+      allow_ratio: true
+      allow_fit: true
+      breakpoints:
+        - sm
+        - md
+        - lg
+      display: Image
+      instructions: 'Choose image using art direction.'
+      type: responsive
+      icon: assets
+      listable: hidden
+      container: assets
+      restrict: false
+      allow_uploads: true
+```
+
+The configuration above can be used within Antlers using the responsive tag:
+
+```twig
+{{ responsive:image }}
+```
+
+The breakpoints are configured in the `breakpoints` array of the config file.
+
 ## Using Responsive Images
 
 Responsive Images will generate responsive versions of the images whenever a new asset is uploaded. These presets are determined by this package and not by your own Glide presets. If you need to regenerate the responsive images for a reason, you can use the `regenerate` command which will clear the Glide cache and regenerate the versions:
