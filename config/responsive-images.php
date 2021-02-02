@@ -19,7 +19,8 @@ return [
     | Max Width
     |--------------------------------------------------------------------------
     |
-    | Set a global max width for generated images
+    | Define a global max-width for generated images.
+    | You can override this on the tag.
     |
     */
 
