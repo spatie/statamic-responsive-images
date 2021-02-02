@@ -5,14 +5,14 @@
                 type="image/webp"
                 @isset($source['media']) media="{{ $source['media'] }}" @endisset
                 srcset="{{ $source['srcSetWebp'] }}"
-                @if($placeholder ?? false) sizes="1px" @endif
+                @if($includePlaceholder ?? false) sizes="1px" @endif
             >
         @endisset
 
         <source
             @isset($source['media']) media="{{ $source['media'] }}" @endisset
             srcset="{{ $source['srcSet'] }}"
-            @if($placeholder ?? false) sizes="1px" @endif
+            @if($includePlaceholder ?? false) sizes="1px" @endif
         >
     @endforeach
 
