@@ -2,6 +2,11 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.2.1 - 2021-02-02
+
+### What's fixed
+- Fixed an issue where passing a `null` ratio would break
+
 ## 2.2.0 - 2021-02-01
 
 ### What's new

@@ -26,6 +26,9 @@ class Breakpoint implements Arrayable
     /** @var array */
     public $parameters;
 
+    /** @var float */
+    public $ratio;
+
     /** @var string */
     public $unit;
 
@@ -35,6 +38,8 @@ class Breakpoint implements Arrayable
         $this->label = $label;
         $this->value = $value;
         $this->parameters = $parameters;
+        $this->ratio = $this->parameters['ratio'] ?? $this->asset->width() / $this->asset->height();
+
         $this->unit = config('statamic.responsive-images.breakpoint_unit', 'px');
     }
 
@@ -77,7 +82,7 @@ class Breakpoint implements Arrayable
                 return $filtered;
             })
             ->map(function (int $width) use ($params) {
-                return "{$this->buildImage($width, $params, $this->parameters['ratio'])} {$width}w";
+                return "{$this->buildImage($width, $params, $this->ratio)} {$width}w";
             })
             ->when($includePlaceholder, function (Collection $widths) {
                 return $widths->prepend($this->placeholder());
@@ -134,7 +139,7 @@ class Breakpoint implements Arrayable
 
         $path = $imageGenerator->generateByAsset($this->asset, [
             'w' => 32,
-            'h' => 32 / $this->parameters['ratio'],
+            'h' => 32 / $this->ratio,
             'blur' => 5,
         ]);
 
@@ -147,7 +152,7 @@ class Breakpoint implements Arrayable
 
         return view('responsive-images::placeholderSvg', [
             'width' => $this->asset->width(),
-            'height' => $this->asset->width() / $this->parameters['ratio'],
+            'height' => $this->asset->width() / $this->ratio,
             'image' => $base64Placeholder,
             'asset' => $this->asset->toAugmentedArray(),
         ])->render();

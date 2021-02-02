@@ -85,4 +85,16 @@ class BreakpointTest extends TestCase
             $responsive->buildImage(100, ['fm' => 'webp'], 1.0)
         );
     }
+
+    /** @test * */
+    public function it_doesnt_crash_with_a_null_ratio()
+    {
+        $this->expectNotToPerformAssertions();
+
+        $breakpoint = new Breakpoint($this->asset, 'default', 0, [
+            'ratio' => null,
+        ]);
+
+        $breakpoint->getSrcSet();
+    }
 }
