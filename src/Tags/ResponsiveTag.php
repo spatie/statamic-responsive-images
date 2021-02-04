@@ -101,7 +101,7 @@ class ResponsiveTag extends Tags
             return $includePlaceholder;
         }
 
-        return config('statamic.responsive-images.placeholder');
+        return config('statamic.responsive-images.placeholder', true);
     }
 
     private function includeWebp(): bool
