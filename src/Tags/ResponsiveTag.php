@@ -102,12 +102,8 @@ class ResponsiveTag extends Tags
 
     private function includeWebp(): bool
     {
-        $includeWebp = $this->params->get('webp');
-
-        if (isset($includeWebp)) {
-            return $includeWebp;
-        }
-
-        return config('statamic.responsive-images.webp', true);
+        return $this->params->has('webp')
+            ? $this->params->get('webp')
+            : config('statamic.responsive-images.webp', true);
     }
 }
