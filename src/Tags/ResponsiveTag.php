@@ -112,6 +112,6 @@ class ResponsiveTag extends Tags
             return $includeWebp;
         }
 
-        return config('statamic.responsive-images.webp');
+        return config('statamic.responsive-images.webp', true);
     }
 }
