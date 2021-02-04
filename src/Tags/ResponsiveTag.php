@@ -95,13 +95,9 @@ class ResponsiveTag extends Tags
 
     private function includePlaceholder(): bool
     {
-        $includePlaceholder = $this->params->get('placeholder');
-
-        if (isset($includePlaceholder)) {
-            return $includePlaceholder;
-        }
-
-        return config('statamic.responsive-images.placeholder', true);
+        return $this->params->has('placeholder')
+            ? $this->params->get('placeholder')
+            : config('statamic.responsive-images.placeholder', true);
     }
 
     private function includeWebp(): bool
