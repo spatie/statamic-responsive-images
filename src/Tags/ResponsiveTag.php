@@ -59,12 +59,14 @@ class ResponsiveTag extends Tags
                     'srcSetWebp' => $this->includeWebp()
                         ? $breakpoint->getSrcSet($includePlaceholder, 'webp')
                         : null,
+                    'placeholder' => $breakpoint->placeholder(),
                 ];
             });
 
         return view('responsive-images::responsiveImage', [
             'attributeString' => $this->getAttributeString(),
-            'placeholder' => $includePlaceholder,
+            'includePlaceholder' => $includePlaceholder,
+            'placeholder' => $sources->last()['placeholder'],
             'src' => $responsive->asset->url(),
             'sources' => $sources,
             'width' => $responsive->asset->width(),

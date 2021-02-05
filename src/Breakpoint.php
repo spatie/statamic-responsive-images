@@ -85,7 +85,7 @@ class Breakpoint implements Arrayable
                 return "{$this->buildImage($width, $params, $this->ratio)} {$width}w";
             })
             ->when($includePlaceholder, function (Collection $widths) {
-                return $widths->prepend($this->placeholder());
+                return $widths->prepend($this->placeholderSrc());
             })
             ->implode(', ');
     }
@@ -125,11 +125,16 @@ class Breakpoint implements Arrayable
             ->toArray();
     }
 
-    private function placeholder(): string
+    public function placeholder(): string
     {
         $base64Svg = base64_encode($this->placeholderSvg());
 
-        return "data:image/svg+xml;base64,{$base64Svg} 32w";
+        return "data:image/svg+xml;base64,{$base64Svg}";
+    }
+
+    private function placeholderSrc(): string
+    {
+        return $this->placeholder() . ' 32w';
     }
 
     private function placeholderSvg(): string
