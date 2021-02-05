@@ -46,10 +46,10 @@ class ServiceProvider extends AddonServiceProvider
         parent::boot();
 
         $this
-            ->bindImageJob()
             ->bootAddonViews()
             ->bootAddonConfig()
-            ->bootDirectives();
+            ->bootDirectives()
+            ->bindImageJob();
     }
 
     protected function bootAddonViews(): self
