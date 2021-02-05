@@ -2,6 +2,16 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.3.0 - 2021-02-05
+
+### What's new
+- The `placeholder` is now available in the view
+- The global config now contains global `webp` and `placeholder` config settings
+
+### What's fixed
+- Gifs are now treated the same as SVGs, they don't generate variants
+- Fixed the Blade directive
+
 ## 2.2.1 - 2021-02-02
 
 ### What's fixed

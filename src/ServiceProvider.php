@@ -76,7 +76,7 @@ class ServiceProvider extends AddonServiceProvider
     protected function bootDirectives()
     {
         Blade::directive('responsive', function ($arguments) {
-            return "<?php echo \Spatie\ResponsiveImages\ResponsiveTag::render({$arguments}) ?>";
+            return "<?php echo \Spatie\ResponsiveImages\Tags\ResponsiveTag::render({$arguments}) ?>";
         });
 
         return $this;
