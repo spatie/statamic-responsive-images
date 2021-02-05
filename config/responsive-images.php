@@ -4,6 +4,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Generate Image Job
+    |--------------------------------------------------------------------------
+    |
+    | The job used to generate images, by default this uses
+    | \Spatie\ResponsiveImages\Jobs\GlideImageJob
+    |
+    */
+
+    'image_job' => \Spatie\ResponsiveImages\Jobs\GenerateGlideImageJob::class,
+
+    /*
+    |--------------------------------------------------------------------------
     | Queue
     |--------------------------------------------------------------------------
     |

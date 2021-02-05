@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Blade;
 use Spatie\ResponsiveImages\Commands\GenerateResponsiveVersionsCommand;
 use Spatie\ResponsiveImages\Commands\RegenerateResponsiveVersionsCommand;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
+use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Spatie\ResponsiveImages\Listeners\GenerateResponsiveVersions;
 use Spatie\ResponsiveImages\Tags\ResponsiveTag;
 use Statamic\Events\AssetUploaded;
@@ -46,12 +47,14 @@ class ServiceProvider extends AddonServiceProvider
     {
         parent::boot();
 
-        $this->bootAddonViews()
+        $this
+            ->bindImageJob()
+            ->bootAddonViews()
             ->bootAddonConfig()
             ->bootDirectives();
     }
 
-    protected function bootAddonViews()
+    protected function bootAddonViews(): self
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'responsive-images');
 
@@ -62,7 +65,7 @@ class ServiceProvider extends AddonServiceProvider
         return $this;
     }
 
-    protected function bootAddonConfig()
+    protected function bootAddonConfig(): self
     {
         $this->mergeConfigFrom(__DIR__.'/../config/responsive-images.php', 'statamic.responsive-images');
 
@@ -73,11 +76,18 @@ class ServiceProvider extends AddonServiceProvider
         return $this;
     }
 
-    protected function bootDirectives()
+    protected function bootDirectives(): self
     {
         Blade::directive('responsive', function ($arguments) {
             return "<?php echo \Spatie\ResponsiveImages\Tags\ResponsiveTag::render({$arguments}) ?>";
         });
+
+        return $this;
+    }
+
+    private function bindImageJob(): self
+    {
+        $this->app->bind(GenerateImageJob::class, config('statamic.responsive-images.image_job'));
 
         return $this;
     }

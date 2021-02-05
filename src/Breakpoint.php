@@ -98,7 +98,9 @@ class Breakpoint implements Arrayable
             $params['height'] = $width / $ratio;
         }
 
-        return URL::makeRelative((new GenerateImageJob($this->asset, $params))->handle());
+        $job = app(GenerateImageJob::class, ['asset' => $this->asset, 'params' => $params]);
+
+        return URL::makeRelative($job->handle());
     }
 
     public function toArray(): array

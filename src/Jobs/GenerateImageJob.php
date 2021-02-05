@@ -2,16 +2,15 @@
 
 namespace Spatie\ResponsiveImages\Jobs;
 
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Statamic\Contracts\Assets\Asset;
-use Statamic\Facades\Image;
-use Statamic\Imaging\GlideImageManipulator;
 
-class GenerateImageJob implements ShouldQueue
+abstract class GenerateImageJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -19,33 +18,20 @@ class GenerateImageJob implements ShouldQueue
     protected $asset;
 
     /** @var array */
-    private $glideParams;
+    protected $params;
 
-    public function __construct(Asset $asset, array $glideParams = [])
+    public function __construct(Asset $asset, array $params = [])
     {
         $this->asset = $asset;
-        $this->glideParams = $glideParams;
+        $this->params = $params;
 
         $this->queue = config('statamic.responsive-images.queue', 'default');
     }
 
     public function handle(): string
     {
-        $manipulator = $this->getManipulator($this->asset);
-
-        foreach ($this->glideParams as $param => $value) {
-            if (is_array($value)) {
-                $value = $value['value'] ?? $value[0] ?? null;
-            }
-
-            $manipulator->$param($value);
-        }
-
-        return $manipulator->build();
+        return $this->imageUrl();
     }
 
-    private function getManipulator(Asset $asset): GlideImageManipulator
-    {
-        return Image::manipulate($asset);
-    }
+    abstract protected function imageUrl(): string;
 }

@@ -39,14 +39,14 @@ class GenerateResponsiveVersionsCommand extends Command
                 ->calculateWidthsFromAsset($asset)
                 ->map(function (int $width) use ($asset) {
                     try {
-                        dispatch(new GenerateImageJob($asset, ['width' => $width]));
+                        dispatch(app(GenerateImageJob::class, ['asset' => $asset, 'params' => ['width' => $width]]));
                     } catch (Exception $e) {
                         $this->error("Exception while generating responsive asset {$asset->filename()}: {$e->getMessage()}");
                         logger($e);
                     }
 
                     try {
-                        dispatch(new GenerateImageJob($asset, ['width' => $width, 'fm' => 'webp']));
+                        dispatch(app(GenerateImageJob::class, ['asset' => $asset, 'params' => ['width' => $width, 'fm' => 'webp']]));
                     } catch (Exception $e) {
                         $this->error("Exception while generating WEBP for asset {$asset->filename()}: {$e->getMessage()}");
                         logger($e);

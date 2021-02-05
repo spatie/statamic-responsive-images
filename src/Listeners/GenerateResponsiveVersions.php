@@ -25,8 +25,8 @@ class GenerateResponsiveVersions
         (new WidthCalculator())
             ->calculateWidthsFromAsset($event->asset)
             ->map(function (int $width) use ($event) {
-                dispatch(new GenerateImageJob($event->asset, ['width' => $width]));
-                dispatch(new GenerateImageJob($event->asset, ['width' => $width, 'fm' => 'webp']));
+                dispatch(app(GenerateImageJob::class, ['asset' => $event->asset, 'params' => ['width' => $width]]));
+                dispatch(app(GenerateImageJob::class, ['asset' => $event->asset, 'params' => ['width' => $width, 'fm' => 'webp']]));
             });
     }
 }
