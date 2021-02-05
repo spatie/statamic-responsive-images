@@ -39,7 +39,7 @@ class ResponsiveTag extends Tags
             return '';
         }
 
-        if ($responsive->asset->extension() === "svg") {
+        if (in_array($responsive->asset->extension(), ['svg', 'gif'])) {
             return view('responsive-images::responsiveImage', [
                 'attributeString' => $this->getAttributeString(),
                 'src' => $responsive->asset->url(),

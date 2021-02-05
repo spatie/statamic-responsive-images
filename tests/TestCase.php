@@ -117,4 +117,14 @@ class TestCase extends OrchestraTestCase
     {
         return $this->getTestFilesDirectory('smallTest.jpg');
     }
+
+    public function getTestSvg(): string
+    {
+        return $this->getTestFilesDirectory('test.svg');
+    }
+
+    public function getTestGif(): string
+    {
+        return $this->getTestFilesDirectory('hackerman.gif');
+    }
 }

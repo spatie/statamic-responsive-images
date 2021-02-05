@@ -2,20 +2,14 @@
 
 namespace Spatie\ResponsiveImages\Tests\Feature;
 
-use Facades\Statamic\Imaging\GlideServer;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Spatie\ResponsiveImages\AssetNotFoundException;
-use Spatie\ResponsiveImages\Responsive;
 use Spatie\ResponsiveImages\Tags\ResponsiveTag;
 use Spatie\ResponsiveImages\Tests\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 use Statamic\Assets\AssetContainer;
-use Statamic\Facades\Parse;
 use Statamic\Facades\Stache;
-use Statamic\Fields\Value;
 
 class ResponsiveTagTest extends TestCase
 {
@@ -29,6 +23,9 @@ class ResponsiveTagTest extends TestCase
 
     /** @var \Statamic\Assets\Asset */
     private $svgAsset;
+
+    /** @var \Statamic\Assets\Asset */
+    private $gifAsset;
 
     protected function setUp(): void
     {
@@ -56,9 +53,13 @@ class ResponsiveTagTest extends TestCase
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
         $this->asset2 = $assetContainer->makeAsset($path)->upload($file);
 
-        $svg = new UploadedFile($this->getTestJpg(), 'test.svg');
+        $svg = new UploadedFile($this->getTestSvg(), 'test.svg');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
         $this->svgAsset = $assetContainer->makeAsset($path)->upload($svg);
+
+        $gif = new UploadedFile($this->getTestGif(), 'hackerman.gif');
+        $path = ltrim('/'.$file->getClientOriginalName(), '/');
+        $this->gifAsset = $assetContainer->makeAsset($path)->upload($gif);
 
         Stache::clear();
     }
@@ -80,6 +81,12 @@ class ResponsiveTagTest extends TestCase
     public function it_generates_no_conversions_for_svgs()
     {
         $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->svgAsset));
+    }
+
+    /** @test */
+    public function it_generates_no_conversions_for_gifs()
+    {
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->gifAsset));
     }
 
     /** @test */
