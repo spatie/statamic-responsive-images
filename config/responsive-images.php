@@ -19,11 +19,36 @@ return [
     | Max Width
     |--------------------------------------------------------------------------
     |
-    | Set a global max width for generated images
+    | Define a global max-width for generated images.
+    | You can override this on the tag.
     |
     */
 
     'max_width' => null,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Placeholder
+    |--------------------------------------------------------------------------
+    |
+    | Define if you want to generate low-quality placeholders of your images.
+    | You can override this on the tag.
+    |
+    */
+
+    'placeholder' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | WebP
+    |--------------------------------------------------------------------------
+    |
+    | Define if you want to generate WebP versions of your images.
+    | You can override this on the tag.
+    |
+    */
+
+    'webp' => true,
 
     /*
     |--------------------------------------------------------------------------

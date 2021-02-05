@@ -49,14 +49,14 @@ class ResponsiveTag extends Tags
             ])->render();
         }
 
-        $includePlaceholder = $this->params['placeholder'] ?? true;
+        $includePlaceholder = $this->includePlaceholder();
 
         $sources = $responsive->breakPoints()
             ->map(function (Breakpoint $breakpoint) use ($includePlaceholder) {
                 return [
                     'media' => $breakpoint->getMediaString(),
                     'srcSet' => $breakpoint->getSrcSet($includePlaceholder),
-                    'srcSetWebp' => $this->params['webp'] ?? true
+                    'srcSetWebp' => $this->includeWebp()
                         ? $breakpoint->getSrcSet($includePlaceholder, 'webp')
                         : null,
                 ];
@@ -91,5 +91,19 @@ class ResponsiveTag extends Tags
             ->map(function ($value, $name) {
                 return $name . '="' . $value . '"';
             })->implode(' ');
+    }
+
+    private function includePlaceholder(): bool
+    {
+        return $this->params->has('placeholder')
+            ? $this->params->get('placeholder')
+            : config('statamic.responsive-images.placeholder', true);
+    }
+
+    private function includeWebp(): bool
+    {
+        return $this->params->has('webp')
+            ? $this->params->get('webp')
+            : config('statamic.responsive-images.webp', true);
     }
 }
