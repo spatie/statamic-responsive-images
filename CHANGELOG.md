@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.4.1 - 2021-02-05
+### What's fixed
+- Fix assets not being published
+
 ## 2.4.0 - 2021-02-05
 ### What's new
 - The generate image job is now configurable
