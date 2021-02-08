@@ -2,11 +2,19 @@
 
 namespace Spatie\ResponsiveImages\Fieldtypes;
 
+use GraphQL\Type\Definition\ResolveInfo;
+use GraphQL\Type\Definition\Type;
+use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFields as ResponsiveFields;
+use Spatie\ResponsiveImages\GraphQL\BreakpointType;
+use Spatie\ResponsiveImages\Responsive;
 use Statamic\Facades\Blueprint;
+use Statamic\Facades\GraphQL;
 use Statamic\Fields\Fields as BlueprintFields;
 use Statamic\Fields\Fieldtype;
+use Statamic\Fields\Value;
 use Statamic\Support\Arr;
+use Statamic\Tags\Parameters;
 
 class ResponsiveFieldtype extends Fieldtype
 {
@@ -134,5 +142,54 @@ class ResponsiveFieldtype extends Fieldtype
             ->values()
             ->only(array_keys($data))
             ->all();
+    }
+
+    public function toGqlType()
+    {
+        return [
+            'type' => GraphQL::listOf(GraphQL::type((new BreakPointType())->name)),
+            'resolve' => function ($entry, $args, $context, $info) {
+                return $this->revolveGql($entry, $args, $context, $info);
+            },
+        ];
+    }
+
+    public function addGqlTypes()
+    {
+        GraphQL::addType(BreakpointType::class);
+    }
+
+    public function revolveGql(array $entry, array $args, ?array $context, ResolveInfo $info): array
+    {
+        /** @var array $field */
+        $field = $entry[$info->fieldName]->value();
+        $field = array_map(function ($value) {
+            if ($value instanceof Value) {
+                return $value->value();
+            }
+
+            return $value;
+        }, $field);
+
+        $responsive = new Responsive($field['src'], new Parameters($field));
+
+        return $responsive->breakPoints()->map(function (Breakpoint $breakpoint) {
+            $data = [
+                'asset' => $breakpoint->asset,
+                'label' => $breakpoint->label,
+                'value' => $breakpoint->value,
+                'unit' => $breakpoint->unit,
+                'ratio' => $breakpoint->ratio,
+                'mediaString' => $breakpoint->getMediaString(),
+                'placeholder' => $breakpoint->placeholder(),
+                'srcSet' => $breakpoint->getSrcSet(config('statamic.responsive-images.placeholder')),
+            ];
+
+            if (config('statamic.responsive-images.webp')) {
+                $data['srcSetWebp'] = $breakpoint->getSrcSet(config('statamic.responsive-images.placeholder'), 'webp');
+            }
+
+            return $data;
+        })->toArray();
     }
 }
