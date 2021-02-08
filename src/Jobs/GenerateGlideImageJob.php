@@ -20,7 +20,7 @@ class GenerateGlideImageJob extends GenerateImageJob
             $manipulator->$param($value);
         }
 
-        return $manipulator->build();
+        return URL::makeRelative($manipulator->build());
     }
 
     private function getManipulator(Asset $asset): GlideImageManipulator

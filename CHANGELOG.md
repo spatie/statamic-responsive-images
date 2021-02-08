@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.4.3 - 2021-02-08
+### What's fixed
+- The breakpoint no longer forces a relative URL
+
 ## 2.4.2 - 2021-02-05
 ### What's fixed
 - Fix config registration

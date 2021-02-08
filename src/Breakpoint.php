@@ -100,7 +100,7 @@ class Breakpoint implements Arrayable
 
         $job = app(GenerateImageJob::class, ['asset' => $this->asset, 'params' => $params]);
 
-        return URL::makeRelative($job->handle());
+        return $job->handle();
     }
 
     public function toArray(): array
