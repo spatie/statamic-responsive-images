@@ -3,7 +3,6 @@
 namespace Spatie\ResponsiveImages\Fieldtypes;
 
 use GraphQL\Type\Definition\ResolveInfo;
-use GraphQL\Type\Definition\Type;
 use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFields as ResponsiveFields;
 use Spatie\ResponsiveImages\GraphQL\BreakpointType;
