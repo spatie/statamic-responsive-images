@@ -3,6 +3,7 @@
 namespace Spatie\ResponsiveImages\Jobs;
 
 use Statamic\Contracts\Assets\Asset;
+use Statamic\Facades\URL;
 use Statamic\Facades\Image;
 use Statamic\Imaging\GlideImageManipulator;
 
