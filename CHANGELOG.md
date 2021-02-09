@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.4.4 - 2021-02-09
+### What's fixed
+- Cache placeholder generation
+
 ## 2.4.3 - 2021-02-08
 ### What's fixed
 - The breakpoint no longer forces a relative URL

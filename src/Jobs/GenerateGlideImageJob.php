@@ -11,7 +11,7 @@ class GenerateGlideImageJob extends GenerateImageJob
 {
     protected function imageUrl(): string
     {
-        $manipulator = $this->getManipulator($this->asset);
+        $manipulator = Image::manipulate($this->asset);
 
         foreach ($this->params as $param => $value) {
             if (is_array($value)) {
@@ -22,10 +22,5 @@ class GenerateGlideImageJob extends GenerateImageJob
         }
 
         return URL::makeRelative($manipulator->build());
-    }
-
-    private function getManipulator(Asset $asset): GlideImageManipulator
-    {
-        return Image::manipulate($asset);
     }
 }

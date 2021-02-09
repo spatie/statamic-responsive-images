@@ -8,6 +8,7 @@ use League\Flysystem\FileNotFoundException;
 use League\Glide\Server;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Statamic\Assets\Asset;
+use Statamic\Facades\Blink;
 use Statamic\Imaging\ImageGenerator;
 use Statamic\Support\Str;
 
@@ -140,27 +141,29 @@ class Breakpoint implements Arrayable
 
     private function placeholderSvg(): string
     {
-        $imageGenerator = app(ImageGenerator::class);
-        $server = app(Server::class);
+        return Blink::once("placeholder-{$this->asset->id()}-{$this->ratio}", function () {
+            $imageGenerator = app(ImageGenerator::class);
+            $server = app(Server::class);
 
-        $path = $imageGenerator->generateByAsset($this->asset, [
-            'w' => 32,
-            'h' => 32 / $this->ratio,
-            'blur' => 5,
-        ]);
+            $path = $imageGenerator->generateByAsset($this->asset, [
+                'w' => 32,
+                'h' => 32 / $this->ratio,
+                'blur' => 5,
+            ]);
 
-        try {
-            $source = base64_encode($server->getCache()->read($path));
-            $base64Placeholder = "data:{$server->getCache()->getMimetype($path)};base64,{$source}";
-        } catch (FileNotFoundException $e) {
-            return '';
-        }
+            try {
+                $source = base64_encode($server->getCache()->read($path));
+                $base64Placeholder = "data:{$server->getCache()->getMimetype($path)};base64,{$source}";
+            } catch (FileNotFoundException $e) {
+                return '';
+            }
 
-        return view('responsive-images::placeholderSvg', [
-            'width' => $this->asset->width(),
-            'height' => $this->asset->width() / $this->ratio,
-            'image' => $base64Placeholder,
-            'asset' => $this->asset->toAugmentedArray(),
-        ])->render();
+            return view('responsive-images::placeholderSvg', [
+                'width' => $this->asset->width(),
+                'height' => $this->asset->width() / $this->ratio,
+                'image' => $base64Placeholder,
+                'asset' => $this->asset->toAugmentedArray(),
+            ])->render();
+        });
     }
 }
