@@ -89,9 +89,6 @@ You can make sure images are a certain ratio by passing a `ratio` parameter, eit
 {{ responsive:image_field ratio="16/9" }}
 ```
 
-This will apply a default ratio of `1/1`. From breakpoint `lg` up to `2xl`, the ratio will be `16/9`. From `2xl` up, the ratio will be `2/1`.
-The breakpoints can be configured in the config and default to the breakpoints of Tailwind CSS.
-
 ## Responsive placeholder
 
 By default, responsive images generates a small base64 encoded placeholder to show while your image loads. If you want to disable this you can pass `placeholder="false"` to the tag.
@@ -134,6 +131,9 @@ Breakpoints allow you to use, for example, different ratios:
 ```twig
 {{ responsive:image_field ratio="1/1" lg:ratio="16/9" 2xl:ratio="2/1" }}
 ```
+
+This will apply a default ratio of `1/1`. From breakpoint `lg` up to `2xl`, the ratio will be `16/9`. From `2xl` up, the ratio will be `2/1`.
+The breakpoints can be configured in the config and default to the breakpoints of Tailwind CSS.
 
 Or different assets:
 
