@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 use League\Flysystem\FileNotFoundException;
 use League\Glide\Server;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
-use Statamic\Assets\Asset;
+use Statamic\Contracts\Assets\Asset;
 use Statamic\Facades\Blink;
 use Statamic\Imaging\ImageGenerator;
 use Statamic\Support\Str;
@@ -54,6 +54,18 @@ class Breakpoint implements Arrayable
 
     public function getSrcSet(bool $includePlaceholder = true, string $format = null): string
     {
+        return $this->getWidths()
+            ->map(function (int $width) use ($format) {
+                return "{$this->buildImageJob($width, $format, $this->ratio)->handle()} {$width}w";
+            })
+            ->when($includePlaceholder, function (Collection $widths) {
+                return $widths->prepend($this->placeholderSrc());
+            })
+            ->implode(', ');
+    }
+
+    private function getParams(string $format = null): array
+    {
         $params = $this->getGlideParams();
 
         if ($format) {
@@ -63,6 +75,13 @@ class Breakpoint implements Arrayable
         /* We don't want any heights specified other than our own */
         unset($params['height']);
         unset($params['h']);
+
+        return $params;
+    }
+
+    private function getWidths(): Collection
+    {
+        $params = $this->getParams();
 
         return app(WidthCalculator::class)
             ->calculateWidthsFromAsset($this->asset)
@@ -80,27 +99,31 @@ class Breakpoint implements Arrayable
                 }
 
                 return $filtered;
-            })
-            ->map(function (int $width) use ($params) {
-                return "{$this->buildImage($width, $params, $this->ratio)} {$width}w";
-            })
-            ->when($includePlaceholder, function (Collection $widths) {
-                return $widths->prepend($this->placeholderSrc());
-            })
-            ->implode(', ');
+            });
     }
 
-    public function buildImage(int $width, array $params = [], ?float $ratio = null): string
+    public function buildImageJob(int $width, ?string $format = null, ?float $ratio = null): GenerateImageJob
     {
+        $params = $this->getParams($format);
+
         $params['width'] = $width;
 
         if (! is_null($ratio)) {
             $params['height'] = $width / $ratio;
         }
 
-        $job = app(GenerateImageJob::class, ['asset' => $this->asset, 'params' => $params]);
+        return app(GenerateImageJob::class, ['asset' => $this->asset, 'params' => $params]);
+    }
 
-        return $job->handle();
+    public function dispatchImageJobs(): void
+    {
+        $this->getWidths()
+            ->map(function (int $width) {
+                dispatch($this->buildImageJob($width, null, $this->ratio));
+                if (config('statamic.responsive-images.webp', true)) {
+                    dispatch($this->buildImageJob($width, 'webp', $this->ratio));
+                }
+            });
     }
 
     public function toArray(): array

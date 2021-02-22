@@ -60,7 +60,7 @@ class BreakpointTest extends TestCase
 
         $this->assertStringContainsString(
             '?w=100',
-            $responsive->buildImage(100)
+            $responsive->buildImageJob(100)->handle()
         );
     }
 
@@ -71,7 +71,7 @@ class BreakpointTest extends TestCase
 
         $this->assertStringContainsString(
             '?fm=webp&w=100',
-            $responsive->buildImage(100, ['fm' => 'webp'])
+            $responsive->buildImageJob(100, 'webp')->handle()
         );
     }
 
@@ -82,7 +82,7 @@ class BreakpointTest extends TestCase
 
         $this->assertStringContainsString(
             '?fm=webp&w=100&h=100',
-            $responsive->buildImage(100, ['fm' => 'webp'], 1.0)
+            $responsive->buildImageJob(100, 'webp', 1.0)->handle()
         );
     }
 

@@ -2,9 +2,11 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
-## 2.5.0 - 2021-02-09
+## 2.5.0 - 2021-02-22
 ### What's fixed
-- Fixed an issue with output
+- Fixed an issue with images not being output
+- Wrapped the components in Statamic.booting to prevent loading issues
+- Reworked how assets are generated on upload & with the command which should result in them being used again instead of regenerating when visiting the page.
 
 ### What's new
 - Added a config option to disable image generation on upload

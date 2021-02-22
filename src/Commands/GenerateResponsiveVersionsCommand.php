@@ -2,13 +2,13 @@
 
 namespace Spatie\ResponsiveImages\Commands;
 
-use Exception;
 use Illuminate\Console\Command;
-use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
-use Spatie\ResponsiveImages\WidthCalculator;
+use Spatie\ResponsiveImages\Breakpoint;
+use Spatie\ResponsiveImages\Responsive;
 use Statamic\Console\RunsInPlease;
 use Statamic\Contracts\Assets\Asset;
 use Statamic\Contracts\Assets\AssetRepository;
+use Statamic\Tags\Parameters;
 
 class GenerateResponsiveVersionsCommand extends Command
 {
@@ -34,28 +34,17 @@ class GenerateResponsiveVersionsCommand extends Command
 
         $this->getOutput()->progressStart($assets->count());
 
+        /** @var \Statamic\Assets\AssetCollection $assets */
         $assets->each(function (Asset $asset) {
-            (new WidthCalculator())
-                ->calculateWidthsFromAsset($asset)
-                ->map(function (int $width) use ($asset) {
-                    try {
-                        dispatch(app(GenerateImageJob::class, ['asset' => $asset, 'params' => ['width' => $width]]));
-                    } catch (Exception $e) {
-                        $this->error("Exception while generating responsive asset {$asset->filename()}: {$e->getMessage()}");
-                        logger($e);
-                    }
-
-                    try {
-                        dispatch(app(GenerateImageJob::class, ['asset' => $asset, 'params' => ['width' => $width, 'fm' => 'webp']]));
-                    } catch (Exception $e) {
-                        $this->error("Exception while generating WEBP for asset {$asset->filename()}: {$e->getMessage()}");
-                        logger($e);
-                    }
-                });
+            $responsive = new Responsive($asset, new Parameters());
+            $responsive->breakPoints()->each(function (Breakpoint $breakpoint) {
+                $breakpoint->dispatchImageJobs();
+            });
 
             $this->getOutput()->progressAdvance();
         });
 
         $this->getOutput()->progressFinish();
+        $this->info("All jobs dispatched.");
     }
 }
