@@ -2,17 +2,12 @@
 
 namespace Spatie\ResponsiveImages\Tests\Feature;
 
-use Facades\Statamic\Imaging\GlideServer;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Spatie\ResponsiveImages\AssetNotFoundException;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Spatie\ResponsiveImages\Responsive;
 use Spatie\ResponsiveImages\Tests\TestCase;
-use Statamic\Assets\AssetContainer;
-use Statamic\Facades\Asset;
 use Statamic\Facades\Stache;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
@@ -27,33 +22,11 @@ class ResponsiveTest extends TestCase
     {
         parent::setUp();
 
-        config(['filesystems.disks.test' => [
-            'driver' => 'local',
-            'root' => __DIR__.'/tmp',
-            'url' => '/test',
-        ]]);
-
-        /** @var \Statamic\Assets\AssetContainer $assetContainer */
-        $assetContainer = (new AssetContainer)
-            ->handle('test_container')
-            ->disk('test')
-            ->save();
-
-        Storage::disk('test')->delete('*');
-        Asset::all()->each->delete();
-
         $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
-        $this->asset = $assetContainer->makeAsset($path)->upload($file);
+        $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
 
         Stache::clear();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        File::deleteDirectory(__DIR__ . '/tmp');
     }
 
     /** @test * */

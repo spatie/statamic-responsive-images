@@ -3,13 +3,11 @@
 namespace Spatie\ResponsiveImages\Tests\Feature;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Spatie\ResponsiveImages\Commands\GenerateResponsiveVersionsCommand;
 use Spatie\ResponsiveImages\Jobs\GenerateGlideImageJob;
 use Spatie\ResponsiveImages\Tests\TestCase;
-use Statamic\Assets\AssetContainer;
 use Statamic\Facades\Asset;
 use Statamic\Facades\Stache;
 
@@ -22,24 +20,9 @@ class GenerateResponsiveVersionsCommandTest extends TestCase
     {
         parent::setUp();
 
-        config(['filesystems.disks.test' => [
-            'driver' => 'local',
-            'root' => __DIR__.'/tmp',
-            'url' => '/test',
-        ]]);
-
-        /** @var \Statamic\Assets\AssetContainer $assetContainer */
-        $assetContainer = (new AssetContainer)
-            ->handle('test_container')
-            ->disk('test')
-            ->save();
-
-        Storage::disk('test')->delete('*');
-        Asset::all()->each->delete();
-
         $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
-        $this->asset = $assetContainer->makeAsset($path)->upload($file);
+        $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
 
         Stache::clear();
     }

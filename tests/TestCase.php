@@ -2,19 +2,25 @@
 
 namespace Spatie\ResponsiveImages\Tests;
 
-use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Statamic\Assets\AssetContainer;
 use Statamic\Console\Commands\GlideClear;
 use Statamic\Extend\Manifest;
+use Statamic\Facades\Asset;
+use Statamic\Facades\Stache;
 use Statamic\Statamic;
 
 class TestCase extends OrchestraTestCase
 {
     use DatabaseMigrations;
     use WithFaker;
+
+    /** @var \Statamic\Assets\AssetContainer */
+    protected $assetContainer;
 
     /**
      * Setup the test environment.
@@ -28,6 +34,29 @@ class TestCase extends OrchestraTestCase
         $this->setUpTempTestFiles();
 
         $this->artisan(GlideClear::class);
+
+        config(['filesystems.disks.test' => [
+            'driver' => 'local',
+            'root' => __DIR__.'/tmp',
+            'url' => '/test',
+        ]]);
+
+        /** @var \Statamic\Assets\AssetContainer $assetContainer */
+        $this->assetContainer = (new AssetContainer)
+            ->handle('test_container')
+            ->disk('test')
+            ->save();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->assetContainer->delete();
+        File::deleteDirectory(__DIR__ . '/tmp');
+        Storage::disk('test')->delete('*');
+        Asset::all()->each->delete();
+        Stache::clear();
+
+        parent::tearDown();
     }
 
     protected function getPackageProviders($app)

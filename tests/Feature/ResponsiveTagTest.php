@@ -3,12 +3,9 @@
 namespace Spatie\ResponsiveImages\Tests\Feature;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Spatie\ResponsiveImages\Tags\ResponsiveTag;
 use Spatie\ResponsiveImages\Tests\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
-use Statamic\Assets\AssetContainer;
 use Statamic\Facades\Stache;
 
 class ResponsiveTagTest extends TestCase
@@ -31,44 +28,23 @@ class ResponsiveTagTest extends TestCase
     {
         parent::setUp();
 
-        config(['filesystems.disks.test' => [
-            'driver' => 'local',
-            'root' => __DIR__.'/tmp',
-            'url' => '/test',
-        ]]);
-
-        /** @var \Statamic\Assets\AssetContainer $assetContainer */
-        $assetContainer = (new AssetContainer)
-            ->handle('test_container')
-            ->disk('test')
-            ->save();
-
-        Storage::disk('test')->delete('*');
-
         $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
-        $this->asset = $assetContainer->makeAsset($path)->upload($file);
+        $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
 
         $file = new UploadedFile($this->getTestJpg(), 'test2.jpg');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
-        $this->asset2 = $assetContainer->makeAsset($path)->upload($file);
+        $this->asset2 = $this->assetContainer->makeAsset($path)->upload($file);
 
         $svg = new UploadedFile($this->getTestSvg(), 'test.svg');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
-        $this->svgAsset = $assetContainer->makeAsset($path)->upload($svg);
+        $this->svgAsset = $this->assetContainer->makeAsset($path)->upload($svg);
 
         $gif = new UploadedFile($this->getTestGif(), 'hackerman.gif');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
-        $this->gifAsset = $assetContainer->makeAsset($path)->upload($gif);
+        $this->gifAsset = $this->assetContainer->makeAsset($path)->upload($gif);
 
         Stache::clear();
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        File::deleteDirectory(__DIR__ . '/tmp');
     }
 
     /** @test */
