@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.5.0 - 2021-02-09
+### What's new
+- Added a config option to disable image generation on upload
+
 ## 2.4.4 - 2021-02-09
 ### What's fixed
 - Cache placeholder generation

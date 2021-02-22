@@ -22,6 +22,10 @@ class GenerateResponsiveVersions
             return;
         }
 
+        if (! config('statamic.responsive-images.generate_on_upload', true)) {
+            return;
+        }
+
         (new WidthCalculator())
             ->calculateWidthsFromAsset($event->asset)
             ->map(function (int $width) use ($event) {
