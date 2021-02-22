@@ -26,15 +26,17 @@ class ResponsiveTag extends Tags
         return $responsive->__call('responsive:url', []);
     }
 
-    public function __call($method, $args): string
+    public function wildcard($tag)
     {
-        $tag = explode(':', $this->tag, 2)[1];
-        $assetParam = $this->context->get($tag)
-            ? $this->context->get($tag)
-            : $this->params->get('src');
+        $this->params['src'] = $this->context->get($tag);
 
+        return $this->index();
+    }
+
+    public function index()
+    {
         try {
-            $responsive = new Responsive($assetParam, $this->params);
+            $responsive = new Responsive($this->params->get('src'), $this->params);
         } catch (AssetNotFoundException $e) {
             return '';
         }
