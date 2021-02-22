@@ -12,6 +12,7 @@ use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Spatie\ResponsiveImages\Responsive;
 use Spatie\ResponsiveImages\Tests\TestCase;
 use Statamic\Assets\AssetContainer;
+use Statamic\Facades\Asset;
 use Statamic\Facades\Stache;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
@@ -39,6 +40,7 @@ class ResponsiveTest extends TestCase
             ->save();
 
         Storage::disk('test')->delete('*');
+        Asset::all()->each->delete();
 
         $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
