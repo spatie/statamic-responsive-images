@@ -170,7 +170,7 @@ class Breakpoint implements Arrayable
 
             $path = $imageGenerator->generateByAsset($this->asset, [
                 'w' => 32,
-                'h' => 32 / $this->ratio,
+                'h' => round(32 / $this->ratio),
                 'blur' => 5,
             ]);
 
@@ -182,8 +182,8 @@ class Breakpoint implements Arrayable
             }
 
             return view('responsive-images::placeholderSvg', [
-                'width' => $this->asset->width(),
-                'height' => $this->asset->width() / $this->ratio,
+                'width' => 32,
+                'height' => round(32 / $this->ratio),
                 'image' => $base64Placeholder,
                 'asset' => $this->asset->toAugmentedArray(),
             ])->render();
