@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.5.2 - 2021-03-05
+### What's fixed
+- Fixed an issue with invalid asset exception - #58
+
+## 2.5.1 - 2021-02-26
+### What's fixed
+- Fixed an issue where the placeholder ratio was not always correct
+
 ## 2.5.0 - 2021-02-22
 ### What's fixed
 - Fixed an issue with images not being output

@@ -27,7 +27,7 @@ class ResponsiveTag extends Tags
 
     public function wildcard($tag)
     {
-        $this->params['src'] = $this->context->get($tag);
+        $this->params->put('src', $this->context->get($tag));
 
         return $this->index();
     }
