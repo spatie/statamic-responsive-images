@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.5.3 - 2021-03-17
+### What's fixed
+- Fixed an issue when using the fieldtype inside a replicator or Bard set - #51
+
 ## 2.5.2 - 2021-03-05
 ### What's fixed
 - Fixed an issue with invalid asset exception - #58
