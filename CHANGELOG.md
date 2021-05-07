@@ -2,6 +2,11 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.5.4 - 2021-05-07
+### What's fixed
+- Assets can be retrieved from an augmented asset's array values
+
+
 ## 2.5.3 - 2021-03-17
 ### What's fixed
 - Fixed an issue when using the fieldtype inside a replicator or Bard set - #51

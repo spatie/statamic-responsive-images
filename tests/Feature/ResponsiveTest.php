@@ -54,6 +54,14 @@ class ResponsiveTest extends TestCase
     }
 
     /** @test * */
+    public function it_can_initialize_using_an_augmented_asset()
+    {
+        $responsive = new Responsive($this->asset->toAugmentedArray(), new Parameters());
+
+        $this->assertEquals($this->asset->id(), $responsive->asset->id());
+    }
+
+    /** @test * */
     public function it_can_initialize_using_a_value()
     {
         $value = new Value($this->asset);
