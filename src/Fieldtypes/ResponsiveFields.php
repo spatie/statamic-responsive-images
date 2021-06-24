@@ -96,7 +96,7 @@ class ResponsiveFields
                                 ? __('Sets how the image is fitted to its target ratio.')
                                 : '',
                             'type' => 'select',
-                            'default' => 'crop_focal',
+                            'default' => $breakpoint === 'default' ? 'crop_focal' : null,
                             'options' => [
                                 'crop_focal' => __('Focal crop'),
                                 'contain' => __('Contain'),

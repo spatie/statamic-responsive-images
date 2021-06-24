@@ -3,5 +3,5 @@
     <img
         
         src="/test/test.svg"
-                            >
+         width="600"          height="600"             >
 </picture>
