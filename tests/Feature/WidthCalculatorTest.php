@@ -15,12 +15,9 @@ class WidthCalculatorTest extends TestCase
     {
         Storage::fake('public');
 
-        $assetContainer = AssetContainer::make('assets')
-            ->disk('public');
-
         $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
-        $asset = $assetContainer->makeAsset($path)->upload($file);
+        $asset = $this->assetContainer->makeAsset($path)->upload($file);
 
         $dimensions = (new WidthCalculator())->calculateWidthsFromAsset($asset);
 
@@ -32,7 +29,7 @@ class WidthCalculatorTest extends TestCase
 
         $file = new UploadedFile($this->getSmallTestJpg(), 'smallTest.jpg');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
-        $smallAsset = $assetContainer->makeAsset($path)->upload($file);
+        $smallAsset = $this->assetContainer->makeAsset($path)->upload($file);
 
         $dimensions = (new WidthCalculator())->calculateWidthsFromAsset($smallAsset);
 
