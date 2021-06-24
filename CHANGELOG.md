@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.5.5 - 2021-06-24
+### What's fixed
+- Prevent the fieldtype from generating too many breakpoints (#66)
+
 ## 2.5.4 - 2021-05-07
 ### What's fixed
 - Assets can be retrieved from an augmented asset's array values
