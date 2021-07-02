@@ -1,3 +1,14 @@
+<script>
+        window.responsiveResizeObserver = new ResizeObserver((entries) => {
+            entries.forEach(entry => {
+                const imgWidth = entry.target.getBoundingClientRect().width;
+                entry.target.parentNode.querySelectorAll('source').forEach((source) => {
+                    source.sizes = Math.ceil(imgWidth / window.innerWidth * 100) + 'vw';
+                });
+            });
+        });
+    </script>
+
 <picture>
                         <source
                 type="image/webp"
@@ -11,13 +22,10 @@
     <img
         
         src="/test/test.jpg"
+        alt="test.jpg"
          width="340"          height="280"                 onload="
             this.onload=null;
-            var imgWidth = this.getBoundingClientRect().width;
-            this.parentNode.querySelectorAll('source')
-                .forEach(function (source) {
-                    source.sizes=Math.ceil(imgWidth/window.innerWidth*100)+'vw';
-                });
+            window.responsiveResizeObserver.observe(this);
         "
             >
 </picture>
