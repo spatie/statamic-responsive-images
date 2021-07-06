@@ -62,14 +62,9 @@ The breakpoints are configured in the `breakpoints` array of the config file.
 
 ## Using Responsive Images
 
-Responsive Images will generate responsive versions of the images whenever a new asset is uploaded. These presets are determined by this package and not by your own Glide presets. If you need to regenerate the responsive images for a reason, you can use the `regenerate` command which will clear the Glide cache and regenerate the versions:
+Responsive Images will generate responsive versions of the images whenever a new asset is uploaded. These presets are determined by this package and not by your own Glide presets.
 
-```bash
-php please responsive:regenerate
-```
-
-If you are using a service, like Horizon, for queues then jobs will be queued to handle the image resizing.
-By default, the job is queued under the 'default' queue. This can be changed via the `queue` config key under `responsive-images.php`
+We generally recommend setting `statamic.assets.image_manipulation.cache` to `false` so only images actually requested by a browser are generated. The first time the conversion is loaded will be slow, but Glide still has an internal cache that it will serve from the next time. This saves a lot on server resources and storage requirements.
 
 ## Templating
 
@@ -152,6 +147,18 @@ php artisan vendor:publish
 ```
 
 and choosing `Spatie\ResponsiveImages\ServiceProvider`
+
+## Generate command
+
+If you need to regenerate the responsive images for a reason, you can use the `regenerate` command which will clear the Glide cache and regenerate the versions. This command only works when you have the `statamic.assets.image_manipulation.cache` config option set to `true` (which we generally don't recommend).
+
+```bash
+php please responsive:regenerate
+```
+
+If you are using a service, like Horizon, for queues then jobs will be queued to handle the image resizing.
+By default, the job is queued under the 'default' queue. This can be changed via the `queue` config key under `responsive-images.php`
+
 
 ### Changelog
 
