@@ -3,7 +3,6 @@
 namespace Spatie\ResponsiveImages\Fieldtypes;
 
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFields as ResponsiveFields;
-use Spatie\ResponsiveImages\GraphQL\BreakpointType;
 use Spatie\ResponsiveImages\GraphQL\ResponsiveFieldType as GraphQLResponsiveFieldtype;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\GraphQL;
