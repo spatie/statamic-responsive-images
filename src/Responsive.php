@@ -4,6 +4,7 @@ namespace Spatie\ResponsiveImages;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Spatie\ResponsiveImages\Exceptions\InvalidAssetException;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Statamic\Assets\Asset;
 use Statamic\Facades\Asset as AssetFacade;
@@ -32,6 +33,10 @@ class Responsive
         }
 
         $this->asset = $this->retrieveAsset($assetParam);
+
+        if ((int) $this->asset->width() === 0 || (int) $this->asset->height() === 0) {
+            throw InvalidAssetException::zeroWidthOrHeight($this->asset);
+        }
     }
 
     private function retrieveAsset($assetParam): Asset
@@ -94,6 +99,10 @@ class Responsive
                         } catch (AssetNotFoundException $e) {
                             logger()->error($e->getMessage());
                             $parameter['value'] = $this->asset;
+                        }
+
+                        if ((int) $parameter['value']->width() === 0 || (int) $parameter['value']->height() === 0) {
+                            throw InvalidAssetException::zeroWidthOrHeight($parameter['value']);
                         }
                     }
 

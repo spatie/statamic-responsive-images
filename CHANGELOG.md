@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.7.1 - 2021-07-07
+### What's fixed
+- We now throw our own exception with more information when a corrupt image is being handled (#71)
+
 ## 2.7.0 - 2021-07-07
 ### What's new
 - Added GraphQL support ([docs](https://github.com/spatie/statamic-responsive-images#graphql))
