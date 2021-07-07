@@ -14,7 +14,7 @@ use Statamic\Tags\Parameters;
 class ResponsiveField extends Field
 {
     protected $attributes = [
-        'description'   => 'Create a responsive image',
+        'description' => 'Create a responsive image',
     ];
 
     public function type(): Type
@@ -40,7 +40,7 @@ class ResponsiveField extends Field
             'placeholder' => [
                 'type' => Type::boolean(),
                 'defaultValue' => config('statamic.responsive-images.placeholder'),
-            ]
+            ],
         ];
 
         $unit = config('statamic.responsive-images.breakpoint_unit');

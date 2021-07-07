@@ -39,7 +39,7 @@ class ResponsiveFieldType extends \Rebing\GraphQL\Support\Type
                             'placeholder' => config('statamic.responsive-images.placeholder'),
                         ]);
                     })->toArray();
-                }
+                },
             ],
         ];
     }
