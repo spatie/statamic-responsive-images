@@ -6,10 +6,14 @@ use Illuminate\Support\Facades\Blade;
 use Spatie\ResponsiveImages\Commands\GenerateResponsiveVersionsCommand;
 use Spatie\ResponsiveImages\Commands\RegenerateResponsiveVersionsCommand;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
+use Spatie\ResponsiveImages\GraphQL\BreakpointType;
+use Spatie\ResponsiveImages\GraphQL\ResponsiveField;
+use Spatie\ResponsiveImages\GraphQL\ResponsiveFieldType as GraphQLResponsiveFieldType;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Spatie\ResponsiveImages\Listeners\GenerateResponsiveVersions;
 use Spatie\ResponsiveImages\Tags\ResponsiveTag;
 use Statamic\Events\AssetUploaded;
+use Statamic\Facades\GraphQL;
 use Statamic\Providers\AddonServiceProvider;
 
 class ServiceProvider extends AddonServiceProvider
@@ -49,7 +53,8 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonViews()
             ->bootAddonConfig()
             ->bootDirectives()
-            ->bindImageJob();
+            ->bindImageJob()
+            ->bootGraphQL();
     }
 
     protected function bootAddonViews(): self
@@ -86,6 +91,18 @@ class ServiceProvider extends AddonServiceProvider
     private function bindImageJob(): self
     {
         $this->app->bind(GenerateImageJob::class, config('statamic.responsive-images.image_job'));
+
+        return $this;
+    }
+
+    private function bootGraphQL(): self
+    {
+        GraphQL::addType(BreakpointType::class);
+        GraphQL::addType(GraphQLResponsiveFieldType::class);
+
+        GraphQL::addField('AssetInterface', 'responsive', function () {
+            return (new ResponsiveField())->toArray();
+        });
 
         return $this;
     }

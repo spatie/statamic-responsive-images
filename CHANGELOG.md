@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.7.0 - 2021-07-07
+### What's new
+- Added GraphQL support ([docs](https://github.com/spatie/statamic-responsive-images#graphql))
+
 ## 2.6.0 - 2021-07-02
 ### What's new
 - We now use ResizeObserver instead of an inline script to set the sizes attribute on the images

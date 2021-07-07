@@ -157,6 +157,26 @@ class Breakpoint implements Arrayable
         return "data:image/svg+xml;base64,{$base64Svg}";
     }
 
+    public function toGql(array $args): array
+    {
+        $data = [
+            'asset' => $this->asset,
+            'label' => $this->label,
+            'value' => $this->value,
+            'unit' => $this->unit,
+            'ratio' => $this->ratio,
+            'mediaString' => $this->getMediaString(),
+            'placeholder' => $args['placeholder'] ? $this->placeholder() : null,
+            'srcSet' => $this->getSrcSet($args['placeholder']),
+        ];
+
+        if ($args['webp']) {
+            $data['srcSetWebp'] = $this->getSrcSet($args['placeholder'], 'webp');
+        }
+
+        return $data;
+    }
+
     private function placeholderSrc(): string
     {
         return $this->placeholder() . ' 32w';

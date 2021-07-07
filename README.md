@@ -159,6 +159,85 @@ php please responsive:regenerate
 If you are using a service, like Horizon, for queues then jobs will be queued to handle the image resizing.
 By default, the job is queued under the 'default' queue. This can be changed via the `queue` config key under `responsive-images.php`
 
+## GraphQL
+
+This addon comes with 2 GraphQL goodies, it adds a `responsive` field to all assets, and allows you to retrieve art directed images through GraphQL as well.
+
+### Responsive field on assets
+
+You can retrieve a responsive version of an asset like this:
+
+```graphql
+{
+  entries {
+    data {
+      id,
+      image {
+        responsive {
+          label
+          value
+          unit
+          ratio
+          mediaString
+          srcSet
+          srcSetWebp
+          placeholder
+        }
+      }
+    }
+  }
+}
+```
+
+Setting parameters like a ratio is also possible:
+
+```graphql
+{
+  entries {
+    data {
+      id,
+      image {
+        responsive(ratio: 1.2) {
+          label
+          value
+          unit
+          ratio
+          mediaString
+          srcSet
+          srcSetWebp
+          placeholder
+        }
+      }
+    }
+  }
+}
+```
+
+## Image from the responsive fieldtype with GraphQL
+
+A responsive fieldtype has all the same fields as a normal responsive field from an asset, except they're under a `breakpoints` key.
+
+```graphql
+{
+  entries {
+    data {
+      id,
+      art_image {
+        breakpoints {
+          label
+          value
+          unit
+          ratio
+          mediaString
+          srcSet
+          srcSetWebp
+          placeholder
+        }
+      }
+    }
+  }
+}
+```
 
 ### Changelog
 

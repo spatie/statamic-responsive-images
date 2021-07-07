@@ -62,6 +62,7 @@ class TestCase extends OrchestraTestCase
     protected function getPackageProviders($app)
     {
         return [
+            \Rebing\GraphQL\GraphQLServiceProvider::class,
             \Statamic\Providers\StatamicServiceProvider::class,
             \Wilderborn\Partyline\ServiceProvider::class,
             \Spatie\ResponsiveImages\ServiceProvider::class,

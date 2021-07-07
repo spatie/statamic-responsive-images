@@ -3,7 +3,9 @@
 namespace Spatie\ResponsiveImages\Fieldtypes;
 
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFields as ResponsiveFields;
+use Spatie\ResponsiveImages\GraphQL\ResponsiveFieldType as GraphQLResponsiveFieldtype;
 use Statamic\Facades\Blueprint;
+use Statamic\Facades\GraphQL;
 use Statamic\Fields\Fields as BlueprintFields;
 use Statamic\Fields\Fieldtype;
 use Statamic\Support\Arr;
@@ -134,5 +136,10 @@ class ResponsiveFieldtype extends Fieldtype
             ->values()
             ->only(array_keys($data))
             ->all();
+    }
+
+    public function toGqlType()
+    {
+        return GraphQL::type(GraphQLResponsiveFieldtype::NAME);
     }
 }
