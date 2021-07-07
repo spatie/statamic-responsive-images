@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.6.0 - 2021-07-02
+### What's new
+- We now use ResizeObserver instead of an inline script to set the sizes attribute on the images
+
 ## 2.5.5 - 2021-06-24
 ### What's fixed
 - Prevent the fieldtype from generating too many breakpoints (#66)
