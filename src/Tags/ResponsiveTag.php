@@ -20,21 +20,22 @@ class ResponsiveTag extends Tags
         /** @var \Spatie\ResponsiveImages\Tags\ResponsiveTag $responsive */
         $responsive = app(ResponsiveTag::class);
         $responsive->setContext(['url' => $asset]);
-        $responsive->tag = 'responsive:url';
         $responsive->setParameters($parameters);
 
-        return $responsive->__call('responsive:url', []);
+        return $responsive->wildcard('url');
     }
 
-    public function __call($method, $args): string
+    public function wildcard($tag)
     {
-        $tag = explode(':', $this->tag, 2)[1];
-        $assetParam = $this->context->get($tag)
-            ? $this->context->get($tag)
-            : $this->params->get('src');
+        $this->params->put('src', $this->context->get($tag));
 
+        return $this->index();
+    }
+
+    public function index()
+    {
         try {
-            $responsive = new Responsive($assetParam, $this->params);
+            $responsive = new Responsive($this->params->get('src'), $this->params);
         } catch (AssetNotFoundException $e) {
             return '';
         }
@@ -84,7 +85,7 @@ class ResponsiveTag extends Tags
 
         return collect($this->params)
             ->reject(function ($value, $name) use ($breakpointPrefixes) {
-                if (Str::contains($name, array_merge(['placeholder', 'webp', 'ratio', 'glide:', 'default:'], $breakpointPrefixes))) {
+                if (Str::contains($name, array_merge(['src', 'placeholder', 'webp', 'ratio', 'glide:', 'default:'], $breakpointPrefixes))) {
                     return true;
                 }
 

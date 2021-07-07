@@ -2,6 +2,44 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.5.5 - 2021-06-24
+### What's fixed
+- Prevent the fieldtype from generating too many breakpoints (#66)
+
+## 2.5.4 - 2021-05-07
+### What's fixed
+- Assets can be retrieved from an augmented asset's array values
+
+
+## 2.5.3 - 2021-03-17
+### What's fixed
+- Fixed an issue when using the fieldtype inside a replicator or Bard set - #51
+
+## 2.5.2 - 2021-03-05
+### What's fixed
+- Fixed an issue with invalid asset exception - #58
+
+## 2.5.1 - 2021-02-26
+### What's fixed
+- Fixed an issue where the placeholder ratio was not always correct
+
+## 2.5.0 - 2021-02-22
+### What's fixed
+- Fixed an issue with images not being output
+- Wrapped the components in Statamic.booting to prevent loading issues
+- Reworked how assets are generated on upload & with the command which should result in them being used again instead of regenerating when visiting the page.
+
+### What's new
+- Added a config option to disable image generation on upload
+
+## 2.4.4 - 2021-02-09
+### What's fixed
+- Cache placeholder generation
+
+## 2.4.3 - 2021-02-08
+### What's fixed
+- The breakpoint no longer forces a relative URL
+
 ## 2.4.2 - 2021-02-05
 ### What's fixed
 - Fix config registration

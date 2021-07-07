@@ -2,9 +2,10 @@
 
 namespace Spatie\ResponsiveImages\Listeners;
 
-use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
-use Spatie\ResponsiveImages\WidthCalculator;
+use Spatie\ResponsiveImages\Breakpoint;
+use Spatie\ResponsiveImages\Responsive;
 use Statamic\Events\AssetUploaded;
+use Statamic\Tags\Parameters;
 
 class GenerateResponsiveVersions
 {
@@ -22,11 +23,13 @@ class GenerateResponsiveVersions
             return;
         }
 
-        (new WidthCalculator())
-            ->calculateWidthsFromAsset($event->asset)
-            ->map(function (int $width) use ($event) {
-                dispatch(app(GenerateImageJob::class, ['asset' => $event->asset, 'params' => ['width' => $width]]));
-                dispatch(app(GenerateImageJob::class, ['asset' => $event->asset, 'params' => ['width' => $width, 'fm' => 'webp']]));
-            });
+        if (! config('statamic.responsive-images.generate_on_upload', true)) {
+            return;
+        }
+
+        $responsive = new Responsive($event->asset, new Parameters());
+        $responsive->breakPoints()->each(function (Breakpoint $breakpoint) {
+            $breakpoint->dispatchImageJobs();
+        });
     }
 }

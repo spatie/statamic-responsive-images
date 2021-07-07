@@ -2,15 +2,14 @@
 
 namespace Spatie\ResponsiveImages\Jobs;
 
-use Statamic\Contracts\Assets\Asset;
 use Statamic\Facades\Image;
-use Statamic\Imaging\GlideImageManipulator;
+use Statamic\Facades\URL;
 
 class GenerateGlideImageJob extends GenerateImageJob
 {
     protected function imageUrl(): string
     {
-        $manipulator = $this->getManipulator($this->asset);
+        $manipulator = Image::manipulate($this->asset);
 
         foreach ($this->params as $param => $value) {
             if (is_array($value)) {
@@ -20,11 +19,6 @@ class GenerateGlideImageJob extends GenerateImageJob
             $manipulator->$param($value);
         }
 
-        return $manipulator->build();
-    }
-
-    private function getManipulator(Asset $asset): GlideImageManipulator
-    {
-        return Image::manipulate($asset);
+        return URL::makeRelative($manipulator->build());
     }
 }

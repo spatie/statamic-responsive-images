@@ -26,7 +26,7 @@ class Responsive
         if ($assetParam instanceof Value && $assetParam->fieldtype() instanceof ResponsiveFieldtype) {
             $this->parameters = collect($assetParam->value())->map(function ($value) {
                 return $value instanceof Value ? $value->value() : $value;
-            })->merge($this->parameters->toArray());
+            })->merge($this->parameters->toArray())->except('src');
 
             $assetParam = $assetParam->value()['src'];
         }
@@ -54,6 +54,10 @@ class Responsive
             if ($asset instanceof Collection) {
                 $asset = $asset->first();
             }
+        }
+
+        if (is_array($assetParam) && isset($assetParam['url'])) {
+            $asset = AssetFacade::findByUrl($assetParam['url']);
         }
 
         if (! isset($asset)) {

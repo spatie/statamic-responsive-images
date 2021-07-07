@@ -4,7 +4,7 @@
         v-for="field in fields"
         :key="field.handle"
         :config="field"
-        :value="value[field.handle]"
+        :value="getValue(field)"
         :meta="meta.meta[field.handle]"
         :read-only="isReadOnly"
         class="form-group bg-white border-t border-b"
@@ -41,6 +41,14 @@ export default {
       let responsiveValue = this.value;
       Vue.set(responsiveValue, handle, value);
       this.update(responsiveValue);
+    },
+
+    getValue(field) {
+      if (field.type === 'assets') {
+        return this.value[field.handle] || [];
+      }
+
+      return this.value[field.handle];
     }
   },
 };
