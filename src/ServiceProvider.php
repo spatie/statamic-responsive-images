@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\Blade;
 use Spatie\ResponsiveImages\Commands\GenerateResponsiveVersionsCommand;
 use Spatie\ResponsiveImages\Commands\RegenerateResponsiveVersionsCommand;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
+use Spatie\ResponsiveImages\GraphQL\BreakpointType;
 use Spatie\ResponsiveImages\GraphQL\ResponsiveField;
+use Spatie\ResponsiveImages\GraphQL\ResponsiveFieldType as GraphQLResponsiveFieldType;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Spatie\ResponsiveImages\Listeners\GenerateResponsiveVersions;
 use Spatie\ResponsiveImages\Tags\ResponsiveTag;
@@ -95,6 +97,9 @@ class ServiceProvider extends AddonServiceProvider
 
     private function bootGraphQL(): self
     {
+        GraphQL::addType(BreakpointType::class);
+        GraphQL::addType(GraphQLResponsiveFieldType::class);
+
         GraphQL::addField('AssetInterface', 'responsive', function () {
             return (new ResponsiveField())->toArray();
         });

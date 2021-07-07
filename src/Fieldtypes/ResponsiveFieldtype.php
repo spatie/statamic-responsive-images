@@ -143,10 +143,4 @@ class ResponsiveFieldtype extends Fieldtype
     {
         return GraphQL::type(GraphQLResponsiveFieldtype::NAME);
     }
-
-    public function addGqlTypes()
-    {
-        GraphQL::addType(BreakpointType::class);
-        GraphQL::addType(GraphQLResponsiveFieldtype::class);
-    }
 }
