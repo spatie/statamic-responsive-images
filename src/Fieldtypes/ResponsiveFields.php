@@ -57,7 +57,7 @@ class ResponsiveFields
                         ? __('Choose an image to generate responsive versions from.')
                         : '',
                     'type' => 'assets',
-                    'localizable' => $this->config['localizable'],
+                    'localizable' => $this->config['localizable'] ?? false,
                     'container' => $this->config['container'],
                     'folder' => $this->config['folder'] ?? '/',
                     'allow_uploads' => $this->config['allow_uploads'],

@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.8.2 - 2021-10-13
+## What's fixed
+- Fix an issue when localizable isn't set in the blueprint
+
 ## 2.8.1 - 2021-10-13
 ## What's fixed
 - Fix the field not being localizable
