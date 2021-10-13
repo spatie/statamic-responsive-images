@@ -12,11 +12,11 @@
 <picture>
                         <source
                 type="image/webp"
-                 media=""                 srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=50&amp;fm=webp&amp;h=41.176470588235&amp;s=4ae0cf2d6dd3634b95c0c46c418c4d49 50w"
+                 media=""                 srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=50&amp;fm=webp&amp;h=41.176470588235 50w"
                  sizes="1px"             >
         
         <source
-             media=""             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=50&amp;h=41.176470588235&amp;s=d7013fb1533447a74531abd78e8a34f5 50w"
+             media=""             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=50&amp;h=41.176470588235 50w"
              sizes="1px"         >
     
     <img

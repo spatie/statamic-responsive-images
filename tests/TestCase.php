@@ -41,6 +41,8 @@ class TestCase extends OrchestraTestCase
             'url' => '/test',
         ]]);
 
+        config()->set('statamic.assets.image_manipulation.secure', false);
+
         /** @var \Statamic\Assets\AssetContainer $assetContainer */
         $this->assetContainer = (new AssetContainer)
             ->handle('test_container')

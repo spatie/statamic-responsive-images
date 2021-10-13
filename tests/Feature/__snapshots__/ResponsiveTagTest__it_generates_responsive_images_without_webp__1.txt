@@ -12,7 +12,7 @@
 <picture>
             
         <source
-             media=""             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=237&amp;h=195.17647058824&amp;s=5f279c6423bff49fb0d948fafed2a008 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=284&amp;h=233.88235294118&amp;s=5a8688aa9c2d3e962a0660d7a794f606 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=280&amp;s=6ccad3dd4358725c8a63ee40bf6bd89b 340w"
+             media=""             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=237&amp;h=195.17647058824 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=284&amp;h=233.88235294118 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=280 340w"
              sizes="1px"         >
     
     <img
