@@ -32,9 +32,9 @@ class ResponsiveTagTest extends TestCase
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
         $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
 
-        $file = new UploadedFile($this->getTestJpg(), 'test2.jpg');
-        $path = ltrim('/'.$file->getClientOriginalName(), '/');
-        $this->asset2 = $this->assetContainer->makeAsset($path)->upload($file);
+        $file2 = new UploadedFile($this->getTestJpg(), 'test2.jpg');
+        $path = ltrim('/'.$file2->getClientOriginalName(), '/');
+        $this->asset2 = $this->assetContainer->makeAsset($path)->upload($file2);
 
         $svg = new UploadedFile($this->getTestSvg(), 'test.svg');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
