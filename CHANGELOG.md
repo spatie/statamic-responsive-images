@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.8.1 - 2021-10-13
+## What's fixed
+- Fix the field not being localizable
+
 ## 2.8.0 - 2021-08-19
 ### What's new
 - Allow Statamic 3.2
