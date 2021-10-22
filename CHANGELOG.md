@@ -5,6 +5,7 @@ All notable changes to `statamic-responsive-images` will be documented in this f
 ## 2.8.3 - 2021-10-22
 ## What's fixed
 - Fix an issue where an undefined breakpoint could occur (#95)
+- Only require the first image if the field config contains required validation (#97)
 
 ## 2.8.2 - 2021-10-13
 ## What's fixed

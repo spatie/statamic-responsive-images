@@ -71,7 +71,7 @@ class ResponsiveFields
                     'width' => $this->config['use_breakpoints']
                         ? ($this->config['allow_ratio'] ? ($this->config['allow_fit'] ? 25 : 33) : 66)
                         : ($this->config['allow_ratio'] ? ($this->config['allow_fit'] ? 50 : 66) : 100),
-                    'required' => $index === 0,
+                    'required' => in_array('required', $this->validate ?? []) && $index === 0,
                 ],
             ];
 
