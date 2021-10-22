@@ -29,7 +29,7 @@ class Responsive
                 return $value instanceof Value ? $value->value() : $value;
             })->merge($this->parameters->toArray())->except('src');
 
-            $assetParam = $assetParam->value()['src'];
+            $assetParam = $assetParam->raw()['src'];
         }
 
         $this->asset = $this->retrieveAsset($assetParam);
