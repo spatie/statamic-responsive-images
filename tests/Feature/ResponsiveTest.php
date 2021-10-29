@@ -110,7 +110,7 @@ class ResponsiveTest extends TestCase
         $fieldtype->setField($field);
 
         $value = new Value([
-            'src' => $this->asset->resolvedPath(),
+            'src' => $this->asset->path(),
         ], 'image', $fieldtype);
 
         $responsive = new Responsive($value, new Parameters());

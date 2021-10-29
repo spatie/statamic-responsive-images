@@ -2,6 +2,10 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 2.8.5 - 2021-10-29
+## What's fixed
+- Fix images not rendering (#99)
+
 ## 2.8.4 - 2021-10-29
 ## What's fixed
 - Return of the missing "default" breakpoint
