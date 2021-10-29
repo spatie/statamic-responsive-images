@@ -31,7 +31,7 @@ class ResponsiveFields
 
 
         foreach ($breakpoints as $index => $breakpoint) {
-            if (! isset(config('statamic.responsive-images.breakpoints')[$breakpoint])) {
+            if (! isset(config('statamic.responsive-images.breakpoints')[$breakpoint]) && $breakpoint  !== 'default') {
                 continue;
             }
 
