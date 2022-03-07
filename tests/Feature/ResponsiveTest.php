@@ -94,6 +94,26 @@ class ResponsiveTest extends TestCase
         $this->assertEquals($this->asset->id(), $responsive->asset->id());
     }
 
+    /** @test */
+    public function it_can_initalize_using_a_string_value()
+    {
+        $value = new Value($this->asset->resolvedPath(), 'url');
+
+        $responsive = new Responsive($value, new Parameters());
+
+        $this->assertEquals($this->asset->id(), $responsive->asset->id());
+    }
+
+    /** @test */
+    public function it_can_initalize_using_a_string_url_value()
+    {
+        $value = new Value($this->asset->url(), 'url');
+
+        $responsive = new Responsive($value, new Parameters());
+
+        $this->assertEquals($this->asset->id(), $responsive->asset->id());
+    }
+
     /** @test * */
     public function it_can_initialize_using_values_from_the_fieldtype()
     {

@@ -65,6 +65,14 @@ class Responsive
             $asset = AssetFacade::findByUrl($assetParam['url']);
         }
 
+        if (is_string($asset)) {
+            $asset = AssetFacade::findByUrl($assetParam);
+
+            if (! $asset) {
+                $asset = AssetFacade::findByPath($assetParam);
+            }
+        }
+
         if (! isset($asset)) {
             throw AssetNotFoundException::create($assetParam);
         }
