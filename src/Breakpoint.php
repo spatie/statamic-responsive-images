@@ -196,7 +196,7 @@ class Breakpoint implements Arrayable
 
             try {
                 $source = base64_encode($server->getCache()->read($path));
-                $base64Placeholder = "data:{$server->getCache()->getMimetype($path)};base64,{$source}";
+                $base64Placeholder = "data:{$server->getCache()->mimeType($path)};base64,{$source}";
             } catch (FileNotFoundException $e) {
                 return '';
             }
