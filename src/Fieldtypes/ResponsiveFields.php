@@ -3,6 +3,7 @@
 namespace Spatie\ResponsiveImages\Fieldtypes;
 
 use Statamic\Facades\AssetContainer;
+use Statamic\Fieldtypes\Assets\ImageRule;
 
 class ResponsiveFields
 {
@@ -74,6 +75,7 @@ class ResponsiveFields
                         ? ($this->config['allow_ratio'] ? ($this->config['allow_fit'] ? 25 : 33) : 66)
                         : ($this->config['allow_ratio'] ? ($this->config['allow_fit'] ? 50 : 66) : 100),
                     'required' => in_array('required', $this->validate ?? []) && $index === 0,
+                    'validate' => [new ImageRule()],
                 ],
             ];
 

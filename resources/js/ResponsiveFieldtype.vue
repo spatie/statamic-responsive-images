@@ -9,6 +9,7 @@
         :read-only="isReadOnly"
         class="form-group bg-white border-t border-b"
         :class="field.type === 'section' ? 'mt-px -mb-px' : ''"
+        :errors="errors(field.handle)"
         @meta-updated="metaUpdated(field.handle, $event)"
         @focus="$emit('focus')"
         @blur="$emit('blur')"
@@ -33,10 +34,18 @@ export default {
           })
           .values()
           .value();
-    }
+    },
+
+    storeState() {
+      return this.$store.state.publish['base'] || {};
+    },
   },
 
   methods: {
+    errors(handle) {
+      return this.storeState.errors[this.handle + '.' + handle] || [];
+    },
+
     updateKey(handle, value) {
       let responsiveValue = this.value;
       Vue.set(responsiveValue, handle, value);
