@@ -2,111 +2,173 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.9.0 - 2022-03-11
+
+## What's Changed
+
+- Test against php 8.1 by @sergiy-petrov in https://github.com/spatie/statamic-responsive-images/pull/100
+- [Fix](https://github.com/spatie/statamic-responsive-images/commit/edf10b72a09b2718ddf8b7bb858ad5cca4e7e874) https://github.com/spatie/statamic-responsive-images/issues/105 [- Don't inherit ratio](https://github.com/spatie/statamic-responsive-images/commit/edf10b72a09b2718ddf8b7bb858ad5cca4e7e874)
+- [Fix](https://github.com/spatie/statamic-responsive-images/commit/6938e4c62708c9bccc406f4f6a71d47cc1f00cda) https://github.com/spatie/statamic-responsive-images/issues/59 [- Add asset validation](https://github.com/spatie/statamic-responsive-images/commit/6938e4c62708c9bccc406f4f6a71d47cc1f00cda)
+- [Fix](https://github.com/spatie/statamic-responsive-images/commit/a3c8602685af80fd604de98f8937e504f4e78f1c) https://github.com/spatie/statamic-responsive-images/issues/81 [- Add index fieldtype display](https://github.com/spatie/statamic-responsive-images/commit/a3c8602685af80fd604de98f8937e504f4e78f1c)
+- [Fix duplicate alt tag issue -](https://github.com/spatie/statamic-responsive-images/commit/2706a7b28247db851b8a0ad9b070be3554a3af37) [fix](https://github.com/spatie/statamic-responsive-images/commit/2706a7b28247db851b8a0ad9b070be3554a3af37) https://github.com/spatie/statamic-responsive-images/issues/104
+- [Use the first assetContainer if none is set](https://github.com/spatie/statamic-responsive-images/commit/a6fe385e838e44e2031a605523ea91be36204d91)
+- [Try a different resize observer technique](https://github.com/spatie/statamic-responsive-images/commit/7b086425c73d5454e9c71c217d0a5d8b836a2a02)
+
+## New Contributors
+
+- @sergiy-petrov made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/100
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.8.5...v2.9.0
+
 ## 2.8.5 - 2021-10-29
+
 ## What's fixed
+
 - Fix images not rendering (#99)
 
 ## 2.8.4 - 2021-10-29
+
 ## What's fixed
+
 - Return of the missing "default" breakpoint
 
 ## 2.8.3 - 2021-10-22
+
 ## What's fixed
+
 - Fix an issue where an undefined breakpoint could occur (#95)
 - Only require the first image if the field config contains required validation (#97)
 
 ## 2.8.2 - 2021-10-13
+
 ## What's fixed
+
 - Fix an issue when localizable isn't set in the blueprint
 
 ## 2.8.1 - 2021-10-13
+
 ## What's fixed
+
 - Fix the field not being localizable
 
 ## 2.8.0 - 2021-08-19
+
 ### What's new
+
 - Allow Statamic 3.2
 
 ## 2.7.1 - 2021-07-07
+
 ### What's fixed
+
 - We now throw our own exception with more information when a corrupt image is being handled (#71)
 
 ## 2.7.0 - 2021-07-07
+
 ### What's new
+
 - Added GraphQL support ([docs](https://github.com/spatie/statamic-responsive-images#graphql))
 
 ## 2.6.0 - 2021-07-02
+
 ### What's new
+
 - We now use ResizeObserver instead of an inline script to set the sizes attribute on the images
 
 ## 2.5.5 - 2021-06-24
+
 ### What's fixed
+
 - Prevent the fieldtype from generating too many breakpoints (#66)
 
 ## 2.5.4 - 2021-05-07
+
 ### What's fixed
+
 - Assets can be retrieved from an augmented asset's array values
 
-
 ## 2.5.3 - 2021-03-17
+
 ### What's fixed
+
 - Fixed an issue when using the fieldtype inside a replicator or Bard set - #51
 
 ## 2.5.2 - 2021-03-05
+
 ### What's fixed
+
 - Fixed an issue with invalid asset exception - #58
 
 ## 2.5.1 - 2021-02-26
+
 ### What's fixed
+
 - Fixed an issue where the placeholder ratio was not always correct
 
 ## 2.5.0 - 2021-02-22
+
 ### What's fixed
+
 - Fixed an issue with images not being output
 - Wrapped the components in Statamic.booting to prevent loading issues
 - Reworked how assets are generated on upload & with the command which should result in them being used again instead of regenerating when visiting the page.
 
 ### What's new
+
 - Added a config option to disable image generation on upload
 
 ## 2.4.4 - 2021-02-09
+
 ### What's fixed
+
 - Cache placeholder generation
 
 ## 2.4.3 - 2021-02-08
+
 ### What's fixed
+
 - The breakpoint no longer forces a relative URL
 
 ## 2.4.2 - 2021-02-05
+
 ### What's fixed
+
 - Fix config registration
 
 ## 2.4.1 - 2021-02-05
+
 ### What's fixed
+
 - Fix assets not being published
 
 ## 2.4.0 - 2021-02-05
+
 ### What's new
+
 - The generate image job is now configurable
 
 ## 2.3.0 - 2021-02-05
 
 ### What's new
+
 - The `placeholder` is now available in the view
 - The global config now contains global `webp` and `placeholder` config settings
 
 ### What's fixed
+
 - Gifs are now treated the same as SVGs, they don't generate variants
 - Fixed the Blade directive
 
 ## 2.2.1 - 2021-02-02
 
 ### What's fixed
+
 - Fixed an issue where passing a `null` ratio would break
 
 ## 2.2.0 - 2021-02-01
 
 ### What's new
+
 - Added a fieldtype that allows full art direction.
 
 ## 2.1.1 - 2021-01-26
@@ -182,7 +244,6 @@ All notable changes to `statamic-responsive-images` will be documented in this f
 ## 1.2.1 - 2020-06-20
 
 - [fix] Fix a bug where webp images weren't being shown
-
 
 ## 1.2.0 - 2020-03-27
 
