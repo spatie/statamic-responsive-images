@@ -2,6 +2,8 @@
 
 namespace Spatie\ResponsiveImages\Fieldtypes;
 
+use Statamic\Facades\AssetContainer;
+
 class ResponsiveFields
 {
     /** @var array|null */
@@ -62,7 +64,7 @@ class ResponsiveFields
                         : '',
                     'type' => 'assets',
                     'localizable' => $this->config['localizable'] ?? false,
-                    'container' => $this->config['container'],
+                    'container' => $this->config['container'] ?? AssetContainer::all()->first()?->handle(),
                     'folder' => $this->config['folder'] ?? '/',
                     'allow_uploads' => $this->config['allow_uploads'],
                     'restrict' => $this->config['restrict'] ?? false,
