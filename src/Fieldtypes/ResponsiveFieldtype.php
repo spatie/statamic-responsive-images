@@ -6,13 +6,10 @@ use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFields as ResponsiveFields;
 use Spatie\ResponsiveImages\GraphQL\ResponsiveFieldType as GraphQLResponsiveFieldtype;
 use Spatie\ResponsiveImages\Responsive;
-use Spatie\ResponsiveImages\Tags\ResponsiveTag;
-use Statamic\Assets\Asset;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\GraphQL;
 use Statamic\Fields\Fields as BlueprintFields;
 use Statamic\Fields\Fieldtype;
-use Statamic\Fieldtypes\Assets\Assets;
 use Statamic\Support\Arr;
 use Statamic\Tags\Context;
 use Statamic\Tags\Parameters;
@@ -126,7 +123,7 @@ class ResponsiveFieldtype extends Fieldtype
     {
         $data = $this->augment($data);
 
-        if (!isset($data['src'])) {
+        if (! isset($data['src'])) {
             return [];
         }
 
