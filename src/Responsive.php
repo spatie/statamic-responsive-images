@@ -118,7 +118,7 @@ class Responsive
                     $currentParams['src'],
                     $breakpoint,
                     $value ?? 0,
-                    Arr::except($currentParams, 'src')
+                    Arr::except($currentParams, ['src', 'ratio'])
                 );
             })
             ->filter();
@@ -159,7 +159,7 @@ class Responsive
             return null;
         }
 
-        return $this->asset->width() / $breakpoint->parameters['ratio'];
+        return $this->asset->width() / ($breakpoint->parameters['ratio'] ?? $this->asset->height());
     }
 
     private function parametersByBreakpoint(): Collection
