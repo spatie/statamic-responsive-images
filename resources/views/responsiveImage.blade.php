@@ -1,11 +1,18 @@
 @once
     <script>
-        window.responsiveResizeObserver = new ResizeObserver((entries) => {
-            entries.forEach(entry => {
-                const imgWidth = entry.target.getBoundingClientRect().width;
-                entry.target.parentNode.querySelectorAll('source').forEach((source) => {
-                    source.sizes = Math.ceil(imgWidth / window.innerWidth * 100) + 'vw';
+        window.addEventListener('load', function () {
+            window.responsiveResizeObserver = new ResizeObserver((entries) => {
+                entries.forEach(entry => {
+                    const imgWidth = entry.target.getBoundingClientRect().width;
+                    entry.target.parentNode.querySelectorAll('source').forEach((source) => {
+                        source.sizes = Math.ceil(imgWidth / window.innerWidth * 100) + 'vw';
+                    });
                 });
+            });
+
+            document.querySelectorAll('[data-statamic-responsive-images]').forEach(responsiveImage => {
+                responsiveResizeObserver.onload = null;
+                responsiveResizeObserver.observe(responsiveImage);
             });
         });
     </script>
@@ -36,10 +43,7 @@
         @isset($width) width="{{ $width }}" @endisset
         @isset($height) height="{{ $height }}" @endisset
         @isset($sources)
-        onload="
-            this.onload=null;
-            window.responsiveResizeObserver.observe(this);
-        "
+        data-statamic-responsive-images
         @endisset
     >
 </picture>
