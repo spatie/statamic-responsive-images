@@ -39,7 +39,9 @@
     <img
         {!! $attributeString ?? '' !!}
         src="{{ $src }}"
+        @unless (\Illuminate\Support\Str::contains($attributeString, 'alt'))
         alt="{{ $asset['title'] }}"
+        @endunless
         @isset($width) width="{{ $width }}" @endisset
         @isset($height) height="{{ $height }}" @endisset
         @isset($sources)
