@@ -2,13 +2,20 @@
 
 namespace Spatie\ResponsiveImages\Fieldtypes;
 
+use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFields as ResponsiveFields;
 use Spatie\ResponsiveImages\GraphQL\ResponsiveFieldType as GraphQLResponsiveFieldtype;
+use Spatie\ResponsiveImages\Responsive;
+use Spatie\ResponsiveImages\Tags\ResponsiveTag;
+use Statamic\Assets\Asset;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\GraphQL;
 use Statamic\Fields\Fields as BlueprintFields;
 use Statamic\Fields\Fieldtype;
+use Statamic\Fieldtypes\Assets\Assets;
 use Statamic\Support\Arr;
+use Statamic\Tags\Context;
+use Statamic\Tags\Parameters;
 
 class ResponsiveFieldtype extends Fieldtype
 {
@@ -113,6 +120,37 @@ class ResponsiveFieldtype extends Fieldtype
     public function preProcess($data)
     {
         return $this->fields()->addValues($data ?? [])->preProcess()->values()->all();
+    }
+
+    public function preProcessIndex($data)
+    {
+        $data = $this->augment($data);
+
+        if (!isset($data['src'])) {
+            return [];
+        }
+
+        $responsive = new Responsive($data['src'], Parameters::make($data, Context::make()));
+
+        return $responsive->breakPoints()
+            ->map(function (Breakpoint $breakpoint) {
+                $arr = [
+                    'id' => $breakpoint->asset->id(),
+                    'is_image' => $isImage = $breakpoint->asset->isImage(),
+                    'extension' => $breakpoint->asset->extension(),
+                    'url' => $breakpoint->asset->url(),
+                    'breakpoint' => $breakpoint->label,
+                ];
+
+                if ($isImage) {
+                    $arr['thumbnail'] = cp_route('assets.thumbnails.show', [
+                        'encoded_asset' => base64_encode($breakpoint->asset->id()),
+                        'size' => 'thumbnail',
+                    ]);
+                }
+
+                return $arr;
+            });
     }
 
     public function process($data)
