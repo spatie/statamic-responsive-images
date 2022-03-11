@@ -159,7 +159,11 @@ class Responsive
             return null;
         }
 
-        return $this->asset->width() / ($breakpoint->parameters['ratio'] ?? $this->asset->height());
+        if (isset ($breakpoint->parameters['ratio'])) {
+            return $this->asset->width() / $breakpoint->parameters['ratio'];
+        }
+
+        return $this->asset->height();
     }
 
     private function parametersByBreakpoint(): Collection
