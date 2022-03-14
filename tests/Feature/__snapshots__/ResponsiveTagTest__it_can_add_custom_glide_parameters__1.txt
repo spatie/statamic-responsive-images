@@ -1,10 +1,17 @@
 <script>
-        window.responsiveResizeObserver = new ResizeObserver((entries) => {
-            entries.forEach(entry => {
-                const imgWidth = entry.target.getBoundingClientRect().width;
-                entry.target.parentNode.querySelectorAll('source').forEach((source) => {
-                    source.sizes = Math.ceil(imgWidth / window.innerWidth * 100) + 'vw';
+        window.addEventListener('load', function () {
+            window.responsiveResizeObserver = new ResizeObserver((entries) => {
+                entries.forEach(entry => {
+                    const imgWidth = entry.target.getBoundingClientRect().width;
+                    entry.target.parentNode.querySelectorAll('source').forEach((source) => {
+                        source.sizes = Math.ceil(imgWidth / window.innerWidth * 100) + 'vw';
+                    });
                 });
+            });
+
+            document.querySelectorAll('[data-statamic-responsive-images]').forEach(responsiveImage => {
+                responsiveResizeObserver.onload = null;
+                responsiveResizeObserver.observe(responsiveImage);
             });
         });
     </script>
@@ -22,10 +29,7 @@
     <img
         
         src="/test/test.jpg"
-        alt="test.jpg"
-         width="340"          height="280"                 onload="
-            this.onload=null;
-            window.responsiveResizeObserver.observe(this);
-        "
+                alt="test.jpg"
+                 width="340"          height="280"                 data-statamic-responsive-images
             >
 </picture>

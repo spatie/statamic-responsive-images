@@ -177,7 +177,7 @@ class ResponsiveTest extends TestCase
 
         $this->assertEquals([
             ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'parameters' => ['ratio' => 1.5, 'bla:ratio' => 2], 'unit' => 'px', 'media' => '(min-width: 1024px)'],
-            ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'parameters' => ['ratio' => 1.2142857142857142, 'bla:ratio' => 2], 'unit' => 'px', 'media' => ''],
+            ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'parameters' => ['bla:ratio' => 2], 'unit' => 'px', 'media' => ''],
         ], $responsive->breakPoints()->toArray());
     }
 

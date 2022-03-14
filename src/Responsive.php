@@ -92,6 +92,8 @@ class Responsive
                     return null;
                 }
 
+                unset($currentParams['ratio']);
+
                 foreach ($parameters as $parameter) {
                     if ($parameter['key'] === 'src' && ! $parameter['value'] instanceof Asset) {
                         try {
@@ -118,7 +120,7 @@ class Responsive
                     $currentParams['src'],
                     $breakpoint,
                     $value ?? 0,
-                    Arr::except($currentParams, ['src', 'ratio'])
+                    Arr::except($currentParams, ['src'])
                 );
             })
             ->filter();
