@@ -2,6 +2,12 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.9.2 - 2022-03-14
+
+- Fix default breakpoint ratio not working
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.9.1...v2.9.2
+
 ## v2.9.1 - 2022-03-11
 
 - Fix an issue with asset height not being calculated correctly
