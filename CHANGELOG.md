@@ -2,6 +2,12 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.9.3 - 2022-03-15
+
+- Fix PHP 7.4 compatibility
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.9.2...v2.9.3
+
 ## v2.9.2 - 2022-03-14
 
 - Fix default breakpoint ratio not working
