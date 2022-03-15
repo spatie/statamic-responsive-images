@@ -19,7 +19,7 @@ jobs:
           - statamic: 3.3.*
             testbench: 7.*
         exclude:
-          - statamic: 3.3
+          - statamic: 3.3.*
             php: 7.4
     
     name: PHP ${{ matrix.php }} - Statamic ${{ matrix.statamic }}
