@@ -61,7 +61,7 @@ class Responsive
             }
         }
 
-        if (is_string($asset)) {
+        if (isset($asset) && is_string($asset)) {
             $asset = AssetFacade::findByUrl($assetParam);
 
             if (! $asset) {
