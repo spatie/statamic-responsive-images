@@ -61,6 +61,14 @@ class Responsive
             }
         }
 
+        if (is_string($asset)) {
+            $asset = AssetFacade::findByUrl($assetParam);
+
+            if (! $asset) {
+                $asset = AssetFacade::findByPath($assetParam);
+            }
+        }
+
         if (is_array($assetParam) && isset($assetParam['url'])) {
             $asset = AssetFacade::findByUrl($assetParam['url']);
         }
