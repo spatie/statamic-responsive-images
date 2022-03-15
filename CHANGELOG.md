@@ -2,6 +2,13 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.10.0 - 2022-03-15
+
+- Add support for Statamic 3.3
+- Drop support for Statamic 3.1
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.9.3...v2.10.0
+
 ## v2.9.3 - 2022-03-15
 
 - Fix PHP 7.4 compatibility
