@@ -65,7 +65,7 @@ class ResponsiveFields
                         : '',
                     'type' => 'assets',
                     'localizable' => $this->config['localizable'] ?? false,
-                    'container' => $this->config['container'] ?? AssetContainer::all()->first()?->handle(),
+                    'container' => $this->config['container'] ?? optional(AssetContainer::all()->first())->handle(),
                     'folder' => $this->config['folder'] ?? '/',
                     'allow_uploads' => $this->config['allow_uploads'],
                     'restrict' => $this->config['restrict'] ?? false,
