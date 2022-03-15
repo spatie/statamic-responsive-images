@@ -10,13 +10,13 @@ jobs:
     strategy:
       matrix:
         php: [7.4, 8.0, 8.1]
-        statamic: [3.1, 3.2, 3.3]
+        statamic: [3.1.*, 3.2.*, 3.3.*]
         include:
-          - statamic: 3.1
+          - statamic: 3.1.*
             testbench: 6.*
-          - statamic: 3.2
+          - statamic: 3.2.*
             testbench: 6.*
-          - statamic: 3.3
+          - statamic: 3.3.*
             testbench: 7.*
         exclude:
           - statamic: 3.3
