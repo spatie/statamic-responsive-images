@@ -8,11 +8,14 @@ use Spatie\ResponsiveImages\GraphQL\ResponsiveFieldType as GraphQLResponsiveFiel
 use Spatie\ResponsiveImages\Responsive;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\GraphQL;
+use Statamic\Fields\Field;
 use Statamic\Fields\Fields as BlueprintFields;
 use Statamic\Fields\Fieldtype;
 use Statamic\Support\Arr;
 use Statamic\Tags\Context;
 use Statamic\Tags\Parameters;
+use Illuminate\Support\Arr as IlluminateArr;
+use Throwable;
 
 class ResponsiveFieldtype extends Fieldtype
 {
@@ -133,6 +136,11 @@ class ResponsiveFieldtype extends Fieldtype
         return $rules->toArray();
     }
 
+    public function preProcess($data)
+    {
+        return $this->getFieldsWithValues($data)->preProcess()->values()->all();
+    }
+
     public function preProcessIndex($data)
     {
         $data = $this->augment($data);
@@ -166,7 +174,9 @@ class ResponsiveFieldtype extends Fieldtype
 
     public function process($data)
     {
-        return Arr::removeNullValues($data);
+        return Arr::removeNullValues(
+            $this->getFieldsWithValues($data)->preProcess()->values()->all()
+        );
     }
 
     public function augment($data)
@@ -175,10 +185,15 @@ class ResponsiveFieldtype extends Fieldtype
             return $data;
         }
 
-        return Blueprint::make()
-            ->setContents(['fields' => $this->fieldConfig()])
-            ->fields()
-            ->addValues($data)
+        $fields = $this->getFieldsWithValues($data);
+
+        try {
+            $processedFields = $fields->process();
+        } catch (Throwable) {
+            $processedFields = $fields;
+        }
+
+        return $processedFields
             ->augment()
             ->values()
             ->only(array_keys($data))
@@ -188,5 +203,16 @@ class ResponsiveFieldtype extends Fieldtype
     public function toGqlType()
     {
         return GraphQL::type(GraphQLResponsiveFieldtype::NAME);
+    }
+
+    protected function getFieldsWithValues(array $values): BlueprintFields
+    {
+        $fields = $this->fields()->all()->map(function (Field $field) use ($values) {
+            return IlluminateArr::has($values, $field->handle())
+                ? $field->newInstance()->fillValue(IlluminateArr::get($values, $field->handle()))
+                : $field->newInstance();
+        });
+
+        return $this->fields()->setFields($fields);
     }
 }

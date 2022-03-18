@@ -1,15 +1,16 @@
 <template>
   <div class="publish-fields">
     <publish-container
-        name="responsive"
+        :name="handle"
         :values="value"
         :meta="meta"
         :errors="errors"
-        @updated="update($event)"
+        @updated="updated($event)"
     >
       <div slot-scope="{ setFieldValue, setFieldMeta }">
         <publish-fields
             :fields="fields"
+            :name-prefix="handle"
             @updated="setFieldValue"
             @meta-updated="setFieldMeta"
         />
@@ -34,6 +35,30 @@ export default {
           })
           .values()
           .value();
+    },
+
+    storeState() {
+      return this.$store.state.publish['base'] || {};
+    },
+
+    errors() {
+      let errors = this.storeState.errors || [];
+
+      Object.keys(errors).map((key) => {
+        const newKey = key.replace(this.handle + '.', '');
+        errors[newKey] = errors[key];
+        delete errors[key];
+      });
+
+      return Object.assign({}, errors);
+    },
+  },
+
+  methods: {
+    updated(data) {
+      const value = Object.assign({}, data);
+      this.value = value;
+      this.update(value);
     },
   },
 };
