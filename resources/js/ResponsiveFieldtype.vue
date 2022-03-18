@@ -1,20 +1,20 @@
 <template>
   <div class="publish-fields">
-    <publish-field
-        v-for="field in fields"
-        :key="field.handle"
-        :config="field"
-        :value="getValue(field)"
-        :meta="meta.meta[field.handle]"
-        :read-only="isReadOnly"
-        class="form-group bg-white border-t border-b"
-        :class="field.type === 'section' ? 'mt-px -mb-px' : ''"
-        :errors="errors(field.handle)"
-        @meta-updated="metaUpdated(field.handle, $event)"
-        @focus="$emit('focus')"
-        @blur="$emit('blur')"
-        @input="updateKey(field.handle, $event)"
-    />
+    <publish-container
+        name="responsive"
+        :values="value"
+        :meta="meta"
+        :errors="errors"
+        @updated="update($event)"
+    >
+      <div slot-scope="{ setFieldValue, setFieldMeta }">
+        <publish-fields
+            :fields="fields"
+            @updated="setFieldValue"
+            @meta-updated="setFieldMeta"
+        />
+      </div>
+    </publish-container>
   </div>
 </template>
 
@@ -35,30 +35,6 @@ export default {
           .values()
           .value();
     },
-
-    storeState() {
-      return this.$store.state.publish['base'] || {};
-    },
-  },
-
-  methods: {
-    errors(handle) {
-      return this.storeState.errors[this.handle + '.' + handle] || [];
-    },
-
-    updateKey(handle, value) {
-      let responsiveValue = this.value;
-      Vue.set(responsiveValue, handle, value);
-      this.update(responsiveValue);
-    },
-
-    getValue(field) {
-      if (field.type === 'assets') {
-        return this.value[field.handle] || [];
-      }
-
-      return this.value[field.handle];
-    }
   },
 };
 </script>

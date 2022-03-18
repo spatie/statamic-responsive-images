@@ -133,11 +133,6 @@ class ResponsiveFieldtype extends Fieldtype
         return $rules->toArray();
     }
 
-    public function preProcess($data)
-    {
-        return $this->fields()->addValues($data ?? [])->preProcess()->values()->all();
-    }
-
     public function preProcessIndex($data)
     {
         $data = $this->augment($data);
@@ -171,9 +166,7 @@ class ResponsiveFieldtype extends Fieldtype
 
     public function process($data)
     {
-        return Arr::removeNullValues(
-            $this->fields()->addValues($data)->process()->values()->all()
-        );
+        return Arr::removeNullValues($data);
     }
 
     public function augment($data)
