@@ -2,11 +2,11 @@
 
 namespace Spatie\ResponsiveImages\Fieldtypes;
 
+use Illuminate\Support\Arr as IlluminateArr;
 use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFields as ResponsiveFields;
 use Spatie\ResponsiveImages\GraphQL\ResponsiveFieldType as GraphQLResponsiveFieldtype;
 use Spatie\ResponsiveImages\Responsive;
-use Statamic\Facades\Blueprint;
 use Statamic\Facades\GraphQL;
 use Statamic\Fields\Field;
 use Statamic\Fields\Fields as BlueprintFields;
@@ -14,7 +14,6 @@ use Statamic\Fields\Fieldtype;
 use Statamic\Support\Arr;
 use Statamic\Tags\Context;
 use Statamic\Tags\Parameters;
-use Illuminate\Support\Arr as IlluminateArr;
 use Throwable;
 
 class ResponsiveFieldtype extends Fieldtype
