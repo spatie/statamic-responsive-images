@@ -2,6 +2,12 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.10.1 - 2022-03-18
+
+- Fix the fieldtype not saving values correctly
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.10.0...v2.10.1
+
 ## v2.10.0 - 2022-03-15
 
 - Add support for Statamic 3.3
