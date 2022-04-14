@@ -1,7 +1,7 @@
 <template>
   <div class="publish-fields">
     <publish-container
-        :name="handle"
+        :name="name"
         :values="value"
         :meta="meta"
         :errors="errors"
@@ -10,7 +10,7 @@
       <div slot-scope="{ setFieldValue, setFieldMeta }">
         <publish-fields
             :fields="fields"
-            :name-prefix="handle"
+            :name-prefix="name"
             @updated="setFieldValue"
             @meta-updated="setFieldMeta"
         />
