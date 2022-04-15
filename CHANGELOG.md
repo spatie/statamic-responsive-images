@@ -2,6 +2,20 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.11.1 - 2022-04-15
+
+## What's Changed
+
+- prevent getFieldsWithValues error by @yipeecaiey in https://github.com/spatie/statamic-responsive-images/pull/117
+- Use computed name property to avoid conflicts with replicator by @quintenbuis in https://github.com/spatie/statamic-responsive-images/pull/119
+
+## New Contributors
+
+- @yipeecaiey made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/117
+- @quintenbuis made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/119
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.11.0...v2.11.1
+
 ## v2.11.0 - 2022-03-18
 
 - Fix Statamic 3.3 support
