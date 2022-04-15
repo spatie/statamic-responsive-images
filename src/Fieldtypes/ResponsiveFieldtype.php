@@ -173,7 +173,7 @@ class ResponsiveFieldtype extends Fieldtype
 
     public function process($data)
     {
-        if(! is_iterable($data) ) {
+        if (! is_iterable($data)) {
             return [];
         }
 
