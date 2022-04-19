@@ -212,7 +212,7 @@ class ResponsiveFieldtype extends Fieldtype
     {
         $fields = $this->fields()->all()->map(function (Field $field) use ($values) {
             return IlluminateArr::has($values, $field->handle())
-                ? $field->newInstance()->fillValue(IlluminateArr::get($values, $field->handle()))
+                ? $field->newInstance()->setValue(IlluminateArr::get($values, $field->handle()))
                 : $field->newInstance();
         });
 
