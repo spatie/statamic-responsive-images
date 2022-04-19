@@ -2,6 +2,18 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.11.2 - 2022-04-19
+
+## What's Changed
+
+- Use setValue instead of fillValue by @hgrimelid in https://github.com/spatie/statamic-responsive-images/pull/122
+
+## New Contributors
+
+- @hgrimelid made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/122
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.11.1...v2.11.2
+
 ## v2.11.1 - 2022-04-15
 
 ## What's Changed
