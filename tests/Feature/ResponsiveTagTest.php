@@ -147,6 +147,20 @@ class ResponsiveTagTest extends TestCase
         ]));
     }
 
+    /** @test */
+    public function it_generates_responsive_images_in_webp_and_avif_formats()
+    {
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
+            'webp' => true,
+            'avif' => true
+        ]));
+
+        config()->set('statamic.responsive-images.avif', true);
+        config()->set('statamic.responsive-images.webp', true);
+
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset));
+    }
+
     private function assertMatchesSnapshotWithoutSvg($value)
     {
         $value = preg_replace('/data:image\/svg\+xml(.*) 32w/', '', $value);

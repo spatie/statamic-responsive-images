@@ -63,4 +63,19 @@ class GenerateResponsiveVersionsCommandTest extends TestCase
 
         Queue::assertPushed(GenerateGlideImageJob::class, 3);
     }
+
+    /** @test * */
+    public function it_dispatches_more_jobs_when_avif_and_webp_is_enabled()
+    {
+        Queue::fake();
+        config()->set('statamic.assets.image_manipulation.cache', true);
+        config()->set('statamic.responsive-images.webp', true);
+        config()->set('statamic.responsive-images.avif', true);
+
+        $this->artisan(GenerateResponsiveVersionsCommand::class)
+            ->expectsOutput("Generating responsive image versions for 1 assets.")
+            ->assertExitCode(0);
+
+        Queue::assertPushed(GenerateGlideImageJob::class, 9);
+    }
 }
