@@ -60,6 +60,9 @@ class ResponsiveTag extends Tags
                     'srcSetWebp' => $this->includeWebp()
                         ? $breakpoint->getSrcSet($includePlaceholder, 'webp')
                         : null,
+                    'srcSetAvif' => $this->includeAvif()
+                        ? $breakpoint->getSrcSet($includePlaceholder, 'avif')
+                        : null,
                     'placeholder' => $breakpoint->placeholder(),
                 ];
             });
@@ -108,5 +111,13 @@ class ResponsiveTag extends Tags
         return $this->params->has('webp')
             ? $this->params->get('webp')
             : config('statamic.responsive-images.webp', true);
+    }
+
+    // TODO: combine includeWebp and includeAvif
+    private function includeAvif(): bool
+    {
+        return $this->params->has('avif')
+            ? $this->params->get('avif')
+            : config('statamic.responsive-images.avif', true);
     }
 }

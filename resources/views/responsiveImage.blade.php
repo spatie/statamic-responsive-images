@@ -20,6 +20,14 @@
 
 <picture>
     @foreach (($sources ?? []) as $source)
+        @isset($source['srcSetAvif'])
+            <source
+                type="image/avif"
+                @isset($source['media']) media="{{ $source['media'] }}" @endisset
+                srcset="{{ $source['srcSetAvif'] }}"
+                @if($includePlaceholder ?? false) sizes="1px" @endif
+            >
+        @endisset
         @isset($source['srcSetWebp'])
             <source
                 type="image/webp"
