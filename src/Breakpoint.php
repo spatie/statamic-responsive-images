@@ -72,6 +72,13 @@ class Breakpoint implements Arrayable
             $params['fm'] = $format;
         }
 
+        // Quality setting goes from 0 to 100 for JPG and WEBP images.
+        // AVIF however does 0 to 62. And because quality defaults to 90 in Glide, we end up with AVIF image that is
+        // larger than JPEG or WEBP in file size. We adjust quality for AVIF here.
+        // Quality values are based on: https://squoosh.app/editor
+        // TODO: Allow developers to choose quality settings through config or tag parameters.
+        $params['q'] = $format === 'avif' ? 30 : 75;
+
         /* We don't want any heights specified other than our own */
         unset($params['height']);
         unset($params['h']);
