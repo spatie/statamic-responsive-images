@@ -17,13 +17,13 @@
     </script>
 
 <picture>
-            
+                    
         <source
-             media="(min-width: 1024px)"             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=237&amp;h=237 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=284&amp;h=284 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=340 340w"
+             media="(min-width: 1024px)"             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=75&amp;w=237&amp;h=237 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=75&amp;w=284&amp;h=284 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=75&amp;w=340&amp;h=340 340w"
              sizes="1px"         >
-            
+                    
         <source
-             media=""             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=237&amp;h=195.17647058824 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=284&amp;h=233.88235294118 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=280 340w"
+             media=""             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=75&amp;w=237&amp;h=195.17647058824 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=75&amp;w=284&amp;h=233.88235294118 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=75&amp;w=340&amp;h=280 340w"
              sizes="1px"         >
     
     <img
