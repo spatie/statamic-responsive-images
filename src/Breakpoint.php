@@ -123,6 +123,10 @@ class Breakpoint implements Arrayable
                 if (config('statamic.responsive-images.webp', true)) {
                     dispatch($this->buildImageJob($width, 'webp', $this->ratio));
                 }
+
+                if (config('statamic.responsive-images.avif', false)) {
+                    dispatch($this->buildImageJob($width, 'avif', $this->ratio));
+                }
             });
     }
 
@@ -172,6 +176,10 @@ class Breakpoint implements Arrayable
 
         if ($args['webp']) {
             $data['srcSetWebp'] = $this->getSrcSet($args['placeholder'], 'webp');
+        }
+
+        if ($args['avif']) {
+            $data['srcSetAvif'] = $this->getSrcSet($args['placeholder'], 'avif');
         }
 
         return $data;

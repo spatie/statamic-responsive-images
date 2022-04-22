@@ -63,15 +63,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | WebP
+    | WebP & AVIF image formats
     |--------------------------------------------------------------------------
     |
-    | Define if you want to generate WebP versions of your images.
+    | Define if you want to generate WebP or AVIF versions of your images.
     | You can override this on the tag.
     |
     */
 
     'webp' => true,
+    'avif' => false,
 
     /*
     |--------------------------------------------------------------------------

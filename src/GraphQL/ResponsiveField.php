@@ -37,6 +37,10 @@ class ResponsiveField extends Field
                 'type' => Type::boolean(),
                 'defaultValue' => config('statamic.responsive-images.webp'),
             ],
+            'avif' => [
+                'type' => Type::boolean(),
+                'defaultValue' => config('statamic.responsive-images.avif'),
+            ],
             'placeholder' => [
                 'type' => Type::boolean(),
                 'defaultValue' => config('statamic.responsive-images.placeholder'),

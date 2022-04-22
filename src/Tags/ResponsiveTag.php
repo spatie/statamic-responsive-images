@@ -118,6 +118,6 @@ class ResponsiveTag extends Tags
     {
         return $this->params->has('avif')
             ? $this->params->get('avif')
-            : config('statamic.responsive-images.avif', true);
+            : config('statamic.responsive-images.avif', false);
     }
 }
