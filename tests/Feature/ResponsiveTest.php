@@ -41,7 +41,7 @@ class ResponsiveTest extends TestCase
     /** @test * */
     public function it_throws_on_a_zero_width_or_height_image()
     {
-        $file = UploadedFile::fake()->create('image.corrupt');
+        $file = new UploadedFile($this->getZeroWidthTestSvg(), 'zerowidthtest.svg');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
         $asset = $this->assetContainer->makeAsset($path)->upload($file);
 

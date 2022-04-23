@@ -155,6 +155,11 @@ class TestCase extends OrchestraTestCase
         return $this->getTestFilesDirectory('test.svg');
     }
 
+    public function getZeroWidthTestSvg(): string
+    {
+        return $this->getTestFilesDirectory('zerowidth.svg');
+    }
+
     public function getTestGif(): string
     {
         return $this->getTestFilesDirectory('hackerman.gif');
