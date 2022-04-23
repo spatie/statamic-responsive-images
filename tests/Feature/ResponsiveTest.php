@@ -9,7 +9,6 @@ use Spatie\ResponsiveImages\Exceptions\InvalidAssetException;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Spatie\ResponsiveImages\Responsive;
 use Spatie\ResponsiveImages\Tests\TestCase;
-use Statamic\Assets\Asset;
 use Statamic\Facades\Stache;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
@@ -37,6 +36,18 @@ class ResponsiveTest extends TestCase
         $responsive = new Responsive($this->asset, new Parameters());
 
         $this->assertEquals($this->asset->id(), $responsive->asset->id());
+    }
+
+    /** @test * */
+    public function it_throws_on_a_zero_width_or_height_image()
+    {
+        $file = UploadedFile::fake()->create('image.corrupt');
+        $path = ltrim('/'.$file->getClientOriginalName(), '/');
+        $asset = $this->assetContainer->makeAsset($path)->upload($file);
+
+        $this->expectException(InvalidAssetException::class);
+
+        new Responsive($asset, new Parameters());
     }
 
     /** @test * */
