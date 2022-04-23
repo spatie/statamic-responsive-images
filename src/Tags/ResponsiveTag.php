@@ -57,12 +57,8 @@ class ResponsiveTag extends Tags
                 return [
                     'media' => $breakpoint->getMediaString(),
                     'srcSet' => $breakpoint->getSrcSet($includePlaceholder),
-                    'srcSetWebp' => $this->includeWebp()
-                        ? $breakpoint->getSrcSet($includePlaceholder, 'webp')
-                        : null,
-                    'srcSetAvif' => $this->includeAvif()
-                        ? $breakpoint->getSrcSet($includePlaceholder, 'avif')
-                        : null,
+                    'srcSetWebp' => $this->getSrcSetFromBreakpoint($breakpoint, 'webp', $includePlaceholder),
+                    'srcSetAvif' => $this->getSrcSetFromBreakpoint($breakpoint, 'avif', $includePlaceholder),
                     'placeholder' => $breakpoint->placeholder(),
                 ];
             });
@@ -106,18 +102,14 @@ class ResponsiveTag extends Tags
             : config('statamic.responsive-images.placeholder', true);
     }
 
-    private function includeWebp(): bool
+    private function getSrcSetFromBreakpoint(Breakpoint $breakpoint, string $format, bool $includePlaceholder): string|null
     {
-        return $this->params->has('webp')
-            ? $this->params->get('webp')
-            : config('statamic.responsive-images.webp', true);
-    }
+        $isFormatIncluded = $this->params->has($format)
+            ? $this->params->get($format)
+            : config('statamic.responsive-images.' . $format, $format === 'webp');
 
-    // TODO: combine includeWebp and includeAvif
-    private function includeAvif(): bool
-    {
-        return $this->params->has('avif')
-            ? $this->params->get('avif')
-            : config('statamic.responsive-images.avif', false);
+        return $isFormatIncluded
+            ? $breakpoint->getSrcSet($includePlaceholder, $format)
+            : null;
     }
 }
