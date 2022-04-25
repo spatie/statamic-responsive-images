@@ -76,6 +76,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Quality
+    |--------------------------------------------------------------------------
+    |
+    | Define quality value for each image encoding format.
+    | You can also override quality directly on the tag through parameters e.g. quality:avif="50".
+    | Use null for default behavior.
+    |
+    */
+
+    'quality' => [
+        'jpg' => 90,
+        'webp' => 90,
+        'avif' => 45
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Breakpoints
     |--------------------------------------------------------------------------
     |

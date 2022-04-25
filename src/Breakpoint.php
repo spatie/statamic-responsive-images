@@ -72,18 +72,51 @@ class Breakpoint implements Arrayable
             $params['fm'] = $format;
         }
 
-        // Quality setting goes from 0 to 100 for JPG and WEBP images.
-        // AVIF however does 0 to 62. And because quality defaults to 90 in Glide, we end up with AVIF image that is
-        // larger than JPEG or WEBP in file size. We adjust quality for AVIF here.
-        // Quality values are based on: https://squoosh.app/editor
-        // TODO: Allow developers to choose quality settings through config or tag parameters.
-        $params['q'] = $format === 'avif' ? 30 : 75;
+        $quality = $this->getFormatQuality($format);
+
+        if ($quality) {
+            $params['q'] = $quality;
+        }
 
         /* We don't want any heights specified other than our own */
         unset($params['height']);
         unset($params['h']);
 
         return $params;
+    }
+
+    /**
+     * Quality setting goes from 0 to 100 for JPG and WEBP images.
+     * AVIF however does 0 to 62. And because quality defaults to 90 in Glide, we end up with AVIF image that is
+     * larger than JPEG or WEBP in file size. We adjust the default AVIF quality value here.
+     *
+     * @param string|null $format
+     * @return int|null
+     */
+    private function getFormatQuality(string $format = null): int|null
+    {
+        // Backwards compatible if someone used glide:quality to adjust quality
+        $glideParamsQualityValue = $this->parameters['glide:quality'] ?? $this->parameters['glide:q'] ?? null;
+
+        if ($glideParamsQualityValue) {
+            return intval($glideParamsQualityValue);
+        }
+
+        if ($format === null) {
+            $format = 'jpg';
+        }
+
+        if (isset($this->parameters['quality:' . $format])) {
+            return intval($this->parameters['quality:' . $format]);
+        }
+
+        $configQualityValue = config('statamic.responsive-images.quality.' . $format);
+
+        if ($configQualityValue !== null) {
+            return intval($configQualityValue);
+        }
+
+        return $format === 'avif' ? 45 : null;
     }
 
     private function getWidths(): Collection

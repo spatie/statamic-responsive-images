@@ -161,6 +161,56 @@ class ResponsiveTagTest extends TestCase
         $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset));
     }
 
+    /** @test */
+    public function quality_value_is_used_from_glide_parameter_instead_of_per_format_quality_parameter()
+    {
+        $tagOutput = ResponsiveTag::render($this->asset, [
+            'glide:quality' => '55',
+            'quality:webp' => '56',
+            'webp' => true
+        ]);
+
+        $this->assertStringNotContainsString('?q=56&amp;fm=webp', $tagOutput);
+        $this->assertStringContainsString('?q=55&amp;fm=webp', $tagOutput);
+
+        $tagOutput = ResponsiveTag::render($this->asset, [
+            'glide:q' => '55',
+            'quality:webp' => '56',
+            'webp' => true
+        ]);
+
+        $this->assertStringNotContainsString('?q=56&amp;fm=webp', $tagOutput);
+        $this->assertStringContainsString('?q=55&amp;fm=webp', $tagOutput);
+    }
+
+    /** @test */
+    public function quality_param_value_is_used_over_quality_config_value()
+    {
+        config()->set('statamic.responsive-images.quality.webp', 66);
+
+        $tagOutput = ResponsiveTag::render($this->asset, [
+            'quality:webp' => '56',
+            'webp' => true
+        ]);
+
+        $this->assertStringNotContainsString('?fm=webp&amp;q=66', $tagOutput);
+        $this->assertStringContainsString('?fm=webp&amp;q=56', $tagOutput);
+    }
+
+    /** @test */
+    public function no_quality_parameter_set_when_no_quality_set_everywhere_except_for_avif()
+    {
+        config()->set('statamic.responsive-images.quality', []);
+
+        $tagOutput = ResponsiveTag::render($this->asset, [
+            'webp' => true,
+            'avif' => true
+        ]);
+
+        $this->assertStringContainsString('?fm=webp&amp;w=284', $tagOutput);
+        $this->assertStringContainsString('?fm=avif&amp;q=45', $tagOutput);
+    }
+
     private function assertMatchesSnapshotWithoutSvg($value)
     {
         $value = preg_replace('/data:image\/svg\+xml(.*) 32w/', '', $value);
