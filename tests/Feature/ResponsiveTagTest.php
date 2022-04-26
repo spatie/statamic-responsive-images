@@ -211,6 +211,20 @@ class ResponsiveTagTest extends TestCase
         $this->assertStringContainsString('?fm=avif&amp;q=45', $tagOutput);
     }
 
+    /** @test */
+    public function format_quality_is_set_on_breakpoints()
+    {
+        config()->set('statamic.responsive-images.quality', []);
+
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
+            'webp' => false,
+            'avif' => false,
+            'quality:jpg' => 30,
+            'md:quality:jpg' => 50,
+            'lg:quality:jpg' => 70
+        ]));
+    }
+
     private function assertMatchesSnapshotWithoutSvg($value)
     {
         $value = preg_replace('/data:image\/svg\+xml(.*) 32w/', '', $value);
