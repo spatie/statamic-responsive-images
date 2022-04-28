@@ -46,11 +46,11 @@ class BreakpointType extends \Rebing\GraphQL\Support\Type
             ],
             'srcSetWebp' => [
                 'type' => GraphQL::string(),
-                'description' => 'The WebP srcSet string for this breakpoint, if webp is enabled',
+                'description' => 'The WebP srcSet string for this breakpoint, if WEBP is enabled',
             ],
             'srcSetAvif' => [
                 'type' => GraphQL::string(),
-                'description' => 'The AVIF srcSet string for this breakpoint, if webp is enabled',
+                'description' => 'The AVIF srcSet string for this breakpoint, if AVIF is enabled',
             ],
             'placeholder' => [
                 'type' => GraphQL::string(),
