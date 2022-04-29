@@ -63,7 +63,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | WebP & AVIF image formats
+    | Image formats
     |--------------------------------------------------------------------------
     |
     | Define if you want to generate WebP or AVIF versions of your images.
