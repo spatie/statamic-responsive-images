@@ -80,8 +80,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Define quality value for each image encoding format.
-    | You can also override quality directly on the tag through parameters e.g. quality:avif="50".
-    | Use null for default behavior.
+    | Use null for default Glide quality.
     |
     */
 
