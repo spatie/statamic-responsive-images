@@ -86,9 +86,7 @@ class Breakpoint implements Arrayable
     }
 
     /**
-     * Quality setting goes from 0 to 100 for JPG and WEBP images.
-     * AVIF however does 0 to 62. And because quality defaults to 90 in Glide, we end up with AVIF image that is
-     * larger than JPEG or WEBP in file size. We adjust the default AVIF quality value here.
+     * Get format quality by the following order: glide parameter, quality parameter and then config values.
      *
      * @param string|null $format
      * @return int|null
@@ -103,7 +101,7 @@ class Breakpoint implements Arrayable
         }
 
         if ($format === null) {
-            $format = 'jpg';
+            $format = $this->asset->extension();
         }
 
         if (isset($this->parameters['quality:' . $format])) {
@@ -116,7 +114,7 @@ class Breakpoint implements Arrayable
             return intval($configQualityValue);
         }
 
-        return $format === 'avif' ? 45 : null;
+        return null;
     }
 
     private function getWidths(): Collection

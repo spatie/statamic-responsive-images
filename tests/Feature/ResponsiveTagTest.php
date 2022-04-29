@@ -198,7 +198,7 @@ class ResponsiveTagTest extends TestCase
     }
 
     /** @test */
-    public function no_quality_parameter_set_when_no_quality_set_everywhere_except_for_avif()
+    public function no_quality_parameter_is_set()
     {
         config()->set('statamic.responsive-images.quality', []);
 
@@ -207,8 +207,8 @@ class ResponsiveTagTest extends TestCase
             'avif' => true
         ]);
 
-        $this->assertStringContainsString('?fm=webp&amp;w=284', $tagOutput);
-        $this->assertStringContainsString('?fm=avif&amp;q=45', $tagOutput);
+        $this->assertStringNotContainsString('?fm=webp&amp;q=', $tagOutput);
+        $this->assertStringNotContainsString('?fm=avif&amp;q=', $tagOutput);
     }
 
     /** @test */
