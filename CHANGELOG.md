@@ -2,6 +2,21 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.12.0 - 2022-05-23
+
+## What's Changed
+
+- AVIF images and quality settings by @ncla in https://github.com/spatie/statamic-responsive-images/pull/123
+- Use asset data alt tag and fallback to title - fix #74
+- Max width now counts as max width for the source image as well - fix #114
+- Asset param can be a query builder - fix #116
+
+## New Contributors
+
+- @ncla made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/123
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.11.2...v2.12.0
+
 ## v2.11.2 - 2022-04-19
 
 ## What's Changed
