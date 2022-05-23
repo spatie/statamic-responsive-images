@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Spatie\ResponsiveImages\Exceptions\InvalidAssetException;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Statamic\Assets\Asset;
+use Statamic\Assets\OrderedQueryBuilder;
 use Statamic\Facades\Asset as AssetFacade;
 use Statamic\Fields\Value;
 use Statamic\Support\Str;
@@ -56,7 +57,7 @@ class Responsive
         if ($assetParam instanceof Value) {
             $asset = $assetParam->value();
 
-            if ($asset instanceof Collection) {
+            if (method_exists($asset, 'first')) {
                 $asset = $asset->first();
             }
         }

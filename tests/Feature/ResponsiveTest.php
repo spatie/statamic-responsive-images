@@ -9,6 +9,8 @@ use Spatie\ResponsiveImages\Exceptions\InvalidAssetException;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Spatie\ResponsiveImages\Responsive;
 use Spatie\ResponsiveImages\Tests\TestCase;
+use Statamic\Assets\OrderedQueryBuilder;
+use Statamic\Facades\Asset;
 use Statamic\Facades\Stache;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
@@ -88,6 +90,16 @@ class ResponsiveTest extends TestCase
     public function it_can_initialize_using_a_collection_value()
     {
         $value = new Value(new Collection([$this->asset]));
+
+        $responsive = new Responsive($value, new Parameters());
+
+        $this->assertEquals($this->asset->id(), $responsive->asset->id());
+    }
+
+    /** @test * */
+    public function it_can_initialize_using_a_query_builder()
+    {
+        $value = new Value(Asset::query()->where('container', $this->assetContainer->handle()));
 
         $responsive = new Responsive($value, new Parameters());
 
