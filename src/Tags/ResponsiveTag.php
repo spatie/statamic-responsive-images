@@ -52,7 +52,7 @@ class ResponsiveTag extends Tags
 
             $src = app(GenerateImageJob::class, ['asset' => $responsive->asset, 'params' => [
                 'width' => $width,
-                'height' => $height
+                'height' => $height,
             ]])->handle();
         }
 
