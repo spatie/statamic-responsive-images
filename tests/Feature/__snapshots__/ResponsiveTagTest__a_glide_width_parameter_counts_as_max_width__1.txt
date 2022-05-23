@@ -17,13 +17,13 @@
     </script>
 
 <picture>
-                        <source
+                                <source
                 type="image/webp"
-                 media=""                 srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=50&amp;fm=webp&amp;h=41.176470588235 50w"
+                 media=""                 srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=50&amp;fm=webp&amp;q=90&amp;h=41.176470588235 50w"
                  sizes="1px"             >
         
         <source
-             media=""             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=50&amp;h=41.176470588235 50w"
+             media=""             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=50&amp;q=90&amp;h=41.176470588235 50w"
              sizes="1px"         >
     
     <img

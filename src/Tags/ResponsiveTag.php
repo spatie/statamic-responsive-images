@@ -57,9 +57,8 @@ class ResponsiveTag extends Tags
                 return [
                     'media' => $breakpoint->getMediaString(),
                     'srcSet' => $breakpoint->getSrcSet($includePlaceholder),
-                    'srcSetWebp' => $this->includeWebp()
-                        ? $breakpoint->getSrcSet($includePlaceholder, 'webp')
-                        : null,
+                    'srcSetWebp' => $this->getSrcSetFromBreakpoint($breakpoint, 'webp', $includePlaceholder),
+                    'srcSetAvif' => $this->getSrcSetFromBreakpoint($breakpoint, 'avif', $includePlaceholder),
                     'placeholder' => $breakpoint->placeholder(),
                 ];
             });
@@ -83,9 +82,11 @@ class ResponsiveTag extends Tags
                 return "{$breakpoint}:";
             })->toArray();
 
+        $attributesToExclude = ['src', 'placeholder', 'webp', 'ratio', 'glide:', 'default:', 'quality:'];
+
         return collect($this->params)
-            ->reject(function ($value, $name) use ($breakpointPrefixes) {
-                if (Str::contains($name, array_merge(['src', 'placeholder', 'webp', 'ratio', 'glide:', 'default:'], $breakpointPrefixes))) {
+            ->reject(function ($value, $name) use ($breakpointPrefixes, $attributesToExclude) {
+                if (Str::contains($name, array_merge($attributesToExclude, $breakpointPrefixes))) {
                     return true;
                 }
 
@@ -103,10 +104,14 @@ class ResponsiveTag extends Tags
             : config('statamic.responsive-images.placeholder', true);
     }
 
-    private function includeWebp(): bool
+    private function getSrcSetFromBreakpoint(Breakpoint $breakpoint, string $format, bool $includePlaceholder): string|null
     {
-        return $this->params->has('webp')
-            ? $this->params->get('webp')
-            : config('statamic.responsive-images.webp', true);
+        $isFormatIncluded = $this->params->has($format)
+            ? $this->params->get($format)
+            : config('statamic.responsive-images.' . $format, $format === 'webp');
+
+        return $isFormatIncluded
+            ? $breakpoint->getSrcSet($includePlaceholder, $format)
+            : null;
     }
 }

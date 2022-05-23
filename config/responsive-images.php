@@ -63,15 +63,32 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | WebP
+    | Image formats
     |--------------------------------------------------------------------------
     |
-    | Define if you want to generate WebP versions of your images.
+    | Define if you want to generate WebP or AVIF versions of your images.
     | You can override this on the tag.
     |
     */
 
     'webp' => true,
+    'avif' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Quality
+    |--------------------------------------------------------------------------
+    |
+    | Define quality value for each image encoding format.
+    | Use null for default Glide quality.
+    |
+    */
+
+    'quality' => [
+        'jpg' => 90,
+        'webp' => 90,
+        'avif' => 45
+    ],
 
     /*
     |--------------------------------------------------------------------------

@@ -113,6 +113,12 @@ class TestCase extends OrchestraTestCase
         $app['config']->set("statamic.responsive-images", require(__DIR__ . "/../config/responsive-images.php"));
 
         $app['config']->set('statamic.assets.image_manipulation.driver', 'imagick');
+
+        $app['config']->set('statamic.graphql.enabled', true);
+        $app['config']->set('statamic.graphql.resources', [
+            'collections' => true,
+            'assets' => true,
+        ]);
     }
 
     protected function setUpTempTestFiles()
@@ -153,6 +159,11 @@ class TestCase extends OrchestraTestCase
     public function getTestSvg(): string
     {
         return $this->getTestFilesDirectory('test.svg');
+    }
+
+    public function getZeroWidthTestSvg(): string
+    {
+        return $this->getTestFilesDirectory('zerowidth.svg');
     }
 
     public function getTestGif(): string

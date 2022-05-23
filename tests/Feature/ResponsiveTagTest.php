@@ -147,6 +147,84 @@ class ResponsiveTagTest extends TestCase
         ]));
     }
 
+    /** @test */
+    public function it_generates_responsive_images_in_webp_and_avif_formats()
+    {
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
+            'webp' => true,
+            'avif' => true
+        ]));
+
+        config()->set('statamic.responsive-images.avif', true);
+        config()->set('statamic.responsive-images.webp', true);
+
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset));
+    }
+
+    /** @test */
+    public function quality_value_is_used_from_glide_parameter_instead_of_per_format_quality_parameter()
+    {
+        $tagOutput = ResponsiveTag::render($this->asset, [
+            'glide:quality' => '55',
+            'quality:webp' => '56',
+            'webp' => true
+        ]);
+
+        $this->assertStringNotContainsString('?q=56&amp;fm=webp', $tagOutput);
+        $this->assertStringContainsString('?q=55&amp;fm=webp', $tagOutput);
+
+        $tagOutput = ResponsiveTag::render($this->asset, [
+            'glide:q' => '55',
+            'quality:webp' => '56',
+            'webp' => true
+        ]);
+
+        $this->assertStringNotContainsString('?q=56&amp;fm=webp', $tagOutput);
+        $this->assertStringContainsString('?q=55&amp;fm=webp', $tagOutput);
+    }
+
+    /** @test */
+    public function quality_param_value_is_used_over_quality_config_value()
+    {
+        config()->set('statamic.responsive-images.quality.webp', 66);
+
+        $tagOutput = ResponsiveTag::render($this->asset, [
+            'quality:webp' => '56',
+            'webp' => true
+        ]);
+
+        $this->assertStringNotContainsString('?fm=webp&amp;q=66', $tagOutput);
+        $this->assertStringContainsString('?fm=webp&amp;q=56', $tagOutput);
+    }
+
+    /** @test */
+    public function no_quality_parameter_is_set()
+    {
+        config()->set('statamic.responsive-images.quality', []);
+
+        $tagOutput = ResponsiveTag::render($this->asset, [
+            'webp' => true,
+            'avif' => true
+        ]);
+
+        $this->assertStringNotContainsString('?fm=webp&amp;q=', $tagOutput);
+        $this->assertStringNotContainsString('?fm=avif&amp;q=', $tagOutput);
+    }
+
+    /** @test */
+    public function format_quality_is_set_on_breakpoints()
+    {
+        config()->set('statamic.responsive-images.quality', []);
+
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
+            'webp' => false,
+            'avif' => false,
+            'quality:jpg' => 30,
+            'md:quality:jpg' => 50,
+            'lg:quality:jpg' => 70
+        ]));
+    }
+
     private function assertMatchesSnapshotWithoutSvg($value)
     {
         $value = preg_replace('/data:image\/svg\+xml(.*) 32w/', '', $value);

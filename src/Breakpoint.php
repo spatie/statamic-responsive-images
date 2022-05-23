@@ -72,11 +72,49 @@ class Breakpoint implements Arrayable
             $params['fm'] = $format;
         }
 
+        $quality = $this->getFormatQuality($format);
+
+        if ($quality) {
+            $params['q'] = $quality;
+        }
+
         /* We don't want any heights specified other than our own */
         unset($params['height']);
         unset($params['h']);
 
         return $params;
+    }
+
+    /**
+     * Get format quality by the following order: glide parameter, quality parameter and then config values.
+     *
+     * @param string|null $format
+     * @return int|null
+     */
+    private function getFormatQuality(string $format = null): int|null
+    {
+        // Backwards compatible if someone used glide:quality to adjust quality
+        $glideParamsQualityValue = $this->parameters['glide:quality'] ?? $this->parameters['glide:q'] ?? null;
+
+        if ($glideParamsQualityValue) {
+            return intval($glideParamsQualityValue);
+        }
+
+        if ($format === null) {
+            $format = $this->asset->extension();
+        }
+
+        if (isset($this->parameters['quality:' . $format])) {
+            return intval($this->parameters['quality:' . $format]);
+        }
+
+        $configQualityValue = config('statamic.responsive-images.quality.' . $format);
+
+        if ($configQualityValue !== null) {
+            return intval($configQualityValue);
+        }
+
+        return null;
     }
 
     private function getWidths(): Collection
@@ -122,6 +160,10 @@ class Breakpoint implements Arrayable
                 dispatch($this->buildImageJob($width, null, $this->ratio));
                 if (config('statamic.responsive-images.webp', true)) {
                     dispatch($this->buildImageJob($width, 'webp', $this->ratio));
+                }
+
+                if (config('statamic.responsive-images.avif', false)) {
+                    dispatch($this->buildImageJob($width, 'avif', $this->ratio));
                 }
             });
     }
@@ -172,6 +214,10 @@ class Breakpoint implements Arrayable
 
         if ($args['webp']) {
             $data['srcSetWebp'] = $this->getSrcSet($args['placeholder'], 'webp');
+        }
+
+        if ($args['avif']) {
+            $data['srcSetAvif'] = $this->getSrcSet($args['placeholder'], 'avif');
         }
 
         return $data;

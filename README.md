@@ -98,12 +98,27 @@ By default, responsive images generates a small base64 encoded placeholder to sh
 {{ responsive:image_field placeholder="false" }}
 ```
 
-## Webp image generation
+## Additional image format generation
 
-By default, responsive images generates webp variants in addition to jpg or png versions of your image, these are usually smaller. If you want to disable this functionality you can pass `webp="false"` to your tag.
+By default, responsive tag generates original source image file format and WEBP variants of the image, so if you use a JPG image as source then by default JPG and WEBP variants will be generated. You can toggle WEBP and AVIF variant generation with the tag parameters.
 
 ```twig
-{{ responsive:image_field webp="false" }}
+{{ responsive:image_field webp="true" avif="false" }}
+```
+
+You can also toggle this in responsive-images.php config file, it will apply your preferences globally.
+
+```php
+'webp' => true,
+'avif' => false,
+```
+
+## Image quality
+
+Image format quality settings can be set globally through config. If you wish to override the config quality values you can use tag parameters. You can utilize breakpoints for the quality parameter too!
+
+```twig
+{{ responsive:image_field quality:webp="50" md:quality:webp="75" }}
 ```
 
 ## Glide parameters
@@ -142,7 +157,7 @@ Or different assets:
 {{ responsive:image_field :lg:src="image_field_lg" :2xl:src="image_field_2xl" }}
 ```
 
-Breakpoints support the `ratio`, `src` and `glide` parameters.
+Breakpoints support the `ratio`, `src`, `quality` and `glide` parameters.
 
 ## Customizing the generated html
 
@@ -187,6 +202,7 @@ You can retrieve a responsive version of an asset like this:
           mediaString
           srcSet
           srcSetWebp
+          srcSetAvif
           placeholder
         }
       }
@@ -211,6 +227,7 @@ Setting parameters like a ratio is also possible:
           mediaString
           srcSet
           srcSetWebp
+          srcSetAvif
           placeholder
         }
       }
@@ -237,6 +254,7 @@ A responsive fieldtype has all the same fields as a normal responsive field from
           mediaString
           srcSet
           srcSetWebp
+          srcSetAvif
           placeholder
         }
       }
