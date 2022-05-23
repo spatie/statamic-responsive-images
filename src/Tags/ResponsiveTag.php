@@ -4,6 +4,7 @@ namespace Spatie\ResponsiveImages\Tags;
 
 use Spatie\ResponsiveImages\AssetNotFoundException;
 use Spatie\ResponsiveImages\Breakpoint;
+use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Spatie\ResponsiveImages\Responsive;
 use Statamic\Support\Str;
 use Statamic\Tags\Tags;
@@ -40,12 +41,27 @@ class ResponsiveTag extends Tags
             return '';
         }
 
+        $maxWidth = (int) ($this->params->all()['glide:width'] ?? 0);
+        $width = $responsive->asset->width();
+        $height = $responsive->assetHeight();
+        $src = $responsive->asset->url();
+
+        if ($maxWidth > 0 && $maxWidth !== $responsive->asset->width()) {
+            $width = $maxWidth;
+            $height = $width / $responsive->defaultBreakpoint()->ratio;
+
+            $src = app(GenerateImageJob::class, ['asset' => $responsive->asset, 'params' => [
+                'width' => $width,
+                'height' => $height
+            ]])->handle();
+        }
+
         if (in_array($responsive->asset->extension(), ['svg', 'gif'])) {
             return view('responsive-images::responsiveImage', [
                 'attributeString' => $this->getAttributeString(),
-                'src' => $responsive->asset->url(),
-                'width' => $responsive->asset->width(),
-                'height' => $responsive->assetHeight(),
+                'src' => $src,
+                'width' => $width,
+                'height' => $height,
                 'asset' => $responsive->asset->toAugmentedArray(),
             ])->render();
         }
@@ -67,10 +83,10 @@ class ResponsiveTag extends Tags
             'attributeString' => $this->getAttributeString(),
             'includePlaceholder' => $includePlaceholder,
             'placeholder' => $sources->last()['placeholder'],
-            'src' => $responsive->asset->url(),
+            'src' => $src,
             'sources' => $sources,
-            'width' => $responsive->asset->width(),
-            'height' => $responsive->assetHeight(),
+            'width' => $width,
+            'height' => $height,
             'asset' => $responsive->asset->toAugmentedArray(),
         ])->render();
     }
