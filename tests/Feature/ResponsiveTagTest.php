@@ -140,6 +140,14 @@ class ResponsiveTagTest extends TestCase
     }
 
     /** @test */
+    public function it_uses_an_alt_field_on_the_asset()
+    {
+        $this->asset->data(['alt' => 'My asset alt tag']);
+
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset));
+    }
+
+    /** @test */
     public function a_glide_width_parameter_counts_as_max_width()
     {
         $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
