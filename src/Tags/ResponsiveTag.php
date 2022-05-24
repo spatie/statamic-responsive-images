@@ -46,7 +46,7 @@ class ResponsiveTag extends Tags
         $height = $responsive->assetHeight();
         $src = $responsive->asset->url();
 
-        if ($maxWidth > 0 && $maxWidth !== $responsive->asset->width()) {
+        if ($maxWidth > 0 && $maxWidth < $responsive->asset->width()) {
             $width = $maxWidth;
             $height = $width / $responsive->defaultBreakpoint()->ratio;
 
