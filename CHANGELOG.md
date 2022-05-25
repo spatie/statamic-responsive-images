@@ -2,6 +2,18 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.12.2 - 2022-05-25
+
+## What's Changed
+
+- Add fix for issue #133 by @GertTimmerman in https://github.com/spatie/statamic-responsive-images/pull/135
+
+## New Contributors
+
+- @GertTimmerman made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/135
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.12.1...v2.12.2
+
 ## v2.12.1 - 2022-05-24
 
 - Fix an issue where images could get upscaled #134
