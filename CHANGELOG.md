@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.12.3 - 2022-05-25
+
+## What's Changed
+
+- Fix `method_exists` exception by @aerni in https://github.com/spatie/statamic-responsive-images/pull/136
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.12.2...v2.12.3
+
 ## v2.12.2 - 2022-05-25
 
 ## What's Changed
