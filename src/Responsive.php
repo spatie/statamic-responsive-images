@@ -57,7 +57,7 @@ class Responsive
         if ($assetParam instanceof Value) {
             $asset = $assetParam->value();
 
-            if (method_exists($asset, 'first')) {
+            if (isset($asset) && method_exists($asset, 'first')) {
                 $asset = $asset->first();
             }
 
