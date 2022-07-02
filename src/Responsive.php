@@ -33,7 +33,7 @@ class Responsive
             $assetParam = $assetParam->value()['src'];
         }
 
-        $this->asset = $this->retrieveAsset($assetParam);
+        $this->asset = $this->retrieveAsset($assetParam)->hydrate();
 
         if ((int) $this->asset->width() === 0 || (int) $this->asset->height() === 0) {
             throw InvalidAssetException::zeroWidthOrHeight($this->asset);
