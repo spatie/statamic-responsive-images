@@ -2,6 +2,16 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.12.4 - 2022-07-04
+
+### What's changed
+
+- Try another fix for alt tags
+- The responsive blade directive can now handle augmented fieldtype data (array)
+- Fix an exception with `OrderedQueryBuilder`
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.12.3...v2.12.4
+
 ## v2.12.3 - 2022-05-25
 
 ## What's Changed
