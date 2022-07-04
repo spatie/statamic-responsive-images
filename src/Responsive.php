@@ -29,7 +29,7 @@ class Responsive
             $assetParam = $assetParam->value();
         }
 
-        if (is_array($assetParam)) {
+        if (is_array($assetParam) && isset($assetParam['src'])) {
             $this->parameters = collect($assetParam)->map(function ($value) {
                 return $value instanceof Value ? $value->value() : $value;
             })->merge($this->parameters->toArray())->except('src');
@@ -64,10 +64,6 @@ class Responsive
             if (isset($asset) && method_exists($asset, 'first')) {
                 $asset = $asset->first();
             }
-
-            if ($asset instanceof OrderedQueryBuilder) {
-                $asset = $asset->first();
-            }
         }
 
         if (isset($asset) && is_string($asset)) {
@@ -84,6 +80,10 @@ class Responsive
 
         if (! isset($asset)) {
             throw AssetNotFoundException::create($assetParam);
+        }
+
+        if ($asset instanceof OrderedQueryBuilder) {
+            $asset = $asset->first();
         }
 
         return $asset;
