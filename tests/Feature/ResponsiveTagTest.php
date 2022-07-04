@@ -3,9 +3,11 @@
 namespace Spatie\ResponsiveImages\Tests\Feature;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Spatie\ResponsiveImages\Tags\ResponsiveTag;
 use Spatie\ResponsiveImages\Tests\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
+use Statamic\Facades\Asset;
 use Statamic\Facades\Stache;
 
 class ResponsiveTagTest extends TestCase
@@ -143,8 +145,11 @@ class ResponsiveTagTest extends TestCase
     public function it_uses_an_alt_field_on_the_asset()
     {
         $this->asset->data(['alt' => 'My asset alt tag']);
+        $this->asset->save();
 
-        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset));
+        $this->assertFileExists(__DIR__ . "/../tmp/.meta/{$this->asset->filename()}.jpg.yaml");
+
+        $this->assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset->url()));
     }
 
     /** @test */
