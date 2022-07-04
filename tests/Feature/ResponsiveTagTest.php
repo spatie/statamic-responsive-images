@@ -3,12 +3,16 @@
 namespace Spatie\ResponsiveImages\Tests\Feature;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Cache;
+use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Spatie\ResponsiveImages\Tags\ResponsiveTag;
 use Spatie\ResponsiveImages\Tests\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 use Statamic\Facades\Asset;
 use Statamic\Facades\Stache;
+use Statamic\Fields\Field;
+use Statamic\Fields\Value;
 
 class ResponsiveTagTest extends TestCase
 {
@@ -235,6 +239,74 @@ class ResponsiveTagTest extends TestCase
             'quality:jpg' => 30,
             'md:quality:jpg' => 50,
             'lg:quality:jpg' => 70
+        ]));
+    }
+
+    /** @test * */
+    public function it_can_render_a_responsive_image_with_the_directive()
+    {
+        $blade = <<<'blade'
+            @responsive($asset)
+        blade;
+
+        $this->assertMatchesSnapshotWithoutSvg(Blade::render($blade, [
+            'asset' => $this->asset
+        ]));
+    }
+
+    /** @test * */
+    public function it_can_render_an_art_directed_image_with_the_directive()
+    {
+        $blade = <<<'blade'
+            @responsive($asset)
+        blade;
+
+        $fieldtype = new ResponsiveFieldtype();
+
+        $field = new Field('image', [
+            'breakpoints' => [],
+            'use_breakpoints' => false,
+            'container' => $this->asset->containerHandle(),
+            'allow_uploads' => true,
+            'allow_ratio' => true,
+            'allow_fit' => true,
+        ]);
+        $fieldtype->setField($field);
+
+        $asset = new Value([
+            'src' => $this->asset->path(),
+        ], 'image', $fieldtype);
+
+        $this->assertMatchesSnapshotWithoutSvg(Blade::render($blade, [
+            'asset' => $asset
+        ]));
+    }
+
+    /** @test * */
+    public function it_can_render_an_art_directed_image_as_array_with_the_directive()
+    {
+        $blade = <<<'blade'
+            @responsive($asset)
+        blade;
+
+        $fieldtype = new ResponsiveFieldtype();
+
+        $field = new Field('image', [
+            'breakpoints' => [],
+            'use_breakpoints' => false,
+            'container' => $this->asset->containerHandle(),
+            'allow_uploads' => true,
+            'allow_ratio' => true,
+            'allow_fit' => true,
+        ]);
+        $fieldtype->setField($field);
+
+        $asset = new Value([
+            'src' => $this->asset->path(),
+        ], 'image', $fieldtype);
+
+        $this->assertMatchesSnapshotWithoutSvg(Blade::render($blade, [
+            'asset' => $asset->value(),
         ]));
     }
 

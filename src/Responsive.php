@@ -26,11 +26,15 @@ class Responsive
         $this->parameters = $parameters;
 
         if ($assetParam instanceof Value && $assetParam->fieldtype() instanceof ResponsiveFieldtype) {
-            $this->parameters = collect($assetParam->value())->map(function ($value) {
+            $assetParam = $assetParam->value();
+        }
+
+        if (is_array($assetParam)) {
+            $this->parameters = collect($assetParam)->map(function ($value) {
                 return $value instanceof Value ? $value->value() : $value;
             })->merge($this->parameters->toArray())->except('src');
 
-            $assetParam = $assetParam->value()['src'];
+            $assetParam = $assetParam['src'];
         }
 
         $this->asset = $this->retrieveAsset($assetParam)->hydrate();
