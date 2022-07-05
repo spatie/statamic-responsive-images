@@ -4,6 +4,7 @@ namespace Spatie\ResponsiveImages;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use League\Flysystem\FileNotFoundException;
 use League\Glide\Server;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
@@ -82,7 +83,25 @@ class Breakpoint implements Arrayable
         unset($params['height']);
         unset($params['h']);
 
+        $crop = $this->getAssetCropFocus($params);
+
+        if ($crop) {
+            $params['fit'] = $crop;
+        }
+
         return $params;
+    }
+
+    private function getAssetCropFocus($params): string|null
+    {
+        if (
+            Config::get('statamic.assets.auto_crop') === false
+            || (array_key_exists('fit', $params) && $params['fit'] !== 'crop_focal')
+        ) {
+            return null;
+        }
+
+        return "crop-" . $this->asset->get('focus', '50-50');
     }
 
     /**

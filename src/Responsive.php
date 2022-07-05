@@ -114,7 +114,7 @@ class Responsive
                 foreach ($parameters as $parameter) {
                     if ($parameter['key'] === 'src' && ! $parameter['value'] instanceof Asset) {
                         try {
-                            $parameter['value'] = $this->retrieveAsset($parameter['value']);
+                            $parameter['value'] = $this->retrieveAsset($parameter['value'])->hydrate();
                         } catch (AssetNotFoundException $e) {
                             logger()->error($e->getMessage());
                             $parameter['value'] = $this->asset;
