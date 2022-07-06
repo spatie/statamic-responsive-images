@@ -83,7 +83,7 @@ class Breakpoint implements Arrayable
         unset($params['height']);
         unset($params['h']);
 
-        $crop = $this->getAssetCropFocus($params);
+        $crop = $this->getCropFocus($params);
 
         if ($crop) {
             $params['fit'] = $crop;
@@ -92,7 +92,7 @@ class Breakpoint implements Arrayable
         return $params;
     }
 
-    private function getAssetCropFocus($params): string|null
+    private function getCropFocus($params): string|null
     {
         if (
             Config::get('statamic.assets.auto_crop') === false
