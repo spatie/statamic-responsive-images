@@ -70,4 +70,28 @@ class BreakpointTest extends TestCase
 
         $breakpoint->getSrcSet();
     }
+
+    /** @test * */
+    public function it_does_not_generate_image_url_with_crop_focus_when_auto_crop_is_disabled()
+    {
+        config()->set('statamic.assets.auto_crop', false);
+
+        $breakpoint = new Breakpoint($this->asset, 'default', 0, []);
+
+        $this->assertStringEndsWith(
+            '?fm=webp&q=90&w=100&h=100',
+            $breakpoint->buildImageJob(100, 'webp', 1.0)->handle()
+        );
+    }
+
+    /** @test * */
+    public function it_does_not_generate_image_url_with_crop_focus_when_a_glide_fit_param_is_provided()
+    {
+        $breakpoint = new Breakpoint($this->asset, 'default', 0, ['glide:fit' => 'fill']);
+
+        $this->assertStringEndsWith(
+            '?fit=fill&fm=webp&q=90&w=100&h=100',
+            $breakpoint->buildImageJob(100, 'webp', 1.0)->handle()
+        );
+    }
 }
