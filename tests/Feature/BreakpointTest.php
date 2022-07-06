@@ -32,7 +32,7 @@ class BreakpointTest extends TestCase
         $responsive = new Breakpoint($this->asset, 'default', 0, []);
 
         $this->assertStringContainsString(
-            '?q=90&w=100',
+            '?q=90&fit=crop-50-50&w=100',
             $responsive->buildImageJob(100)->handle()
         );
     }
@@ -43,7 +43,7 @@ class BreakpointTest extends TestCase
         $responsive = new Breakpoint($this->asset, 'default', 0, []);
 
         $this->assertStringContainsString(
-            '?fm=webp&q=90&w=100',
+            '?fm=webp&q=90&fit=crop-50-50&w=100',
             $responsive->buildImageJob(100, 'webp')->handle()
         );
     }
@@ -54,7 +54,7 @@ class BreakpointTest extends TestCase
         $responsive = new Breakpoint($this->asset, 'default', 0, []);
 
         $this->assertStringContainsString(
-            '?fm=webp&q=90&w=100&h=100',
+            '?fm=webp&q=90&fit=crop-50-50&w=100&h=100',
             $responsive->buildImageJob(100, 'webp', 1.0)->handle()
         );
     }
