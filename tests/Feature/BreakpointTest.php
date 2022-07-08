@@ -3,10 +3,12 @@
 namespace Spatie\ResponsiveImages\Tests\Feature;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Spatie\ResponsiveImages\Tests\TestCase;
 use Spatie\ResponsiveImages\Breakpoint;
 use Statamic\Facades\Stache;
+use Statamic\Facades\YAML;
 
 class BreakpointTest extends TestCase
 {
@@ -92,6 +94,38 @@ class BreakpointTest extends TestCase
         $this->assertStringEndsWith(
             '?fit=fill&fm=webp&q=90&w=100&h=100',
             $breakpoint->buildImageJob(100, 'webp', 1.0)->handle()
+        );
+    }
+
+    /** @test * */
+    public function it_uses_crop_focus_value_from_assets_metadata()
+    {
+        $metaDataPath = $this->asset->metaPath();
+
+        // Get original metadata that was generated when the asset was uploaded
+        $metaData = YAML::file(
+            Storage::disk('test')->path($metaDataPath)
+        )->parse();
+
+        // Set some focus value
+        $metaData['data'] = [
+            'focus' => '29-71-3.6'
+        ];
+
+        // Dump the YAML data back into the metadata yaml file
+        Storage::disk('test')->put($metaDataPath, YAML::dump($metaData));
+
+        // Flush the cache so Statamic is not using outdated metadata
+        Cache::flush();
+
+        // Fetch the asset from the container again, triggering metadata hydration
+        $asset = $this->assetContainer->asset('test.jpg');
+
+        $breakpoint = new Breakpoint($asset, 'default', 0, []);
+
+        $this->assertStringEndsWith(
+            '?q=90&fit=crop-29-71-3.6&w=100',
+            $breakpoint->buildImageJob(100 )->handle()
         );
     }
 }
