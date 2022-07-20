@@ -19,15 +19,15 @@
 <picture>
                     
         <source
-             media="(min-width: 1024px)"             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=70&amp;w=237&amp;h=195.17647058824 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=70&amp;w=284&amp;h=233.88235294118 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=70&amp;w=340&amp;h=280 340w"
+             media="(min-width: 1024px)"             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=70&amp;fit=crop-50-50&amp;w=237&amp;h=195.17647058824 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=70&amp;fit=crop-50-50&amp;w=284&amp;h=233.88235294118 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=70&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
              sizes="1px"         >
                     
         <source
-             media="(min-width: 768px)"             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=50&amp;w=237&amp;h=195.17647058824 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=50&amp;w=284&amp;h=233.88235294118 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=50&amp;w=340&amp;h=280 340w"
+             media="(min-width: 768px)"             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=50&amp;fit=crop-50-50&amp;w=237&amp;h=195.17647058824 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=50&amp;fit=crop-50-50&amp;w=284&amp;h=233.88235294118 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=50&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
              sizes="1px"         >
                     
         <source
-             media=""             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=30&amp;w=237&amp;h=195.17647058824 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=30&amp;w=284&amp;h=233.88235294118 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=30&amp;w=340&amp;h=280 340w"
+             media=""             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=30&amp;fit=crop-50-50&amp;w=237&amp;h=195.17647058824 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=30&amp;fit=crop-50-50&amp;w=284&amp;h=233.88235294118 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=30&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
              sizes="1px"         >
     
     <img
