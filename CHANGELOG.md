@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.13.0 - 2022-07-20
+
+### What's Changed
+
+- Explicitly define crop focus by @ncla in https://github.com/spatie/statamic-responsive-images/pull/145
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.12.4...v2.13.0
+
 ## v2.12.4 - 2022-07-04
 
 ### What's changed
