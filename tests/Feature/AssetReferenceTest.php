@@ -8,6 +8,7 @@ use Spatie\ResponsiveImages\Tests\TestCase;
 use Statamic\Facades\Stache;
 use Spatie\ResponsiveImages\Responsive;
 use Statamic\Tags\Parameters;
+use Spatie\ResponsiveImages\Exceptions\InvalidAssetException;
 
 class AssetReferenceTest extends TestCase
 {
@@ -32,21 +33,21 @@ class AssetReferenceTest extends TestCase
     /** @test * */
     public function it_can_move_an_image()
     {
-        $asset->move('folder1');
+        $this->asset->move('folder1');
 
         $this->expectException(InvalidAssetException::class);
 
-        new Responsive($asset, new Parameters());
+        new Responsive($this->asset, new Parameters());
     }
     
     /** @test * */
     public function it_can_rename_an_image()
     {   
-        $asset->rename('test1.jpg');
+        $this->asset->rename('test1.jpg');
         
         $this->expectException(InvalidAssetException::class);
 
-        new Responsive($asset, new Parameters());
+        new Responsive($this->asset, new Parameters());
     }
     
     /** @test * */
@@ -56,7 +57,7 @@ class AssetReferenceTest extends TestCase
 
         $this->expectException(InvalidAssetException::class);
 
-        new Responsive($asset, new Parameters());
+        new Responsive($this->asset, new Parameters());
     }
     
     /** @test * */
@@ -66,7 +67,7 @@ class AssetReferenceTest extends TestCase
 
         $this->expectException(InvalidAssetException::class);
 
-        new Responsive($asset, new Parameters());
+        new Responsive($this->asset, new Parameters());
     }
     
 }
