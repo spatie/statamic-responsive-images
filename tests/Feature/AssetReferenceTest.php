@@ -35,19 +35,19 @@ class AssetReferenceTest extends TestCase
     {
         $this->asset->move('folder1');
 
-        $this->expectException(InvalidAssetException::class);
+        $responsive = new Responsive($this->asset, new Parameters());
 
-        new Responsive($this->asset, new Parameters());
+        $this->assertEquals($this->asset->id(), $responsive->asset->id());
     }
     
     /** @test * */
     public function it_can_rename_an_image()
     {   
         $this->asset->rename('test1.jpg');
-        
-        $this->expectException(InvalidAssetException::class);
 
-        new Responsive($this->asset, new Parameters());
+        $responsive = new Responsive($this->asset, new Parameters());
+
+        $this->assertEquals($this->asset->id(), $responsive->asset->id());
     }
     
     /** @test * */
@@ -55,9 +55,9 @@ class AssetReferenceTest extends TestCase
     {
         $this->assetContainer->assetFolder('folder1')->move('folder2');
 
-        $this->expectException(InvalidAssetException::class);
+        $responsive = new Responsive($this->asset, new Parameters());
 
-        new Responsive($this->asset, new Parameters());
+        $this->assertEquals($this->asset->id(), $responsive->asset->id());
     }
     
     /** @test * */
@@ -65,9 +65,9 @@ class AssetReferenceTest extends TestCase
     {
         $this->assetContainer->assetFolder('folder1')->rename('folder3');
 
-        $this->expectException(InvalidAssetException::class);
+        $responsive = new Responsive($this->asset, new Parameters());
 
-        new Responsive($this->asset, new Parameters());
+        $this->assertEquals($this->asset->id(), $responsive->asset->id());
     }
     
 }
