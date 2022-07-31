@@ -52,10 +52,48 @@ class ResponsiveReferenceUpdater extends DataReferenceUpdater
                     && $this->getConfiguredAssetsFieldContainer($field) === $this->container;
             })
             ->each(function ($field) use ($dottedPrefix) {
-                $this->updateArrayValue($field, $dottedPrefix);
+                $this->updateResponsiveValue($field, $dottedPrefix);
             });
 
         return $this;
+    }
+
+    /**
+     * Update responsive value on item. This method is
+     * a clone of AssetReferenceUpdater@updateArrayValue()
+     * with a modification to fix dot notication zeroes.
+     * 
+     *
+     * @param  \Statamic\Fields\Field  $field
+     * @param  null|string  $dottedPrefix
+     */
+    protected function updateResponsiveValue($field, $dottedPrefix, $multiple = false)
+    {
+        $data = $this->item->data()->all();
+
+        $dottedKey = $dottedPrefix.$field->handle();
+
+        $fieldData = collect(Arr::dot(Arr::get($data, $dottedKey, [])));
+
+        // Array dot notation zeroes need to be removed
+        $fieldData = $fieldData->mapWithKeys(function ($value, $key) {
+            return [str_replace('.0', '', $key) => $value];
+        });
+
+        if (! $fieldData->contains($this->originalValue())) {
+            return;
+        }
+
+        $fieldData->transform(function ($value) {
+            return $value === $this->originalValue() ? $this->newValue() : $value;
+        });
+
+
+        Arr::set($data, $dottedKey, $fieldData->all());
+
+        $this->item->data($data);
+
+        $this->updated = true;
     }
 
     /**
