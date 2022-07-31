@@ -6,7 +6,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Spatie\ResponsiveImages\ResponsiveReferenceUpdater;
 use Statamic\Events\AssetSaved;
 use Statamic\Listeners\Concerns\GetsItemsContainingData;
-use Illuminate\Support\Facades\Log;
 
 class UpdateResponsiveReferences implements ShouldQueue
 {
@@ -38,8 +37,6 @@ class UpdateResponsiveReferences implements ShouldQueue
         if (! $originalPath || $originalPath === $newPath) {
             return;
         }
-
-        Log::info('UpdateResponsiveReferences listener triggered.');
 
         $this->getItemsContainingData()->each(function ($item) use ($container, $originalPath, $newPath) {
             ResponsiveReferenceUpdater::item($item)
