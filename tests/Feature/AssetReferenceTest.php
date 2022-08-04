@@ -54,6 +54,27 @@ class AssetReferenceTest extends TestCase
         Facades\Blueprint::shouldReceive('in')->with($namespace)->andReturn(collect([$blueprint]));
     }
 
+    protected function createDummyCollectionEntry($data)
+    {
+        // Create collection
+        $collection = tap(Facades\Collection::make('articles'))->save();
+
+        $blueprintContents = [
+            'fields' => [
+                [
+                    'handle' => 'avatar',
+                    'field' => $this->responsiveFieldConfiguration,
+                ]
+            ],
+        ];
+
+        // Create blueprint for collection
+        $this->setInBlueprints('collections/articles', $blueprintContents);
+
+        // Create entry in the collection
+        return tap(Facades\Entry::make()->collection($collection)->data($data))->save();
+    }
+
     /** @test * */
     public function it_can_move_an_image()
     {
@@ -95,34 +116,36 @@ class AssetReferenceTest extends TestCase
     }
 
     /** @test */
-    public function collection_item_responsive_asset_reference_gets_updated_after_asset_rename()
+    public function asset_reference_gets_updated_after_asset_rename()
     {
-        // Create collection
-        $collection = tap(Facades\Collection::make('articles'))->save();
-
-        $blueprintContents = [
-            'fields' => [
-                [
-                    'handle' => 'avatar',
-                    'field' => $this->responsiveFieldConfiguration,
-                ]
-            ],
-        ];
-
-        // Create blueprint for collection
-        $this->setInBlueprints('collections/articles', $blueprintContents);
-
-        // Create entry in the collection
-        $entry = tap(Facades\Entry::make()->collection($collection)->data([
+        $entry = $this->createDummyCollectionEntry([
             'avatar' => [
                 'src' => 'test_container::test.jpg'
             ],
-        ]))->save();
+        ]);
 
         $this->assertEquals('test_container::test.jpg', Arr::get($entry->get('avatar'), 'src'));
 
         $this->asset->rename('new-test2');
 
         $this->assertEquals('test_container::new-test2.jpg', Arr::get($entry->fresh()->get('avatar'), 'src'));
+    }
+
+    /** @test */
+    public function asset_array_reference_gets_updated_after_asset_rename()
+    {
+        $entry = $this->createDummyCollectionEntry([
+            'avatar' => [
+                'src' => [
+                    'test_container::test.jpg'
+                ],
+            ],
+        ]);
+
+        $this->assertEquals(['test_container::test.jpg'], Arr::get($entry->get('avatar'), 'src'));
+
+        $this->asset->rename('new-test2');
+
+        $this->assertEquals(['test_container::new-test2.jpg'], Arr::get($entry->fresh()->get('avatar'), 'src'));
     }
 }
