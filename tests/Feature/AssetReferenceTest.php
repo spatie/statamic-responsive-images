@@ -125,11 +125,14 @@ class AssetReferenceTest extends TestCase
     }
 
     /** @test */
-    public function asset_reference_gets_updated_after_asset_rename()
+    public function asset_string_reference_gets_updated_after_asset_rename()
     {
         $entry = $this->createDummyCollectionEntry($this->entryBlueprintWithSingleResponsiveField, [
             'avatar' => [
-                'src' => 'test_container::test.jpg'
+                'src' => 'test_container::test.jpg',
+                'ratio' => '16/9',
+                'sm:src' => 'test_container::test.jpg',
+                'sm:ratio' => '16/9',
             ],
         ]);
 
@@ -143,19 +146,34 @@ class AssetReferenceTest extends TestCase
     /** @test */
     public function asset_array_reference_gets_updated_after_asset_rename()
     {
-        $entry = $this->createDummyCollectionEntry($this->entryBlueprintWithSingleResponsiveField, [
-            'avatar' => [
-                'src' => [
-                    'test_container::test.jpg'
-                ],
+        $startingAvatarData = [
+            'src' => [
+                'test_container::test.jpg'
             ],
+            'sm:src' => [
+                'test_container::test.jpg'
+            ],
+        ];
+
+        $entry = $this->createDummyCollectionEntry($this->entryBlueprintWithSingleResponsiveField, [
+            'avatar' => $startingAvatarData,
         ]);
 
-        $this->assertEquals(['test_container::test.jpg'], Arr::get($entry->get('avatar'), 'src'));
+        $this->assertEquals($startingAvatarData, $entry->get('avatar'));
 
         $this->asset->rename('new-test2');
 
-        $this->assertEquals(['test_container::new-test2.jpg'], Arr::get($entry->fresh()->get('avatar'), 'src'));
+        $this->assertEquals(
+            [
+                'src' => [
+                    'test_container::new-test2.jpg'
+                ],
+                'sm:src' => [
+                    'test_container::new-test2.jpg'
+                ],
+            ],
+            $entry->fresh()->get('avatar')
+        );
     }
 
     /** @test */

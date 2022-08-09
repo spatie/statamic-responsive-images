@@ -34,7 +34,9 @@ class ResponsiveReferenceUpdater extends DataReferenceUpdater
      */
     protected function recursivelyUpdateFields($fields, $dottedPrefix = null)
     {
-        $this->updateResponsiveFieldValues($fields, $dottedPrefix);
+        $this
+            ->updateResponsiveFieldValues($fields, $dottedPrefix)
+            ->updateNestedFieldValues($fields, $dottedPrefix);
     }
 
     /**
@@ -67,27 +69,48 @@ class ResponsiveReferenceUpdater extends DataReferenceUpdater
      * @param  \Statamic\Fields\Field  $field
      * @param  null|string  $dottedPrefix
      */
-    protected function updateResponsiveValue($field, $dottedPrefix, $multiple = false)
+    protected function updateResponsiveValue($field, $dottedPrefix)
     {
         $data = $this->item->data()->all();
 
         $dottedKey = $dottedPrefix.$field->handle();
 
-        $fieldData = collect(Arr::dot(Arr::get($data, $dottedKey, [])));
+        $fieldData = collect(
+            Arr::get($data, $dottedKey, [])
+        );
 
-        // Array dot notation zeroes need to be removed
-        $fieldData = $fieldData->mapWithKeys(function ($value, $key) {
-            return [str_replace('.0', '', $key) => $value];
+        $updated = 0;
+
+        $fieldData->transform(function ($value, $key) use (&$updated) {
+            if (!str_ends_with($key, 'src')) {
+                return $value;
+            }
+
+            // In content files, the src value can be either string or array.
+            // We first handle the string value, and then handle the array value.
+            if (is_string($value) && $value === $this->originalValue()) {
+                $updated++;
+                return $this->newValue();
+            }
+
+            // Handle array value.
+            if (is_array($value) && in_array($this->originalValue(), $value)) {
+                return array_map(function ($item) use (&$updated) {
+                    if ($item === $this->originalValue()) {
+                        $updated++;
+                        return $this->newValue();
+                    }
+
+                    return $item;
+                }, $value);
+            }
+
+            return $value;
         });
 
-        if (! $fieldData->contains($this->originalValue())) {
+        if ($updated === 0) {
             return;
         }
-
-        $fieldData->transform(function ($value) {
-            return $value === $this->originalValue() ? $this->newValue() : $value;
-        });
-
 
         Arr::set($data, $dottedKey, $fieldData->all());
 
