@@ -61,11 +61,9 @@ class ResponsiveReferenceUpdater extends DataReferenceUpdater
     }
 
     /**
-     * Update responsive value on item. This method is
-     * a clone of AssetReferenceUpdater@updateArrayValue()
-     * with a modification to fix dot notication zeroes.
+     * Update responsive value on item.
      * 
-     *
+     * @see AssetReferenceUpdater::updateArrayValue()
      * @param  \Statamic\Fields\Field  $field
      * @param  null|string  $dottedPrefix
      */
