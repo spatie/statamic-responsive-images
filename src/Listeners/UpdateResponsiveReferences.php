@@ -12,19 +12,9 @@ class UpdateResponsiveReferences implements ShouldQueue
     use GetsItemsContainingData;
 
     /**
-     * Register the listeners for the subscriber.
-     *
-     * @param  \Illuminate\Events\Dispatcher  $events
-     */
-    public function subscribe($events)
-    {
-        $events->listen(AssetSaved::class, self::class.'@handle');
-    }
-
-    /**
      * Handle the events.
      *
-     * @param  AssetSaved  $event
+     * @param AssetSaved $event
      */
     public function handle(AssetSaved $event)
     {
@@ -34,7 +24,7 @@ class UpdateResponsiveReferences implements ShouldQueue
         $originalPath = $asset->getOriginal('path');
         $newPath = $asset->path();
 
-        if (! $originalPath || $originalPath === $newPath) {
+        if (!$originalPath || $originalPath === $newPath) {
             return;
         }
 
