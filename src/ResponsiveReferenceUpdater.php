@@ -2,30 +2,11 @@
 
 namespace Spatie\ResponsiveImages;
 
-use Statamic\Data\DataReferenceUpdater;
-use Statamic\Facades\AssetContainer;
+use Statamic\Assets\AssetReferenceUpdater;
 use Statamic\Support\Arr;
 
-class ResponsiveReferenceUpdater extends DataReferenceUpdater
+class ResponsiveReferenceUpdater extends AssetReferenceUpdater
 {
-    /**
-     * @var string
-     */
-    protected $container;
-
-    /**
-     * Filter by container.
-     *
-     * @param  string  $container
-     * @return $this
-     */
-    public function filterByContainer(string $container)
-    {
-        $this->container = $container;
-
-        return $this;
-    }
-
     /**
      * Recursively update fields.
      *
@@ -77,9 +58,9 @@ class ResponsiveReferenceUpdater extends DataReferenceUpdater
             Arr::get($data, $dottedKey, [])
         );
 
-        $updated = 0;
+        $referencesUpdated = 0;
 
-        $fieldData->transform(function ($value, $key) use (&$updated) {
+        $fieldData->transform(function ($value, $key) use (&$referencesUpdated) {
             if (!str_ends_with($key, 'src')) {
                 return $value;
             }
@@ -87,15 +68,15 @@ class ResponsiveReferenceUpdater extends DataReferenceUpdater
             // In content files, the src value can be either string or array.
             // We first handle the string value, and then handle the array value.
             if (is_string($value) && $value === $this->originalValue()) {
-                $updated++;
+                $referencesUpdated++;
                 return $this->newValue();
             }
 
             // Handle array value.
             if (is_array($value) && in_array($this->originalValue(), $value)) {
-                return array_map(function ($item) use (&$updated) {
+                return array_map(function ($item) use (&$referencesUpdated) {
                     if ($item === $this->originalValue()) {
-                        $updated++;
+                        $referencesUpdated++;
                         return $this->newValue();
                     }
 
@@ -106,7 +87,7 @@ class ResponsiveReferenceUpdater extends DataReferenceUpdater
             return $value;
         });
 
-        if ($updated === 0) {
+        if ($referencesUpdated === 0) {
             return;
         }
 
@@ -115,24 +96,5 @@ class ResponsiveReferenceUpdater extends DataReferenceUpdater
         $this->item->data($data);
 
         $this->updated = true;
-    }
-
-    /**
-     * Get configured assets field container, or implied asset container if only one exists.
-     *
-     * @param  \Statamic\Fields\Field  $field
-     * @return string
-     */
-    protected function getConfiguredAssetsFieldContainer($field)
-    {
-        if ($container = $field->get('container')) {
-            return $container;
-        }
-
-        $containers = AssetContainer::all();
-
-        return $containers->count() === 1
-            ? $containers->first()->handle()
-            : null;
     }
 }
