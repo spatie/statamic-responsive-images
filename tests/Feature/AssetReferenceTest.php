@@ -3,13 +3,10 @@
 namespace Spatie\ResponsiveImages\Tests\Feature;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
-use Spatie\ResponsiveImages\Responsive;
 use Spatie\ResponsiveImages\Tests\TestCase;
 use Statamic\Facades;
 use Statamic\Facades\Stache;
 use Statamic\Support\Arr;
-use Statamic\Tags\Parameters;
 
 class AssetReferenceTest extends TestCase
 {
@@ -20,7 +17,7 @@ class AssetReferenceTest extends TestCase
         'type' => 'responsive',
         'container' => 'test_container',
         'max_files' => 1,
-        'use_breakpoints' => false,
+        'use_breakpoints' => true,
         'allow_ratio' => false,
         'allow_fit' => true,
         'restrict' => false,
@@ -37,10 +34,6 @@ class AssetReferenceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        Storage::disk('test')->delete('*');
-        Storage::disk('test')->makeDirectory('/folder1');
-        Storage::disk('test')->makeDirectory('/folder2');
 
         $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
         $path = ltrim('/'.$file->getClientOriginalName(), '/');
@@ -82,46 +75,6 @@ class AssetReferenceTest extends TestCase
 
         // Create entry in the collection
         return tap(Facades\Entry::make()->collection($collection)->data($entryData))->save();
-    }
-
-    /** @test * */
-    public function it_can_move_an_image()
-    {
-        $this->asset->move('folder1');
-
-        $responsive = new Responsive($this->asset, new Parameters());
-
-        $this->assertEquals($this->asset->id(), $responsive->asset->id());
-    }
-    
-    /** @test * */
-    public function it_can_rename_an_image()
-    {   
-        $this->asset->rename('test1.jpg');
-
-        $responsive = new Responsive($this->asset, new Parameters());
-
-        $this->assertEquals($this->asset->id(), $responsive->asset->id());
-    }
-    
-    /** @test * */
-    public function it_can_move_a_folder()
-    {
-        $this->assetContainer->assetFolder('folder1')->move('folder2');
-
-        $responsive = new Responsive($this->asset, new Parameters());
-
-        $this->assertEquals($this->asset->id(), $responsive->asset->id());
-    }
-    
-    /** @test * */
-    public function it_can_rename_a_folder()
-    {
-        $this->assetContainer->assetFolder('folder1')->rename('folder3');
-
-        $responsive = new Responsive($this->asset, new Parameters());
-
-        $this->assertEquals($this->asset->id(), $responsive->asset->id());
     }
 
     /** @test */
