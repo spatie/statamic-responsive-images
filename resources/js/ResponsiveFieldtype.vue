@@ -5,6 +5,7 @@
         :values="value"
         :meta="meta"
         :errors="errors"
+        :trackDirtyState="false"
         @updated="updated($event)"
     >
       <div slot-scope="{ setFieldValue, setFieldMeta }">
@@ -23,7 +24,6 @@
 
 export default {
   mixins: [Fieldtype],
-
   computed: {
     fields() {
       return _.chain(this.meta.fields)
@@ -57,7 +57,6 @@ export default {
   methods: {
     updated(data) {
       const value = Object.assign({}, data);
-      this.value = value;
       this.update(value);
     },
   },
