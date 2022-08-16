@@ -24,6 +24,7 @@
 
 export default {
   mixins: [Fieldtype],
+
   computed: {
     fields() {
       return _.chain(this.meta.fields)
