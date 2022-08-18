@@ -40,9 +40,10 @@ class ServiceProvider extends AddonServiceProvider
         AssetUploaded::class => [
             GenerateResponsiveVersions::class,
         ],
-        AssetSaved::class => [
-            UpdateResponsiveReferences::class,
-        ],
+    ];
+
+    protected $subscribe = [
+        UpdateResponsiveReferences::class,
     ];
 
     protected $commands = [

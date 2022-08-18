@@ -189,4 +189,49 @@ class AssetReferenceTest extends TestCase
             Arr::get($entry->fresh()->get('test_replicator_field'), '0.responsive_test_replicator.src.0')
         );
     }
+
+    /** @test */
+    public function asset_reference_gets_removed_after_asset_deletion()
+    {
+        $entry = $this->createDummyCollectionEntry($this->entryBlueprintWithSingleResponsiveField, [
+            'avatar' => [
+                'src' => 'test_container::test.jpg',
+                'md:src' => 'test_container::test.jpg',
+                'ratio' => '16/9',
+                'md:ratio' => '16/9',
+                'lg:src' => [
+                    'test_container::test.jpg'
+                ],
+            ],
+        ]);
+
+        $this->assertEquals('test_container::test.jpg', Arr::get($entry->get('avatar'), 'src'));
+
+        $this->asset->delete();
+
+        $this->assertArrayNotHasKey('src', $entry->fresh()->data()->get('avatar'));
+        $this->assertArrayNotHasKey('md:src', $entry->fresh()->data()->get('avatar'));
+        $this->assertEmpty(Arr::get($entry->fresh()->data()->get('avatar'), 'lg:src'));
+        $this->assertEquals('16/9', Arr::get($entry->fresh()->data()->get('avatar'), 'ratio'));
+    }
+
+    /** @test */
+    public function asset_reference_stays_unchanged_after_asset_deletion_when_reference_updating_is_off()
+    {
+        config()->set('statamic.system.update_references', false);
+        // Set up environment again because listeners in UpdateResponsiveReferences@subscribe depend on config value
+        $this->setUp();
+
+        $entry = $this->createDummyCollectionEntry($this->entryBlueprintWithSingleResponsiveField, [
+            'avatar' => [
+                'src' => 'test_container::test.jpg',
+            ],
+        ]);
+
+        $this->assertEquals('test_container::test.jpg', Arr::get($entry->get('avatar'), 'src'));
+
+        $this->asset->delete();
+
+        $this->assertEquals('test_container::test.jpg', Arr::get($entry->fresh()->get('avatar'), 'src'));
+    }
 }

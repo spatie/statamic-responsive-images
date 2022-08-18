@@ -66,7 +66,13 @@ class ResponsiveReferenceUpdater extends AssetReferenceUpdater
             }
 
             // In content files, the src value can be either string or array.
-            // We first handle the string value, and then handle the array value.
+            // First handle the string value, and then handle the array value.
+            // Handle asset deletion, return null now for filtering later.
+            if ($value === $this->originalValue() && $this->isRemovingValue()) {
+                $referencesUpdated++;
+                return null;
+            }
+
             if (is_string($value) && $value === $this->originalValue()) {
                 $referencesUpdated++;
                 return $this->newValue();
@@ -74,7 +80,13 @@ class ResponsiveReferenceUpdater extends AssetReferenceUpdater
 
             // Handle array value.
             if (is_array($value) && in_array($this->originalValue(), $value)) {
-                return array_map(function ($item) use (&$referencesUpdated) {
+                $transformedFieldDataArray = array_map(function ($item) use (&$referencesUpdated) {
+                    // Handle asset deletion, return null now for filtering.
+                    if ($item === $this->originalValue() && $this->isRemovingValue()) {
+                        $referencesUpdated++;
+                        return null;
+                    }
+
                     if ($item === $this->originalValue()) {
                         $referencesUpdated++;
                         return $this->newValue();
@@ -82,10 +94,14 @@ class ResponsiveReferenceUpdater extends AssetReferenceUpdater
 
                     return $item;
                 }, $value);
+
+                return array_filter($transformedFieldDataArray, fn($item) => $item !== null);
             }
 
             return $value;
         });
+
+        $fieldData = $fieldData->filter(fn($item) => $item !== null);
 
         if ($referencesUpdated === 0) {
             return;
