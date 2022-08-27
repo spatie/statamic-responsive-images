@@ -2,6 +2,19 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.13.1 - 2022-08-27
+
+### What's Changed
+
+- Prevent float to int conversion warning by @kevinmeijer97 in https://github.com/spatie/statamic-responsive-images/pull/151
+- Fix fieldtype Vue component issues by @ncla in https://github.com/spatie/statamic-responsive-images/pull/156
+
+### New Contributors
+
+- @kevinmeijer97 made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/151
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.13.0...v2.13.1
+
 ## v2.13.0 - 2022-07-20
 
 ### What's Changed
