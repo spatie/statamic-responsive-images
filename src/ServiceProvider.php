@@ -14,7 +14,6 @@ use Spatie\ResponsiveImages\Listeners\GenerateResponsiveVersions;
 use Spatie\ResponsiveImages\Listeners\UpdateResponsiveReferences;
 use Spatie\ResponsiveImages\Tags\ResponsiveTag;
 use Statamic\Events\AssetUploaded;
-use Statamic\Events\AssetSaved;
 use Statamic\Facades\GraphQL;
 use Statamic\Providers\AddonServiceProvider;
 

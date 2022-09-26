@@ -43,7 +43,7 @@ class ResponsiveReferenceUpdater extends AssetReferenceUpdater
 
     /**
      * Update responsive value on item.
-     * 
+     *
      * @see AssetReferenceUpdater::updateArrayValue()
      * @param  \Statamic\Fields\Field  $field
      * @param  null|string  $dottedPrefix
@@ -61,7 +61,7 @@ class ResponsiveReferenceUpdater extends AssetReferenceUpdater
         $referencesUpdated = 0;
 
         $fieldData->transform(function ($value, $key) use (&$referencesUpdated) {
-            if (!str_ends_with($key, 'src')) {
+            if (! str_ends_with($key, 'src')) {
                 return $value;
             }
 
@@ -70,11 +70,13 @@ class ResponsiveReferenceUpdater extends AssetReferenceUpdater
             // Handle asset deletion, return null now for filtering later.
             if ($value === $this->originalValue() && $this->isRemovingValue()) {
                 $referencesUpdated++;
+
                 return null;
             }
 
             if (is_string($value) && $value === $this->originalValue()) {
                 $referencesUpdated++;
+
                 return $this->newValue();
             }
 
@@ -84,24 +86,26 @@ class ResponsiveReferenceUpdater extends AssetReferenceUpdater
                     // Handle asset deletion, return null now for filtering.
                     if ($item === $this->originalValue() && $this->isRemovingValue()) {
                         $referencesUpdated++;
+
                         return null;
                     }
 
                     if ($item === $this->originalValue()) {
                         $referencesUpdated++;
+
                         return $this->newValue();
                     }
 
                     return $item;
                 }, $value);
 
-                return array_filter($transformedFieldDataArray, fn($item) => $item !== null);
+                return array_filter($transformedFieldDataArray, fn ($item) => $item !== null);
             }
 
             return $value;
         });
 
-        $fieldData = $fieldData->filter(fn($item) => $item !== null);
+        $fieldData = $fieldData->filter(fn ($item) => $item !== null);
 
         if ($referencesUpdated === 0) {
             return;

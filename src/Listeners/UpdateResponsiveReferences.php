@@ -67,7 +67,7 @@ class UpdateResponsiveReferences implements ShouldQueue
      */
     protected function replaceReferences($container, $originalPath, $newPath)
     {
-        if (!$originalPath || $originalPath === $newPath) {
+        if (! $originalPath || $originalPath === $newPath) {
             return;
         }
 
