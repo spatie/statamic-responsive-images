@@ -2,6 +2,19 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.14.0 - 2022-09-26
+
+### What's Changed
+
+- Add asset reference updating for Repsonsive fieldtype by @stuartcusackie @ncla in https://github.com/spatie/statamic-responsive-images/pull/149
+- Fix required validation for default breakpoint by @ncla in https://github.com/spatie/statamic-responsive-images/pull/164
+
+### New Contributors
+
+- @stuartcusackie made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/149
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.13.1...v2.14.0
+
 ## v2.13.1 - 2022-08-27
 
 ### What's Changed
