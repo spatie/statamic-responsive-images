@@ -42,7 +42,7 @@ class ResponsiveReferenceUpdater extends AssetReferenceUpdater
     }
 
     /**
-     * Update responsive value on item
+     * Update responsive value on item.
      * 
      * @see AssetReferenceUpdater::updateArrayValue()
      * @param  \Statamic\Fields\Field  $field
