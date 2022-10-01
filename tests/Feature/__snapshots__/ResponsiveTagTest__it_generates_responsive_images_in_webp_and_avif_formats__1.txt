@@ -31,7 +31,7 @@
              sizes="1px"         >
     
     <img
-        avif="1"
+        
         src="/test/test.jpg"
                 alt="test.jpg"
                  width="340"          height="280"                 data-statamic-responsive-images
