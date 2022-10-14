@@ -178,7 +178,7 @@ class ResponsiveFieldtype extends Fieldtype
         }
 
         return Arr::removeNullValues(
-            $this->getFieldsWithValues($data)->preProcess()->values()->all()
+            $this->getFieldsWithValues($data)->process()->values()->all()
         );
     }
 
