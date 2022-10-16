@@ -2,7 +2,6 @@
 
 namespace Spatie\ResponsiveImages;
 
-use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
@@ -256,6 +255,10 @@ class Breakpoint implements Arrayable
                 'w' => 32,
                 'h' => round(32 / $this->ratio),
                 'blur' => 5,
+                // Arbitrary parameter to change md5 hash for Glide manipulation cache key
+                // to force Glide to generate new manipulated image if cache setting changes.
+                // TODO: Remove this issue is resolved in statamic/cms package
+                'cache' => Config::get('statamic.assets.image_manipulation.cache', false)
             ]);
 
             /**
