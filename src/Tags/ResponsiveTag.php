@@ -98,7 +98,7 @@ class ResponsiveTag extends Tags
                 return "{$breakpoint}:";
             })->toArray();
 
-        $attributesToExclude = ['src', 'placeholder', 'webp', 'ratio', 'glide:', 'default:', 'quality:'];
+        $attributesToExclude = ['src', 'placeholder', 'webp', 'avif', 'ratio', 'glide:', 'default:', 'quality:'];
 
         return collect($this->params)
             ->reject(function ($value, $name) use ($breakpointPrefixes, $attributesToExclude) {
