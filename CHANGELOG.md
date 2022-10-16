@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.14.2 - 2022-10-16
+
+### What's Changed
+
+- Fix placeholder generation failing when changing `assets.image_manipulation.cache` value by @ncla in https://github.com/spatie/statamic-responsive-images/pull/174
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.14.1...v2.14.2
+
 ## v2.14.1 - 2022-10-16
 
 ### What's Changed
