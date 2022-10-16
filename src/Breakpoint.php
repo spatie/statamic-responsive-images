@@ -258,17 +258,13 @@ class Breakpoint implements Arrayable
                 'blur' => 5,
             ]);
 
-            try {
-                /**
-                 * Glide tag has undocumented method for generating data URL that we borrow from
-                 * @see \Statamic\Tags\Glide::generateGlideDataUrl
-                 */
-                $cache = GlideManager::cacheDisk();
-                $assetContentEncoded = base64_encode($cache->read($manipulationPath));
-                $base64Placeholder = 'data:'.$cache->mimeType($manipulationPath).';base64,'.$assetContentEncoded;
-            } catch (Exception $e) {
-                return '';
-            }
+            /**
+             * Glide tag has undocumented method for generating data URL that we borrow from
+             * @see \Statamic\Tags\Glide::generateGlideDataUrl
+             */
+            $cache = GlideManager::cacheDisk();
+            $assetContentEncoded = base64_encode($cache->read($manipulationPath));
+            $base64Placeholder = 'data:'.$cache->mimeType($manipulationPath).';base64,'.$assetContentEncoded;
 
             return view('responsive-images::placeholderSvg', [
                 'width' => 32,
