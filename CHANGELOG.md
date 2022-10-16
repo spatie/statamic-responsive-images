@@ -2,6 +2,15 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.14.1 - 2022-10-16
+
+### What's Changed
+
+- Fix `avif` attribute being output to `<img>` tag by @ncla in https://github.com/spatie/statamic-responsive-images/pull/170
+- Fix `src` saving as an array when it should be a string by @ncla in https://github.com/spatie/statamic-responsive-images/pull/173
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.14.0...v2.14.1
+
 ## v2.14.0 - 2022-09-26
 
 ### What's Changed
