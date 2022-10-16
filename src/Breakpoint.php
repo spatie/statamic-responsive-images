@@ -5,11 +5,10 @@ namespace Spatie\ResponsiveImages;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
-use League\Flysystem\FileNotFoundException;
-use League\Glide\Server;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Statamic\Contracts\Assets\Asset;
 use Statamic\Facades\Blink;
+use Statamic\Facades\Glide as GlideManager;
 use Statamic\Imaging\ImageGenerator;
 use Statamic\Support\Str;
 
@@ -251,25 +250,24 @@ class Breakpoint implements Arrayable
     {
         return Blink::once("placeholder-{$this->asset->id()}-{$this->ratio}", function () {
             $imageGenerator = app(ImageGenerator::class);
-            $server = app(Server::class);
 
-            $path = $imageGenerator->generateByAsset($this->asset, [
+            $manipulationPath = $imageGenerator->generateByAsset($this->asset, [
                 'w' => 32,
                 'h' => round(32 / $this->ratio),
                 'blur' => 5,
+                // Arbitrary parameter to change md5 hash for Glide manipulation cache key
+                // to force Glide to generate new manipulated image if cache setting changes.
+                // TODO: Remove this line once the issue has been resolved in statamic/cms package
+                'cache' => Config::get('statamic.assets.image_manipulation.cache', false),
             ]);
 
-            try {
-                $source = base64_encode($server->getCache()->read($path));
-                $cache = $server->getCache();
-                $mimetype = method_exists($cache, 'getMimetype')
-                    ? $cache->getMimetype($path)
-                    : $cache->mimeType($path);
-
-                $base64Placeholder = "data:{$mimetype};base64,{$source}";
-            } catch (FileNotFoundException $e) {
-                return '';
-            }
+            /**
+             * Glide tag has undocumented method for generating data URL that we borrow from
+             * @see \Statamic\Tags\Glide::generateGlideDataUrl
+             */
+            $cache = GlideManager::cacheDisk();
+            $assetContentEncoded = base64_encode($cache->read($manipulationPath));
+            $base64Placeholder = 'data:'.$cache->mimeType($manipulationPath).';base64,'.$assetContentEncoded;
 
             return view('responsive-images::placeholderSvg', [
                 'width' => 32,
