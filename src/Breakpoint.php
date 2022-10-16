@@ -257,7 +257,7 @@ class Breakpoint implements Arrayable
                 'blur' => 5,
                 // Arbitrary parameter to change md5 hash for Glide manipulation cache key
                 // to force Glide to generate new manipulated image if cache setting changes.
-                // TODO: Remove this once the issue has been resolved in statamic/cms package
+                // TODO: Remove this line once the issue has been resolved in statamic/cms package
                 'cache' => Config::get('statamic.assets.image_manipulation.cache', false)
             ]);
 
