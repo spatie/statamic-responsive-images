@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.14.3 - 2022-11-02
+
+### What's Changed
+
+- Control panel JS assets have been compiled for distribution with missing fixes from #156
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.14.2...v2.14.3
+
 ## v2.14.2 - 2022-10-16
 
 ### What's Changed
