@@ -85,8 +85,8 @@ class ResponsiveTag extends Tags
             'placeholder' => $sources->last()['placeholder'],
             'src' => $src,
             'sources' => $sources,
-            'width' => $width,
-            'height' => $height,
+            'width' => round($width),
+            'height' => round($height),
             'asset' => $responsive->asset->toAugmentedArray(),
         ])->render();
     }

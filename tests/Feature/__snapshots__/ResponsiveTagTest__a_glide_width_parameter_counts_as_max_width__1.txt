@@ -30,6 +30,6 @@
         
         src="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=50&amp;h=41.176470588235"
                 alt="test.jpg"
-                 width="50"          height="41.176470588235"                 data-statamic-responsive-images
+                 width="50"          height="41"                 data-statamic-responsive-images
             >
 </picture>
