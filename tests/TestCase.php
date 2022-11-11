@@ -37,7 +37,7 @@ class TestCase extends OrchestraTestCase
 
         config(['filesystems.disks.test' => [
             'driver' => 'local',
-            'root' => __DIR__.'/tmp',
+            'root' => __DIR__ . '/tmp',
             'url' => '/test',
         ]]);
 
@@ -124,7 +124,7 @@ class TestCase extends OrchestraTestCase
     protected function setUpTempTestFiles()
     {
         $this->initializeDirectory($this->getTestFilesDirectory());
-        File::copyDirectory(__DIR__.'/TestSupport/testfiles', $this->getTestFilesDirectory());
+        File::copyDirectory(__DIR__ . '/TestSupport/testfiles', $this->getTestFilesDirectory());
     }
 
     protected function initializeDirectory($directory)
@@ -138,12 +138,12 @@ class TestCase extends OrchestraTestCase
 
     public function getTempDirectory($suffix = ''): string
     {
-        return __DIR__.'/TestSupport/temp'.($suffix == '' ? '' : '/'.$suffix);
+        return __DIR__ . '/TestSupport/temp' . ($suffix == '' ? '' : '/' . $suffix);
     }
 
     public function getTestFilesDirectory($suffix = ''): string
     {
-        return $this->getTempDirectory().'/testfiles'.($suffix == '' ? '' : '/'.$suffix);
+        return $this->getTempDirectory() . '/testfiles' . ($suffix == '' ? '' : '/' . $suffix);
     }
 
     public function getTestJpg(): string
