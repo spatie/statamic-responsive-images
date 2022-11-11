@@ -1,0 +1,11 @@
+{
+    "data": {
+        "asset": {
+            "responsive": [
+                {
+                    "srcSetAvif": "\/img\/asset\/dGVzdF9jb250YWluZXIvZ3JhcGhxbC5qcGc=?fm=avif&q=45&fit=crop-50-50&w=237&h=195.17647058824 237w, \/img\/asset\/dGVzdF9jb250YWluZXIvZ3JhcGhxbC5qcGc=?fm=avif&q=45&fit=crop-50-50&w=284&h=233.88235294118 284w, \/img\/asset\/dGVzdF9jb250YWluZXIvZ3JhcGhxbC5qcGc=?fm=avif&q=45&fit=crop-50-50&w=340&h=280 340w"
+                }
+            ]
+        }
+    }
+}

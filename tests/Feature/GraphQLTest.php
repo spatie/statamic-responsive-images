@@ -1,68 +1,51 @@
 <?php
 
-namespace Spatie\ResponsiveImages\Tests\Feature;
-
 use Illuminate\Http\UploadedFile;
-use Spatie\ResponsiveImages\Tests\TestCase;
-use Spatie\Snapshots\MatchesSnapshots;
-use Statamic\Assets\Asset;
 
-class GraphQLTest extends TestCase
+use function Spatie\Snapshots\assertMatchesJsonSnapshot;
+
+function assertMatchesJsonSnapshotWithoutSvg($value)
 {
-    use MatchesSnapshots;
+    $value = preg_replace('/data:image(.*?) 32w, /', '', $value);
+    assertMatchesJsonSnapshot($value);
+}
 
-    private Asset $asset;
+beforeEach(function () {
+    $file = new UploadedFile($this->getTestJpg(), 'graphql.jpg');
+    $path = ltrim('/' . $file->getClientOriginalName(), '/');
+    $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+test('graphql asset outputs avif srcset when enabled through config', function () {
+    config()->set('statamic.responsive-images.avif', true);
 
-        $file = new UploadedFile($this->getTestJpg(), 'graphql.jpg');
-        $path = ltrim('/'.$file->getClientOriginalName(), '/');
-        $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
-    }
-
-    private function assertMatchesJsonSnapshotWithoutSvg($value)
-    {
-        $value = preg_replace('/data:image(.*?) 32w, /', '', $value);
-        $this->assertMatchesJsonSnapshot($value);
-    }
-
-    /** @test */
-    public function graphql_asset_outputs_avif_srcset_when_enabled_through_config()
-    {
-        config()->set('statamic.responsive-images.avif', true);
-
-        $query = '
+    $query = '
             {
                 asset(id: "test_container::graphql.jpg") {
                     responsive {
-                      	srcSetAvif
+                        srcSetAvif
                     }
                 }
             }
         ';
 
-        $response = $this->post('/graphql/', ['query' => $query]);
-        $this->assertMatchesJsonSnapshotWithoutSvg($response->getContent());
-    }
+    $response = $this->post('/graphql/', ['query' => $query]);
+    assertMatchesJsonSnapshotWithoutSvg($response->getContent());
+});
 
-    /** @test */
-    public function graphql_asset_outputs_avif_srcset_when_enabled_through_arguments()
-    {
-        config()->set('statamic.responsive-images.avif', false);
+test('graphql asset outs avif srcset when enabled through arguments', function () {
+    config()->set('statamic.responsive-images.avif', false);
 
-        $query = '
+    $query = '
             {
                 asset(id: "test_container::graphql.jpg") {
                     responsive(avif: true) {
-                      	srcSetAvif
+                        srcSetAvif
                     }
                 }
             }
         ';
 
-        $response = $this->post('/graphql/', ['query' => $query]);
-        $this->assertMatchesJsonSnapshotWithoutSvg($response->getContent());
-    }
-}
+    $response = $this->post('/graphql/', ['query' => $query]);
+    assertMatchesJsonSnapshotWithoutSvg($response->getContent());
+});
