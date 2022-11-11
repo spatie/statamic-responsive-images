@@ -14,167 +14,133 @@ use Statamic\Facades\Stache;
 use Statamic\Facades\YAML;
 use Statamic\Facades\Blink;
 
-class BreakpointTest extends TestCase
-{
-    /** @var \Statamic\Assets\Asset */
-    private $asset;
+beforeEach(function () {
+    Storage::disk('test')->delete('*');
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
+    $path = ltrim('/' . $file->getClientOriginalName(), '/');
+    $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
+    Stache::clear();
+});
 
-        Storage::disk('test')->delete('*');
+it('can build an image', function () {
+    $responsive = new Breakpoint($this->asset, 'default', 0, []);
 
-        $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
-        $path = ltrim('/'.$file->getClientOriginalName(), '/');
-        $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
-        Stache::clear();
-    }
+    expect(
+        $responsive->buildImageJob(100)->handle()
+    )->toContain('?q=90&fit=crop-50-50&w=100');
+});
 
-    /** @test * */
-    public function it_can_build_an_image()
-    {
-        $responsive = new Breakpoint($this->asset, 'default', 0, []);
+it('can build an image with parameters', function () {
+    $responsive = new Breakpoint($this->asset, 'default', 0, []);
 
-        $this->assertStringContainsString(
-            '?q=90&fit=crop-50-50&w=100',
-            $responsive->buildImageJob(100)->handle()
-        );
-    }
+    expect(
+        $responsive->buildImageJob(100, 'webp')->handle()
+    )->toContain('?fm=webp&q=90&fit=crop-50-50&w=100');
+});
 
-    /** @test * */
-    public function it_can_build_an_image_with_parameters()
-    {
-        $responsive = new Breakpoint($this->asset, 'default', 0, []);
+it('can build an image with a ration', function () {
+    $responsive = new Breakpoint($this->asset, 'default', 0, []);
 
-        $this->assertStringContainsString(
-            '?fm=webp&q=90&fit=crop-50-50&w=100',
-            $responsive->buildImageJob(100, 'webp')->handle()
-        );
-    }
+    expect(
+        $responsive->buildImageJob(100, 'webp', 1.0)->handle()
+    )->toContain('?fm=webp&q=90&fit=crop-50-50&w=100&h=100');
+});
 
-    /** @test * */
-    public function it_can_build_an_image_with_a_ratio()
-    {
-        $responsive = new Breakpoint($this->asset, 'default', 0, []);
+it("doesn't crash with a `null` ration", function () {
 
-        $this->assertStringContainsString(
-            '?fm=webp&q=90&fit=crop-50-50&w=100&h=100',
-            $responsive->buildImageJob(100, 'webp', 1.0)->handle()
-        );
-    }
+    $breakpoint = new Breakpoint($this->asset, 'default', 0, [
+        'ratio' => null,
+    ]);
 
-    /** @test * */
-    public function it_doesnt_crash_with_a_null_ratio()
-    {
-        $this->expectNotToPerformAssertions();
+    $breakpoint->getSrcSet();
+})->expectNotToPerformAssertions();
 
-        $breakpoint = new Breakpoint($this->asset, 'default', 0, [
-            'ratio' => null,
-        ]);
+it('does not generate image url with crop focus when auto crop is disabled', function () {
+    config()->set('statamic.assets.auto_crop', false);
 
-        $breakpoint->getSrcSet();
-    }
+    $breakpoint = new Breakpoint($this->asset, 'default', 0, []);
 
-    /** @test * */
-    public function it_does_not_generate_image_url_with_crop_focus_when_auto_crop_is_disabled()
-    {
-        config()->set('statamic.assets.auto_crop', false);
+    expect(
+        $breakpoint->buildImageJob(100, 'webp', 1.0)->handle()
+    )->toContain('?fm=webp&q=90&w=100&h=100',);
+});
 
-        $breakpoint = new Breakpoint($this->asset, 'default', 0, []);
+it('does not generate image url with crop focus when a `glide:fit` param is provided', function () {
+    $breakpoint = new Breakpoint($this->asset, 'default', 0, ['glide:fit' => 'fill']);
 
-        $this->assertStringEndsWith(
-            '?fm=webp&q=90&w=100&h=100',
-            $breakpoint->buildImageJob(100, 'webp', 1.0)->handle()
-        );
-    }
+    expect(
+        $breakpoint->buildImageJob(100, 'webp', 1.0)->handle()
+    )->toContain('?fit=fill&fm=webp&q=90&w=100&h=100');
+});
 
-    /** @test * */
-    public function it_does_not_generate_image_url_with_crop_focus_when_a_glide_fit_param_is_provided()
-    {
-        $breakpoint = new Breakpoint($this->asset, 'default', 0, ['glide:fit' => 'fill']);
+it('uses crop focus value from assets metadata', function () {
+    $metaDataPath = $this->asset->metaPath();
 
-        $this->assertStringEndsWith(
-            '?fit=fill&fm=webp&q=90&w=100&h=100',
-            $breakpoint->buildImageJob(100, 'webp', 1.0)->handle()
-        );
-    }
+    // Get original metadata that was generated when the asset was uploaded
+    $metaData = YAML::file(
+        Storage::disk('test')->path($metaDataPath)
+    )->parse();
 
-    /** @test * */
-    public function it_uses_crop_focus_value_from_assets_metadata()
-    {
-        $metaDataPath = $this->asset->metaPath();
+    // Set some focus value
+    $metaData['data'] = [
+        'focus' => '29-71-3.6'
+    ];
 
-        // Get original metadata that was generated when the asset was uploaded
-        $metaData = YAML::file(
-            Storage::disk('test')->path($metaDataPath)
-        )->parse();
+    // Dump the YAML data back into the metadata yaml file
+    Storage::disk('test')->put($metaDataPath, YAML::dump($metaData));
 
-        // Set some focus value
-        $metaData['data'] = [
-            'focus' => '29-71-3.6'
-        ];
+    // Flush the cache so Statamic is not using outdated metadata
+    Cache::flush();
 
-        // Dump the YAML data back into the metadata yaml file
-        Storage::disk('test')->put($metaDataPath, YAML::dump($metaData));
+    // Fetch the asset from the container again, triggering metadata hydration
+    $asset = $this->assetContainer->asset('test.jpg');
 
-        // Flush the cache so Statamic is not using outdated metadata
-        Cache::flush();
+    $breakpoint = new Breakpoint($asset, 'default', 0, []);
 
-        // Fetch the asset from the container again, triggering metadata hydration
-        $asset = $this->assetContainer->asset('test.jpg');
+    expect(
+        $breakpoint->buildImageJob(100)->handle()
+    )->toContain('?q=90&fit=crop-29-71-3.6&w=100');
+});
 
-        $breakpoint = new Breakpoint($asset, 'default', 0, []);
+it('generates placeholder data url when toggling cache form on to off', function () {
+    /**
+     * Clear regular cache and both Glide path cache storages
+     * @see: https://statamic.dev/image-manipulation#path-cache-store
+     */
+    Config::set('statamic.assets.image_manipulation.cache', false);
+    $this->artisan(GlideClear::class);
+    Config::set('statamic.assets.image_manipulation.cache', true);
+    $this->artisan(GlideClear::class);
 
-        $this->assertStringEndsWith(
-            '?q=90&fit=crop-29-71-3.6&w=100',
-            $breakpoint->buildImageJob(100 )->handle()
-        );
-    }
+    // Glide server has already initialized in service container, we clear it so the cache config value gets read.
+    App::forgetInstance(\League\Glide\Server::class);
+
+    $cacheDiskPathBefore = \Statamic\Facades\Glide::cacheDisk()->getConfig()['root'];
+
+    // Generate placeholder
+    $responsive = new Breakpoint($this->asset, 'default', 0, []);
+    $firstPlaceholder = $responsive->placeholder();
 
     /**
-     * @test
+     * We use Blink cache for placeholder generation that we need to clear just in case
+     * @see https://statamic.dev/extending/blink-cache
+     * @see Breakpoint::placeholderSvg()
      */
-    public function it_generates_placeholder_data_url_when_toggling_cache_from_on_to_off()
-    {
-        /**
-         * Clear regular cache and both Glide path cache storages
-         * @see: https://statamic.dev/image-manipulation#path-cache-store
-         */
-        Config::set('statamic.assets.image_manipulation.cache', false);
-        $this->artisan(GlideClear::class);
-        Config::set('statamic.assets.image_manipulation.cache', true);
-        $this->artisan(GlideClear::class);
+    Blink::store()->flush();
 
-        // Glide server has already initialized in service container, we clear it so the cache config value gets read.
-        App::forgetInstance(\League\Glide\Server::class);
+    Config::set('statamic.assets.image_manipulation.cache', false);
 
-        $cacheDiskPathBefore = \Statamic\Facades\Glide::cacheDisk()->getConfig()['root'];
+    // Once again, because we are running in the same session, we need Glide server instance to be forgotten
+    // so that it uses different Filesystem that depends on the statamic.assets.image_manipulation.cache value
+    App::forgetInstance(\League\Glide\Server::class);
 
-        // Generate placeholder
-        $responsive = new Breakpoint($this->asset, 'default', 0, []);
-        $firstPlaceholder = $responsive->placeholder();
+    $cacheDiskPathAfter = \Statamic\Facades\Glide::cacheDisk()->getConfig()['root'];
 
-        /**
-         * We use Blink cache for placeholder generation that we need to clear just in case
-         * @see https://statamic.dev/extending/blink-cache
-         * @see Breakpoint::placeholderSvg()
-         */
-        Blink::store()->flush();
+    // Generate placeholder again
+    $responsive = new Breakpoint($this->asset, 'default', 0, []);
+    $secondPlaceholder = $responsive->placeholder();
 
-        Config::set('statamic.assets.image_manipulation.cache', false);
-
-        // Once again, because we are running in the same session, we need Glide server instance to be forgotten
-        // so that it uses different Filesystem that depends on the statamic.assets.image_manipulation.cache value
-        App::forgetInstance(\League\Glide\Server::class);
-
-        $cacheDiskPathAfter = \Statamic\Facades\Glide::cacheDisk()->getConfig()['root'];
-
-        // Generate placeholder again
-        $responsive = new Breakpoint($this->asset, 'default', 0, []);
-        $secondPlaceholder = $responsive->placeholder();
-
-        $this->assertEquals($firstPlaceholder, $secondPlaceholder);
-        $this->assertNotEquals($cacheDiskPathBefore, $cacheDiskPathAfter);
-    }
-}
+    expect($secondPlaceholder)->toEqual($firstPlaceholder)
+        ->and($cacheDiskPathAfter)->not->toEqual($cacheDiskPathBefore);
+});
