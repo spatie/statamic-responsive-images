@@ -1,7 +1,5 @@
 <?php
 
-namespace Spatie\ResponsiveImages\Tests\Feature;
-
 use Illuminate\Http\UploadedFile;
 use Statamic\Facades;
 use Statamic\Facades\Stache;

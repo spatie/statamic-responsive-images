@@ -1,15 +1,9 @@
 <?php
 
-namespace Spatie\ResponsiveImages\Tests\Feature;
-
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Cache;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Spatie\ResponsiveImages\Tags\ResponsiveTag;
-use Spatie\ResponsiveImages\Tests\TestCase;
-use Spatie\Snapshots\MatchesSnapshots;
-use Statamic\Facades\Asset;
 use Statamic\Facades\Stache;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;

@@ -1,7 +1,5 @@
 <?php
 
-namespace Spatie\ResponsiveImages\Tests\Feature;
-
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
 use Spatie\ResponsiveImages\Commands\GenerateResponsiveVersionsCommand;

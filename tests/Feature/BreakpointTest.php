@@ -1,13 +1,10 @@
 <?php
 
-namespace Spatie\ResponsiveImages\Tests\Feature;
-
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
-use Spatie\ResponsiveImages\Tests\TestCase;
 use Spatie\ResponsiveImages\Breakpoint;
 use Statamic\Console\Commands\GlideClear;
 use Statamic\Facades\Stache;
