@@ -17,7 +17,6 @@ use Statamic\Statamic;
 class TestCase extends OrchestraTestCase
 {
     use DatabaseMigrations;
-    use WithFaker;
 
     /** @var \Statamic\Assets\AssetContainer */
     protected $assetContainer;
@@ -28,8 +27,6 @@ class TestCase extends OrchestraTestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->faker = $this->makeFaker();
 
         $this->setUpTempTestFiles();
 
