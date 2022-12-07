@@ -132,7 +132,7 @@ it('can generate a set of breakpoints for an asset', function () {
     ]);
 });
 
-it('can parse a basic function', function () {
+it('can parse a basic fraction', function () {
     $responsive = new Responsive($this->asset, new Parameters([
         'ratio' => 1,
         'lg:ratio' => '1 / 2',
@@ -146,7 +146,7 @@ it('can parse a basic function', function () {
     ]);
 });
 
-it("uses the default asset ration if a default isn't provided", function () {
+it("uses the default asset ratio if a default isn't provided", function () {
     $responsive = new Responsive($this->asset, new Parameters([
         'lg:ratio' => 1.5,
     ]));
@@ -192,13 +192,13 @@ it('can retrieve the default breakpoint', function () {
     ]);
 });
 
-it('can retrieve the height of an image for a ration', function () {
+it('can retrieve the height of an image for a ratio', function () {
     $responsive = new Responsive($this->asset, new Parameters());
 
     expect($responsive->assetHeight())->toEqual(280.0);
 });
 
-it('can retrieve the height of an image for a breakpoint ration', function () {
+it('can retrieve the height of an image for a breakpoint ratio', function () {
     $responsive = new Responsive($this->asset, new Parameters([
         'lg:ratio' => 2 / 1,
     ]));

@@ -33,7 +33,7 @@ test('graphql asset outputs avif srcset when enabled through config', function (
     assertMatchesJsonSnapshotWithoutSvg($response->getContent());
 });
 
-test('graphql asset outs avif srcset when enabled through arguments', function () {
+test('graphql asset outputs avif srcset when enabled through arguments', function () {
     config()->set('statamic.responsive-images.avif', false);
 
     $query = '

@@ -36,7 +36,7 @@ it('can build an image with parameters', function () {
     )->toContain('?fm=webp&q=90&fit=crop-50-50&w=100');
 });
 
-it('can build an image with a ration', function () {
+it('can build an image with a ratio', function () {
     $responsive = new Breakpoint($this->asset, 'default', 0, []);
 
     expect(
@@ -44,7 +44,7 @@ it('can build an image with a ration', function () {
     )->toContain('?fm=webp&q=90&fit=crop-50-50&w=100&h=100');
 });
 
-it("doesn't crash with a `null` ration", function () {
+it("doesn't crash with a `null` ratio", function () {
 
     $breakpoint = new Breakpoint($this->asset, 'default', 0, [
         'ratio' => null,

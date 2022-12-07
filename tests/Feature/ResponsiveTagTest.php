@@ -47,7 +47,7 @@ it('generates no conversions for svgs')
 it('generates no conversions for gifs')
     ->tap(fn () => assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->gifAsset)));
 
-it("returns an emprt string if the asset isn't found")
+it("returns an empty string if the asset isn't found")
     ->expect(fn () => ResponsiveTag::render('doesnt-exist'))
     ->toEqual('');
 
@@ -57,7 +57,7 @@ it('generates responsive images with parameters', function () {
     ]));
 });
 
-it('generates responsive images with breaking parameters', function () {
+it('generates responsive images with breakpoint parameters', function () {
     assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
         'ratio' => 1,
         'lg:ratio' => 1.5,
@@ -78,7 +78,7 @@ test('the source image can change with breakpoints', function () {
     ]));
 });
 
-it('generates responsive images with breaking points without webp', function () {
+it('generates responsive images with breakpoints without webp', function () {
     assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
         'webp' => false,
         'lg:ratio' => 1,
@@ -118,7 +118,7 @@ test('a glide width parameter counts as max width', function () {
     ]));
 });
 
-it('generates responsive images in webp and avig formats', function () {
+it('generates responsive images in webp and avif formats', function () {
     assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
         'webp' => true,
         'avif' => true

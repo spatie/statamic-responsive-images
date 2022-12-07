@@ -76,7 +76,7 @@ test('asset string reference gets updated after asset rename', function () {
     expect(Arr::get($entry->fresh()->get('avatar'), 'src'))->toEqual('test_container::new-test2.jpg');
 });
 
-test('asset array reference gets updated after asset resume', function () {
+test('asset array reference gets updated after asset rename', function () {
     $startingAvatarData = [
         'src' => [
             'test_container::test.jpg'

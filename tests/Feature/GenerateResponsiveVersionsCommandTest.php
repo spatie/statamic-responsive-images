@@ -43,7 +43,7 @@ it('dispatches less jobs when webp is disabled', function () {
     Queue::assertPushed(GenerateGlideImageJob::class, 3);
 });
 
-it('dispatches more jobs when avis and webp is enabled', function () {
+it('dispatches more jobs when avif and webp is enabled', function () {
     Queue::fake();
     config()->set('statamic.assets.image_manipulation.cache', true);
     config()->set('statamic.responsive-images.webp', true);
