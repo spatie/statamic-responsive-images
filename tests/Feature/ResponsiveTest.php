@@ -1,263 +1,215 @@
 <?php
 
-namespace Spatie\ResponsiveImages\Tests\Feature;
-
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Spatie\ResponsiveImages\AssetNotFoundException;
 use Spatie\ResponsiveImages\Exceptions\InvalidAssetException;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Spatie\ResponsiveImages\Responsive;
-use Spatie\ResponsiveImages\Tests\TestCase;
-use Statamic\Assets\OrderedQueryBuilder;
 use Statamic\Facades\Asset;
 use Statamic\Facades\Stache;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
 use Statamic\Tags\Parameters;
 
-class ResponsiveTest extends TestCase
-{
-    /** @var \Statamic\Assets\Asset */
-    private $asset;
+beforeEach(function () {
+    $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
+    $path = ltrim('/' . $file->getClientOriginalName(), '/');
+    $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    Stache::clear();
+});
 
-        $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
-        $path = ltrim('/'.$file->getClientOriginalName(), '/');
-        $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
+it('can initialize using an asset', function () {
+    $responsive = new Responsive($this->asset, new Parameters());
 
-        Stache::clear();
-    }
+    expect($responsive->asset->id())->toEqual($this->asset->id());
+});
 
-    /** @test * */
-    public function it_can_initialize_using_an_asset()
-    {
-        $responsive = new Responsive($this->asset, new Parameters());
+it('throws on a zero width or height image', function () {
+    $file = new UploadedFile($this->getZeroWidthTestSvg(), 'zerowidthtest.svg');
+    $path = ltrim('/' . $file->getClientOriginalName(), '/');
+    $asset = $this->assetContainer->makeAsset($path)->upload($file);
 
-        $this->assertEquals($this->asset->id(), $responsive->asset->id());
-    }
+    new Responsive($asset, new Parameters());
+})->throws(InvalidAssetException::class);
 
-    /** @test * */
-    public function it_throws_on_a_zero_width_or_height_image()
-    {
-        $file = new UploadedFile($this->getZeroWidthTestSvg(), 'zerowidthtest.svg');
-        $path = ltrim('/'.$file->getClientOriginalName(), '/');
-        $asset = $this->assetContainer->makeAsset($path)->upload($file);
+it('can initialize using the assets path', function () {
+    $responsive = new Responsive($this->asset->resolvedPath(), new Parameters());
 
-        $this->expectException(InvalidAssetException::class);
+    expect($responsive->asset->id())->toEqual($this->asset->id());
+});
 
-        new Responsive($asset, new Parameters());
-    }
+it('can initialize using the assets url', function () {
+    $responsive = new Responsive($this->asset->url(), new Parameters());
 
-    /** @test * */
-    public function it_can_initialize_using_the_assets_path()
-    {
-        $responsive = new Responsive($this->asset->resolvedPath(), new Parameters());
+    expect($responsive->asset->id())->toEqual($this->asset->id());
+});
 
-        $this->assertEquals($this->asset->id(), $responsive->asset->id());
-    }
+it('can initialize using an argument asset', function () {
+    $responsive = new Responsive($this->asset->toAugmentedArray(), new Parameters());
 
-    /** @test * */
-    public function it_can_initialize_using_the_assets_url()
-    {
-        $responsive = new Responsive($this->asset->url(), new Parameters());
+    expect($responsive->asset->id())->toEqual($this->asset->id());
+});
 
-        $this->assertEquals($this->asset->id(), $responsive->asset->id());
-    }
+it('can initialize using a value', function () {
+    $value = new Value($this->asset);
 
-    /** @test * */
-    public function it_can_initialize_using_an_augmented_asset()
-    {
-        $responsive = new Responsive($this->asset->toAugmentedArray(), new Parameters());
+    $responsive = new Responsive($value, new Parameters());
 
-        $this->assertEquals($this->asset->id(), $responsive->asset->id());
-    }
+    expect($responsive->asset->id())->toEqual($this->asset->id());
+});
 
-    /** @test * */
-    public function it_can_initialize_using_a_value()
-    {
-        $value = new Value($this->asset);
+it('can initialize using a collection value', function () {
+    $value = new Value(new Collection([$this->asset]));
 
-        $responsive = new Responsive($value, new Parameters());
+    $responsive = new Responsive($value, new Parameters());
 
-        $this->assertEquals($this->asset->id(), $responsive->asset->id());
-    }
+    expect($responsive->asset->id())->toEqual($this->asset->id());
+});
 
-    /** @test * */
-    public function it_can_initialize_using_a_collection_value()
-    {
-        $value = new Value(new Collection([$this->asset]));
+it('can initialize using a query builder', function () {
+    $value = new Value(Asset::query()->where('container', $this->assetContainer->handle()));
 
-        $responsive = new Responsive($value, new Parameters());
+    $responsive = new Responsive($value, new Parameters());
 
-        $this->assertEquals($this->asset->id(), $responsive->asset->id());
-    }
+    expect($responsive->asset->id())->toEqual($this->asset->id());
+});
 
-    /** @test * */
-    public function it_can_initialize_using_a_query_builder()
-    {
-        $value = new Value(Asset::query()->where('container', $this->assetContainer->handle()));
+it('can initialize using a string value', function () {
+    $value = new Value($this->asset->resolvedPath(), 'url');
 
-        $responsive = new Responsive($value, new Parameters());
+    $responsive = new Responsive($value, new Parameters());
 
-        $this->assertEquals($this->asset->id(), $responsive->asset->id());
-    }
+    expect($responsive->asset->id())->toEqual($this->asset->id());
+});
 
-    /** @test */
-    public function it_can_initalize_using_a_string_value()
-    {
-        $value = new Value($this->asset->resolvedPath(), 'url');
+it('can initialize using a string url value', function () {
+    $value = new Value($this->asset->url(), 'url');
 
-        $responsive = new Responsive($value, new Parameters());
+    $responsive = new Responsive($value, new Parameters());
 
-        $this->assertEquals($this->asset->id(), $responsive->asset->id());
-    }
+    expect($responsive->asset->id())->toEqual($this->asset->id());
+});
 
-    /** @test */
-    public function it_can_initalize_using_a_string_url_value()
-    {
-        $value = new Value($this->asset->url(), 'url');
+it('can initialize using values from the fieldtype', function () {
+    $fieldtype = new ResponsiveFieldtype();
 
-        $responsive = new Responsive($value, new Parameters());
+    $field = new Field('image', [
+        'breakpoints' => [],
+        'use_breakpoints' => false,
+        'container' => $this->asset->containerHandle(),
+        'allow_uploads' => true,
+        'allow_ratio' => true,
+        'allow_fit' => true,
+    ]);
+    $fieldtype->setField($field);
 
-        $this->assertEquals($this->asset->id(), $responsive->asset->id());
-    }
+    $value = new Value([
+        'src' => $this->asset->path(),
+    ], 'image', $fieldtype);
 
-    /** @test * */
-    public function it_can_initialize_using_values_from_the_fieldtype()
-    {
-        $fieldtype = new ResponsiveFieldtype();
+    $responsive = new Responsive($value, new Parameters());
 
-        $field = new Field('image', [
-            'breakpoints' => [],
-            'use_breakpoints' => false,
-            'container' => $this->asset->containerHandle(),
-            'allow_uploads' => true,
-            'allow_ratio' => true,
-            'allow_fit' => true,
-        ]);
-        $fieldtype->setField($field);
+    expect($responsive->asset->id())->toEqual($this->asset->id());
+});
 
-        $value = new Value([
-            'src' => $this->asset->path(),
-        ], 'image', $fieldtype);
+it("throws if it can't find an asset", function () {
+    new Responsive('doesnt-exist', new Parameters());
+})->throws(AssetNotFoundException::class);
 
-        $responsive = new Responsive($value, new Parameters());
+it('can generate a set of breakpoints for an asset', function () {
+    $responsive = new Responsive($this->asset, new Parameters([
+        'ratio' => 1,
+        'lg:ratio' => 1.5,
+    ]));
 
-        $this->assertEquals($this->asset->id(), $responsive->asset->id());
-    }
+    expect(
+        $responsive->breakPoints()->toArray()
+    )->toEqual([
+        ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'unit' => 'px', 'media' => '(min-width: 1024px)', 'parameters' => ['ratio' => 1.5]],
+        ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'unit' => 'px', 'media' => '', 'parameters' => ['ratio' => 1]],
+    ]);
+});
 
-    /** @test * */
-    public function it_throws_if_it_cant_find_an_asset()
-    {
-        $this->expectException(AssetNotFoundException::class);
+it('can parse a basic fraction', function () {
+    $responsive = new Responsive($this->asset, new Parameters([
+        'ratio' => 1,
+        'lg:ratio' => '1 / 2',
+    ]));
 
-        new Responsive('doesnt-exist', new Parameters());
-    }
+    expect(
+        $responsive->breakPoints()->toArray()
+    )->toEqual([
+        ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'parameters' => ['ratio' => 1 / 2], 'unit' => 'px', 'media' => '(min-width: 1024px)'],
+        ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'parameters' => ['ratio' => 1.0], 'unit' => 'px', 'media' => ''],
+    ]);
+});
 
-    /** @test * */
-    public function it_can_generate_a_set_of_breakpoints_for_an_asset()
-    {
-        $responsive = new Responsive($this->asset, new Parameters([
-            'ratio' => 1,
-            'lg:ratio' => 1.5,
-        ]));
+it("uses the default asset ratio if a default isn't provided", function () {
+    $responsive = new Responsive($this->asset, new Parameters([
+        'lg:ratio' => 1.5,
+    ]));
 
-        $this->assertEquals([
-            ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'unit' => 'px', 'media' => '(min-width: 1024px)', 'parameters' => ['ratio' => 1.5]],
-            ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'unit' => 'px', 'media' => '', 'parameters' => ['ratio' => 1]],
-        ], $responsive->breakPoints()->toArray());
-    }
+    expect(
+        $responsive->breakPoints()->toArray()
+    )->toEqual([
+        ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'parameters' => ['ratio' => 1.5], 'unit' => 'px', 'media' => '(min-width: 1024px)'],
+        ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'parameters' => ['ratio' => 1.2142857142857142], 'unit' => 'px', 'media' => ''],
+    ]);
+});
 
-    /** @test * */
-    public function it_can_parse_a_basic_fraction()
-    {
-        $responsive = new Responsive($this->asset, new Parameters([
-            'ratio' => 1,
-            'lg:ratio' => '1 / 2',
-        ]));
+test('unknown breakpoints get ignored', function () {
+    $responsive = new Responsive($this->asset, new Parameters([
+        'lg:ratio' => 1.5,
+        'bla:ratio' => 2,
+    ]));
 
-        $this->assertEquals([
-            ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'parameters' => ['ratio' => 1 / 2], 'unit' => 'px', 'media' => '(min-width: 1024px)'],
-            ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'parameters' => ['ratio' => 1.0], 'unit' => 'px', 'media' => ''],
-        ], $responsive->breakPoints()->toArray());
-    }
+    expect(
+        $responsive->breakPoints()->toArray()
+    )->toEqual([
+        ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'parameters' => ['ratio' => 1.5, 'bla:ratio' => 2], 'unit' => 'px', 'media' => '(min-width: 1024px)'],
+        ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'parameters' => ['bla:ratio' => 2], 'unit' => 'px', 'media' => ''],
+    ]);
+});
 
-    /** @test * */
-    public function it_uses_the_default_asset_ratio_if_a_default_isnt_provided()
-    {
-        $responsive = new Responsive($this->asset, new Parameters([
-            'lg:ratio' => 1.5,
-        ]));
+it('can retrieve the default breakpoint', function () {
+    $responsive = new Responsive($this->asset, new Parameters([
+        'lg:ratio' => 1.5,
+    ]));
 
-        $this->assertEquals([
-            ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'parameters' => ['ratio' => 1.5], 'unit' => 'px', 'media' => '(min-width: 1024px)'],
-            ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'parameters' => ['ratio' => 1.2142857142857142], 'unit' => 'px', 'media' => ''],
-        ], $responsive->breakPoints()->toArray());
-    }
+    expect(
+        $responsive->defaultBreakpoint()->toArray()
+    )->toEqual([
+        'asset' => $this->asset,
+        'label' => 'default',
+        'value' => 0,
+        'parameters' => [
+            'ratio' => 1.2142857142857142,
+        ],
+        'unit' => 'px',
+        'media' => ''
+    ]);
+});
 
-    /** @test * */
-    public function unknown_breakpoints_get_ignored()
-    {
-        $responsive = new Responsive($this->asset, new Parameters([
-            'lg:ratio' => 1.5,
-            'bla:ratio' => 2,
-        ]));
+it('can retrieve the height of an image for a ratio', function () {
+    $responsive = new Responsive($this->asset, new Parameters());
 
-        $this->assertEquals([
-            ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'parameters' => ['ratio' => 1.5, 'bla:ratio' => 2], 'unit' => 'px', 'media' => '(min-width: 1024px)'],
-            ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'parameters' => ['bla:ratio' => 2], 'unit' => 'px', 'media' => ''],
-        ], $responsive->breakPoints()->toArray());
-    }
+    expect($responsive->assetHeight())->toEqual(280.0);
+});
 
-    /** @test * */
-    public function it_can_retrieve_the_default_breakpoint()
-    {
-        $responsive = new Responsive($this->asset, new Parameters([
-            'lg:ratio' => 1.5,
-        ]));
+it('can retrieve the height of an image for a breakpoint ratio', function () {
+    $responsive = new Responsive($this->asset, new Parameters([
+        'lg:ratio' => 2 / 1,
+    ]));
 
-        $this->assertEquals([
-            'asset' => $this->asset,
-            'label' => 'default',
-            'value' => 0,
-            'parameters' => [
-                'ratio' => 1.2142857142857142,
-            ],
-            'unit' => 'px',
-            'media' => ''
-        ], $responsive->defaultBreakpoint()->toArray());
-    }
+    expect($responsive->assetHeight('lg'))->toEqual(170.0); // Width = 340
+});
 
-    /** @test * */
-    public function it_can_retrieve_the_height_of_an_image_for_a_ratio()
-    {
-        $responsive = new Responsive($this->asset, new Parameters());
+it("returns `null` for a non-existing breakpoint", function () {
+    $responsive = new Responsive($this->asset, new Parameters([
+        'lg:ratio' => 2 / 1,
+    ]));
 
-        $this->assertEquals(280.0, $responsive->assetHeight());
-    }
-
-    /** @test * */
-    public function it_can_retrieve_the_height_of_an_image_for_a_breakpoint_ratio()
-    {
-        $responsive = new Responsive($this->asset, new Parameters([
-            'lg:ratio' => 2 / 1,
-        ]));
-
-        // Width = 340
-        $this->assertEquals(170.0, $responsive->assetHeight('lg'));
-    }
-
-    /** @test * */
-    public function it_returns_null_for_a_non_existent_breakpoint()
-    {
-        $responsive = new Responsive($this->asset, new Parameters([
-            'lg:ratio' => 2 / 1,
-        ]));
-
-        $this->assertEquals(null, $responsive->assetHeight('bla'));
-    }
-}
+    expect($responsive->assetHeight('bla'))->toEqual(null);
+});
