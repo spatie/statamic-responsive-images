@@ -266,8 +266,16 @@ class Breakpoint implements Arrayable
              * @see \Statamic\Tags\Glide::generateGlideDataUrl
              */
             $cache = GlideManager::cacheDisk();
-            $assetContentEncoded = base64_encode($cache->read($manipulationPath));
-            $base64Placeholder = 'data:'.$cache->mimeType($manipulationPath).';base64,'.$assetContentEncoded;
+
+            try {
+                $assetContent = $cache->read($manipulationPath);
+            } catch (\Exception $e) {
+                logger()->error($e->getMessage());
+
+                $assetContent = '';
+            }
+
+            $base64Placeholder = 'data:'.$cache->mimeType($manipulationPath).';base64,'.base64_encode($assetContent);
 
             return view('responsive-images::placeholderSvg', [
                 'width' => 32,
