@@ -59,7 +59,13 @@ class Breakpoint implements Arrayable
                 return "{$this->buildImageJob($width, $format, $this->ratio)->handle()} {$width}w";
             })
             ->when($includePlaceholder, function (Collection $widths) {
-                return $widths->prepend($this->placeholderSrc());
+                $placeholderSrc = $this->placeholderSrc();
+
+                if (empty($placeholderSrc)) {
+                    return $widths;
+                }
+
+                return $widths->prepend($placeholderSrc);
             })
             ->implode(', ');
     }
@@ -210,13 +216,6 @@ class Breakpoint implements Arrayable
             ->toArray();
     }
 
-    public function placeholder(): string
-    {
-        $base64Svg = base64_encode($this->placeholderSvg());
-
-        return "data:image/svg+xml;base64,{$base64Svg}";
-    }
-
     public function toGql(array $args): array
     {
         $data = [
@@ -241,12 +240,7 @@ class Breakpoint implements Arrayable
         return $data;
     }
 
-    private function placeholderSrc(): string
-    {
-        return $this->placeholder() . ' 32w';
-    }
-
-    private function placeholderSvg(): string
+    public function placeholder(): string
     {
         return Blink::once("placeholder-{$this->asset->id()}-{$this->ratio}", function () {
             $imageGenerator = app(ImageGenerator::class);
@@ -261,18 +255,35 @@ class Breakpoint implements Arrayable
                 'cache' => Config::get('statamic.assets.image_manipulation.cache', false),
             ]);
 
-            $base64Placeholder = $this->readImageToBase64($manipulationPath);
+            $base64Image = $this->readImageToBase64($manipulationPath);
 
-            return view('responsive-images::placeholderSvg', [
+            if (! $base64Image) {
+                return '';
+            }
+
+            $placeholderSvg = view('responsive-images::placeholderSvg', [
                 'width' => 32,
                 'height' => round(32 / $this->ratio),
-                'image' => $base64Placeholder,
+                'image' => $base64Image,
                 'asset' => $this->asset->toAugmentedArray(),
             ])->render();
+
+            return 'data:image/svg+xml;base64,' . base64_encode($placeholderSvg);
         });
     }
 
-    private function readImageToBase64($assetPath): string
+    private function placeholderSrc(): string
+    {
+        $placeholder = $this->placeholder();
+
+        if (empty($placeholder)) {
+            return '';
+        }
+
+        return $placeholder . ' 32w';
+    }
+
+    private function readImageToBase64($assetPath): string|null
     {
         /**
          * Glide tag has undocumented method for generating data URL that we borrow from
@@ -290,7 +301,7 @@ class Breakpoint implements Arrayable
 
             logger()->error($e->getMessage());
 
-            return '';
+            return null;
         }
 
         return 'data:'.$cache->mimeType($assetPath).';base64,'.base64_encode($assetContent);

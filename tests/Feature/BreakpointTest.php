@@ -122,7 +122,7 @@ it('generates placeholder data url when toggling cache form on to off', function
     /**
      * We use Blink cache for placeholder generation that we need to clear just in case
      * @see https://statamic.dev/extending/blink-cache
-     * @see Breakpoint::placeholderSvg()
+     * @see Breakpoint::placeholder()
      */
     Blink::store()->flush();
 
