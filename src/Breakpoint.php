@@ -5,6 +5,7 @@ namespace Spatie\ResponsiveImages;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
+use League\Flysystem\FilesystemException;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Statamic\Contracts\Assets\Asset;
 use Statamic\Facades\Blink;
@@ -294,7 +295,7 @@ class Breakpoint implements Arrayable
         try {
             $assetContent = $cache->read($assetPath);
             $assetMimeType = $cache->mimeType($assetPath);
-        } catch (\Exception $e) {
+        } catch (FilesystemException $e) {
             if (config('app.debug')) {
                 throw $e;
             }
