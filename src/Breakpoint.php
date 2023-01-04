@@ -261,21 +261,7 @@ class Breakpoint implements Arrayable
                 'cache' => Config::get('statamic.assets.image_manipulation.cache', false),
             ]);
 
-            /**
-             * Glide tag has undocumented method for generating data URL that we borrow from
-             * @see \Statamic\Tags\Glide::generateGlideDataUrl
-             */
-            $cache = GlideManager::cacheDisk();
-
-            try {
-                $assetContent = $cache->read($manipulationPath);
-            } catch (\Exception $e) {
-                logger()->error($e->getMessage());
-
-                $assetContent = '';
-            }
-
-            $base64Placeholder = 'data:'.$cache->mimeType($manipulationPath).';base64,'.base64_encode($assetContent);
+            $base64Placeholder = $this->readImageToBase64($manipulationPath);
 
             return view('responsive-images::placeholderSvg', [
                 'width' => 32,
@@ -284,5 +270,29 @@ class Breakpoint implements Arrayable
                 'asset' => $this->asset->toAugmentedArray(),
             ])->render();
         });
+    }
+
+    private function readImageToBase64($assetPath): string
+    {
+        /**
+         * Glide tag has undocumented method for generating data URL that we borrow from
+         * @see \Statamic\Tags\Glide::generateGlideDataUrl
+         */
+        $cache = GlideManager::cacheDisk();
+
+        try {
+            $assetContent = $cache->read($assetPath);
+            $assetMimeType = $cache->mimeType($assetPath);
+        } catch (\Exception $e) {
+            if (config('app.debug')) {
+                throw $e;
+            }
+
+            logger()->error($e->getMessage());
+
+            return '';
+        }
+
+        return 'data:'.$cache->mimeType($assetPath).';base64,'.base64_encode($assetContent);
     }
 }
