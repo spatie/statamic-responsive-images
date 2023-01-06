@@ -19,6 +19,6 @@ class GenerateGlideImageJob extends GenerateImageJob
             $manipulator->$param($value);
         }
 
-        return URL::makeRelative($manipulator->build());
+        return URL::makeAbsolute($manipulator->build());
     }
 }
