@@ -305,6 +305,6 @@ class Breakpoint implements Arrayable
             return null;
         }
 
-        return 'data:'.$cache->mimeType($assetPath).';base64,'.base64_encode($assetContent);
+        return 'data:' . $assetMimeType . ';base64,' . base64_encode($assetContent);
     }
 }
