@@ -141,3 +141,45 @@ it('generates placeholder data url when toggling cache form on to off', function
     expect($secondPlaceholder)->toEqual($firstPlaceholder)
         ->and($cacheDiskPathAfter)->not->toEqual($cacheDiskPathBefore);
 });
+
+it('generates absolute url when using custom filesystem with custom url for glide cache', function () {
+    config(['filesystems.disks.absolute_test' => [
+        'driver' => 'local',
+        'root' => __DIR__ . '/tmp',
+        'url' => 'https://responsive.test/test',
+    ]]);
+
+    config([
+        'statamic.assets.image_manipulation.cache' => 'absolute_test',
+    ]);
+
+    $responsive = new Breakpoint($this->asset, 'default', 0, []);
+
+    expect(
+        $responsive->buildImageJob(100)->handle()
+    )->toStartWith('https://responsive.test/');
+});
+
+it('generates absolute url when force enabled through config', function () {
+    config([
+        'statamic.responsive-images.return_absolute_url' => true,
+    ]);
+
+    $responsive = new Breakpoint($this->asset, 'default', 0, []);
+
+    expect(
+        $responsive->buildImageJob(100)->handle()
+    )->toStartWith('http://localhost/');
+});
+
+it('generates relative url when absolute urls are disabled through config', function () {
+    config([
+        'statamic.responsive-images.return_absolute_url' => false,
+    ]);
+
+    $responsive = new Breakpoint($this->asset, 'default', 0, []);
+
+    expect(
+        $responsive->buildImageJob(100)->handle()
+    )->toStartWith('/img/asset/');
+});
