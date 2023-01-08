@@ -2,6 +2,20 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.14.5 - 2023-01-08
+
+### What's Changed
+
+- Placeholder generation now fails silently on production by logging exceptions if `APP_DEBUG` is `false` by @heidkaemper in https://github.com/spatie/statamic-responsive-images/pull/189
+- Refactor tests to Pest by @alexmanase in https://github.com/spatie/statamic-responsive-images/pull/183
+
+### New Contributors
+
+- @alexmanase made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/183
+- @heidkaemper made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/189
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.14.4...v2.14.5
+
 ## v2.14.4 - 2022-11-09
 
 ### What's Changed
