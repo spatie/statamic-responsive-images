@@ -5,6 +5,7 @@ namespace Spatie\ResponsiveImages;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
+use League\Flysystem\FilesystemException;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Statamic\Contracts\Assets\Asset;
 use Statamic\Facades\Blink;
@@ -59,7 +60,13 @@ class Breakpoint implements Arrayable
                 return "{$this->buildImageJob($width, $format, $this->ratio)->handle()} {$width}w";
             })
             ->when($includePlaceholder, function (Collection $widths) {
-                return $widths->prepend($this->placeholderSrc());
+                $placeholderSrc = $this->placeholderSrc();
+
+                if (empty($placeholderSrc)) {
+                    return $widths;
+                }
+
+                return $widths->prepend($placeholderSrc);
             })
             ->implode(', ');
     }
@@ -210,13 +217,6 @@ class Breakpoint implements Arrayable
             ->toArray();
     }
 
-    public function placeholder(): string
-    {
-        $base64Svg = base64_encode($this->placeholderSvg());
-
-        return "data:image/svg+xml;base64,{$base64Svg}";
-    }
-
     public function toGql(array $args): array
     {
         $data = [
@@ -241,12 +241,7 @@ class Breakpoint implements Arrayable
         return $data;
     }
 
-    private function placeholderSrc(): string
-    {
-        return $this->placeholder() . ' 32w';
-    }
-
-    private function placeholderSvg(): string
+    public function placeholder(): string
     {
         return Blink::once("placeholder-{$this->asset->id()}-{$this->ratio}", function () {
             $imageGenerator = app(ImageGenerator::class);
@@ -261,20 +256,55 @@ class Breakpoint implements Arrayable
                 'cache' => Config::get('statamic.assets.image_manipulation.cache', false),
             ]);
 
-            /**
-             * Glide tag has undocumented method for generating data URL that we borrow from
-             * @see \Statamic\Tags\Glide::generateGlideDataUrl
-             */
-            $cache = GlideManager::cacheDisk();
-            $assetContentEncoded = base64_encode($cache->read($manipulationPath));
-            $base64Placeholder = 'data:'.$cache->mimeType($manipulationPath).';base64,'.$assetContentEncoded;
+            $base64Image = $this->readImageToBase64($manipulationPath);
 
-            return view('responsive-images::placeholderSvg', [
+            if (! $base64Image) {
+                return '';
+            }
+
+            $placeholderSvg = view('responsive-images::placeholderSvg', [
                 'width' => 32,
                 'height' => round(32 / $this->ratio),
-                'image' => $base64Placeholder,
+                'image' => $base64Image,
                 'asset' => $this->asset->toAugmentedArray(),
             ])->render();
+
+            return 'data:image/svg+xml;base64,' . base64_encode($placeholderSvg);
         });
+    }
+
+    private function placeholderSrc(): string
+    {
+        $placeholder = $this->placeholder();
+
+        if (empty($placeholder)) {
+            return '';
+        }
+
+        return $placeholder . ' 32w';
+    }
+
+    private function readImageToBase64($assetPath): string|null
+    {
+        /**
+         * Glide tag has undocumented method for generating data URL that we borrow from
+         * @see \Statamic\Tags\Glide::generateGlideDataUrl
+         */
+        $cache = GlideManager::cacheDisk();
+
+        try {
+            $assetContent = $cache->read($assetPath);
+            $assetMimeType = $cache->mimeType($assetPath);
+        } catch (FilesystemException $e) {
+            if (config('app.debug')) {
+                throw $e;
+            }
+
+            logger()->error($e->getMessage());
+
+            return null;
+        }
+
+        return 'data:' . $assetMimeType . ';base64,' . base64_encode($assetContent);
     }
 }
