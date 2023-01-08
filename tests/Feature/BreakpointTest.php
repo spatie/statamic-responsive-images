@@ -122,7 +122,7 @@ it('generates placeholder data url when toggling cache form on to off', function
     /**
      * We use Blink cache for placeholder generation that we need to clear just in case
      * @see https://statamic.dev/extending/blink-cache
-     * @see Breakpoint::placeholderSvg()
+     * @see Breakpoint::placeholder()
      */
     Blink::store()->flush();
 
@@ -141,3 +141,20 @@ it('generates placeholder data url when toggling cache form on to off', function
     expect($secondPlaceholder)->toEqual($firstPlaceholder)
         ->and($cacheDiskPathAfter)->not->toEqual($cacheDiskPathBefore);
 });
+
+it("doesn't crash when the placeholder image cannot be read", function () {
+    $responsive = new Breakpoint($this->asset, 'default', 0, []);
+
+    // Generate placeholder to trigger caching
+    $responsive->placeholder();
+
+    // Forget cached files
+    $pathPrefix = \Statamic\Imaging\ImageGenerator::assetCachePathPrefix($this->asset);
+
+    \Statamic\Facades\Glide::server()->deleteCache($pathPrefix.'/'.$this->asset->path());
+
+    Blink::store()->flush();
+
+    // Generate new placeholder
+    $responsive->placeholder();
+})->expectNotToPerformAssertions();
