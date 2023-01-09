@@ -2,6 +2,18 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.15.0 - 2023-01-09
+
+### What's Changed
+
+- Add config option to force absolute URLs on Glide URLsSet URL absolute instead of relative by @SteJW in https://github.com/spatie/statamic-responsive-images/pull/190
+
+### New Contributors
+
+- @SteJW made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/190
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.14.5...v2.15.0
+
 ## v2.14.5 - 2023-01-08
 
 ### What's Changed
