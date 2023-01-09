@@ -27,6 +27,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Force absolute URL
+    |--------------------------------------------------------------------------
+    |
+    | Useful if you are using GraphQL API and consuming it from another
+    | app on a different domain. Normally Glide will return relative URLs, but
+    | you can force it to return absolute URLs.
+    |
+    */
+    'force_absolute_urls' => false,
+    
+    /*
+    |--------------------------------------------------------------------------
     | Queue
     |--------------------------------------------------------------------------
     |
