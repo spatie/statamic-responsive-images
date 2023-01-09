@@ -21,7 +21,7 @@ class GenerateGlideImageJob extends GenerateImageJob
 
         $url = $manipulator->build();
 
-        if (config('statamic.responsive-images.return_absolute_url', false)) {
+        if (config('statamic.responsive-images.force_absolute_urls', false)) {
             return URL::makeAbsolute($url);
         }
 

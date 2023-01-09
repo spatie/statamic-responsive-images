@@ -27,13 +27,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Return absolute URL
+    | Force absolute URL
     |--------------------------------------------------------------------------
     |
-    | If you want to return an absolute url (with http://), set to true.
+    | Useful if you are using GraphQL API and consuming it from another
+    | app on a different domain. Normally Glide will return relative URLs, but
+    | you can force it to return absolute URLs.
     |
     */
-    'return_absolute_url' => false,
+    'force_absolute_urls' => false,
     
     /*
     |--------------------------------------------------------------------------

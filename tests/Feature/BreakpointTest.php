@@ -179,7 +179,7 @@ it('generates absolute url when using custom filesystem with custom url for glid
 
 it('generates absolute url when force enabled through config', function () {
     config([
-        'statamic.responsive-images.return_absolute_url' => true,
+        'statamic.responsive-images.force_absolute_urls' => true,
     ]);
 
     $responsive = new Breakpoint($this->asset, 'default', 0, []);
@@ -191,7 +191,7 @@ it('generates absolute url when force enabled through config', function () {
 
 it('generates relative url when absolute urls are disabled through config', function () {
     config([
-        'statamic.responsive-images.return_absolute_url' => false,
+        'statamic.responsive-images.force_absolute_urls' => false,
     ]);
 
     $responsive = new Breakpoint($this->asset, 'default', 0, []);
