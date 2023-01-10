@@ -1,7 +1,7 @@
 <template>
   <div class="publish-fields">
     <publish-container
-        :name="name"
+        :name="containerName"
         :values="value"
         :meta="meta"
         :errors="errors"
@@ -21,10 +21,16 @@
 </template>
 
 <script>
+import uniqid from 'uniqid';
+
 export default {
   mixins: [Fieldtype],
 
   computed: {
+    containerName() {
+      return this.$props.handle + '.' + uniqid()
+    },
+
     fields() {
       return _.chain(this.meta.fields)
           .map(field => {
