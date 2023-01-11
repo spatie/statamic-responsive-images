@@ -6,7 +6,7 @@ All notable changes to `statamic-responsive-images` will be documented in this f
 
 ### What's Changed
 
-- Add config option to force absolute URLs on Glide URLsSet URL absolute instead of relative by @SteJW in https://github.com/spatie/statamic-responsive-images/pull/190
+- Add config option to force absolute URLs on Glide URLs by @SteJW in https://github.com/spatie/statamic-responsive-images/pull/190
 
 ### New Contributors
 
