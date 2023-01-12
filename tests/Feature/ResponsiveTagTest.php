@@ -112,10 +112,23 @@ it('uses an alt field on the asset', function () {
     assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset->url()));
 });
 
-test('a glide width parameter counts as max width', function () {
-    assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
+test('a glide width parameter counts as max width for img tag', function () {
+    expect(ResponsiveTag::render($this->asset, [
         'glide:width' => '50',
-    ]));
+    ]))->toContain('width="50"');
+});
+
+test('max width from config is used for img tag', function () {
+    config()->set('statamic.responsive-images.max_width', 50);
+
+    expect(ResponsiveTag::render($this->asset))->toContain('width="50"');
+});
+
+test('max width from glide width parameter takes precedence over config max width', function() {
+    config()->set('statamic.responsive-images.max_width', 45);
+
+    expect(ResponsiveTag::render($this->asset, ['glide:width' => '50']))
+        ->toContain('width="50"');
 });
 
 it('generates responsive images in webp and avif formats', function () {

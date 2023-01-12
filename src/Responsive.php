@@ -95,7 +95,6 @@ class Responsive
 
         $defaultParams = $parametersByBreakpoint->get('default') ?? collect();
         $currentParams = array_merge([
-            'ratio' => $this->asset->width() / $this->asset->height(),
             'src' => $this->asset,
         ], $defaultParams->mapWithKeys(function ($param) {
             return [$param['key'] => $param['value']];
@@ -108,8 +107,6 @@ class Responsive
                 if (! $value && $breakpoint !== 'default') {
                     return null;
                 }
-
-                unset($currentParams['ratio']);
 
                 foreach ($parameters as $parameter) {
                     if ($parameter['key'] === 'src' && ! $parameter['value'] instanceof Asset) {
@@ -153,7 +150,7 @@ class Responsive
         }
 
         return $breakpoints
-            ->sortByDesc('value')
+            ->sortByDesc('breakpointMinValue')
             ->values();
     }
 
@@ -178,11 +175,8 @@ class Responsive
             return null;
         }
 
-        if (isset($breakpoint->parameters['ratio'])) {
-            return $this->asset->width() / $breakpoint->parameters['ratio'];
-        }
-
-        return $this->asset->height();
+        return app(DimensionCalculator::class)
+            ->calculateForImgTag($this->asset, $breakpoint)->getHeight();
     }
 
     private function parametersByBreakpoint(): Collection

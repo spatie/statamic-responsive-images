@@ -61,6 +61,7 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonConfig()
             ->bootDirectives()
             ->bindImageJob()
+            ->bindDimensionCalculator()
             ->bootGraphQL();
     }
 
@@ -98,6 +99,13 @@ class ServiceProvider extends AddonServiceProvider
     private function bindImageJob(): self
     {
         $this->app->bind(GenerateImageJob::class, config('statamic.responsive-images.image_job'));
+
+        return $this;
+    }
+
+    private function bindDimensionCalculator(): self
+    {
+        $this->app->bind(DimensionCalculator::class, ResponsiveDimensionCalculator::class);
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace Spatie\ResponsiveImages\Tags;
 
 use Spatie\ResponsiveImages\AssetNotFoundException;
 use Spatie\ResponsiveImages\Breakpoint;
+use Spatie\ResponsiveImages\DimensionCalculator;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Spatie\ResponsiveImages\Responsive;
 use Statamic\Support\Str;
@@ -41,14 +42,18 @@ class ResponsiveTag extends Tags
             return '';
         }
 
-        $maxWidth = (int) ($this->params->all()['glide:width'] ?? 0);
+        $maxWidth = (int) ($this->params->all()['glide:width'] ?? config('statamic.responsive-images.max_width') ?? 0);
+
         $width = $responsive->asset->width();
         $height = $responsive->assetHeight();
         $src = $responsive->asset->url();
 
         if ($maxWidth > 0 && $maxWidth < $responsive->asset->width()) {
-            $width = $maxWidth;
-            $height = $width / $responsive->defaultBreakpoint()->ratio;
+            $dimensions = app(DimensionCalculator::class)
+                ->calculateForImgTag($responsive->asset, $responsive->defaultBreakpoint(), $maxWidth);
+
+            $width = $dimensions->getWidth();
+            $height = $dimensions->getHeight();
 
             $src = app(GenerateImageJob::class, ['asset' => $responsive->asset, 'params' => [
                 'width' => $width,

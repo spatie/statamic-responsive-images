@@ -18,7 +18,7 @@ class TestCase extends OrchestraTestCase
     use DatabaseMigrations;
 
     /** @var \Statamic\Assets\AssetContainer */
-    protected $assetContainer;
+    public $assetContainer;
 
     /**
      * Setup the test environment.

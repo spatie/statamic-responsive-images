@@ -49,3 +49,18 @@ test('graphql asset outputs avif srcset when enabled through arguments', functio
     $response = $this->post('/graphql/', ['query' => $query]);
     assertMatchesJsonSnapshotWithoutSvg($response->getContent());
 });
+
+test('ratio is outputted if using ResponsiveDimensionCalculator', function () {
+    $query = '
+            {
+                asset(id: "test_container::graphql.jpg") {
+                    responsive {
+                        ratio
+                    }
+                }
+            }
+        ';
+
+    $response = $this->post('/graphql/', ['query' => $query]);
+    assertMatchesJsonSnapshotWithoutSvg($response->getContent());
+});
