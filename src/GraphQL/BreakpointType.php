@@ -2,10 +2,11 @@
 
 namespace Spatie\ResponsiveImages\GraphQL;
 
+use Rebing\GraphQL\Support\Type;
 use Statamic\Facades\GraphQL;
 use Statamic\GraphQL\Types\AssetInterface;
 
-class BreakpointType extends \Rebing\GraphQL\Support\Type
+class BreakpointType extends Type
 {
     const NAME = 'ResponsiveBreakpoint';
 
@@ -24,11 +25,11 @@ class BreakpointType extends \Rebing\GraphQL\Support\Type
                 'type' => GraphQL::string(),
                 'description' => 'The breakpoint label.',
             ],
-            'value' => [
+            'minWidth' => [
                 'type' => GraphQL::int(),
                 'description' => 'The min-width of this breakpoint.',
             ],
-            'unit' => [
+            'widthUnit' => [
                 'type' => GraphQL::string(),
                 'description' => 'The unit (px by default) of the breakpoint.',
             ],
@@ -36,21 +37,9 @@ class BreakpointType extends \Rebing\GraphQL\Support\Type
                 'type' => GraphQL::float(),
                 'description' => 'The image ratio on this breakpoint.',
             ],
-            'mediaString' => [
-                'type' => GraphQL::string(),
-                'description' => 'Picture source media string',
-            ],
-            'srcSet' => [
-                'type' => GraphQL::string(),
-                'description' => 'The srcSet string for this breakpoint',
-            ],
-            'srcSetWebp' => [
-                'type' => GraphQL::string(),
-                'description' => 'The WebP srcSet string for this breakpoint, if WEBP is enabled',
-            ],
-            'srcSetAvif' => [
-                'type' => GraphQL::string(),
-                'description' => 'The AVIF srcSet string for this breakpoint, if AVIF is enabled',
+            'sources' => [
+                'type' => GraphQL::listOf(GraphQL::type(SourceType::NAME)),
+                'description' => 'The sources for this breakpoint.',
             ],
             'placeholder' => [
                 'type' => GraphQL::string(),

@@ -5,16 +5,19 @@ namespace Spatie\ResponsiveImages;
 use Illuminate\Support\Collection;
 use Statamic\Contracts\Assets\Asset;
 
+/**
+ * The original, file-size, aspect-ratio based dimension calculator.
+ */
 class ResponsiveDimensionCalculator implements DimensionCalculator
 {
-    public function calculate(Asset $asset, Breakpoint $breakpoint): Collection
+    public function calculate(Asset $asset, Source $source): Collection
     {
         $width = $asset->width();
         $height = $asset->height();
         $fileSize = $asset->size();
 
-        $ratio = $this->breakpointRatio($asset, $breakpoint);
-        $glideParams = $breakpoint->getImageManipulationParams();
+        $ratio = $this->breakpointRatio($asset, $source->breakpoint);
+        $glideParams = $source->breakpoint->getImageManipulationParams();
 
         return $this
             ->calculateDimensions($fileSize, $width, $height, $ratio)

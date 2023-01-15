@@ -1,30 +1,8 @@
 <?php
 
 use Illuminate\Http\UploadedFile;
-use Statamic\Facades;
 use Statamic\Facades\Stache;
 use Statamic\Support\Arr;
-
-function setInBlueprints($namespace, $blueprintContents): void
-{
-    $blueprint = tap(Facades\Blueprint::make('set-in-blueprints')->setContents($blueprintContents))->save();
-
-    Facades\Blueprint::shouldReceive('in')->with($namespace)->andReturn(collect([$blueprint]));
-}
-
-function createDummyCollectionEntry($blueprintConfiguration, $entryData)
-{
-    // Create collection
-    $collection = tap(Facades\Collection::make('articles'))->save();
-
-    $blueprintContents = $blueprintConfiguration;
-
-    // Create blueprint for collection
-    setInBlueprints('collections/articles', $blueprintContents);
-
-    // Create entry in the collection
-    return tap(Facades\Entry::make()->collection($collection)->data($entryData))->save();
-}
 
 beforeEach(function () {
     $this->responsiveFieldConfiguration = [
@@ -43,9 +21,7 @@ beforeEach(function () {
         'visibility' => 'visible',
     ];
 
-    $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
-    $path = ltrim('/' . $file->getClientOriginalName(), '/');
-    $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
+    $this->asset = $this->uploadTestImageToTestContainer();
 
     Stache::clear();
 
@@ -60,7 +36,7 @@ beforeEach(function () {
 });
 
 test('asset string reference gets updated after asset rename', function () {
-    $entry = createDummyCollectionEntry($this->entryBlueprintWithSingleResponsiveField, [
+    $entry = test()->createDummyCollectionEntry($this->entryBlueprintWithSingleResponsiveField, [
         'avatar' => [
             'src' => 'test_container::test.jpg',
             'ratio' => '16/9',
@@ -86,7 +62,7 @@ test('asset array reference gets updated after asset rename', function () {
         ],
     ];
 
-    $entry = createDummyCollectionEntry($this->entryBlueprintWithSingleResponsiveField, [
+    $entry = test()->createDummyCollectionEntry($this->entryBlueprintWithSingleResponsiveField, [
         'avatar' => $startingAvatarData,
     ]);
 
@@ -148,7 +124,7 @@ test('asset reference gets updated in replicator set after asset rename', functi
         ],
     ];
 
-    $entry = createDummyCollectionEntry($blueprintContents, $entryData);
+    $entry = test()->createDummyCollectionEntry($blueprintContents, $entryData);
 
     expect(
         Arr::get($entry->get('test_replicator_field'), '0.responsive_test_replicator.src.0')
@@ -162,7 +138,7 @@ test('asset reference gets updated in replicator set after asset rename', functi
 });
 
 test('asset reference gets removed after asset deletion', function () {
-    $entry = createDummyCollectionEntry($this->entryBlueprintWithSingleResponsiveField, [
+    $entry = test()->createDummyCollectionEntry($this->entryBlueprintWithSingleResponsiveField, [
         'avatar' => [
             'src' => 'test_container::test.jpg',
             'md:src' => 'test_container::test.jpg',
@@ -190,8 +166,10 @@ test('asset reference stays unchanged after asset deletion when reference updati
     config()->set('statamic.system.update_references', false);
     // Set up environment again because listeners in UpdateResponsiveReferences@subscribe depend on config value
     $this->setUp();
+    // Re-upload because setUp() deletes asset that we uploaded in beforeEach()
+    $this->asset = $this->uploadTestImageToTestContainer();
 
-    $entry = createDummyCollectionEntry($this->entryBlueprintWithSingleResponsiveField, [
+    $entry = test()->createDummyCollectionEntry($this->entryBlueprintWithSingleResponsiveField, [
         'avatar' => [
             'src' => 'test_container::test.jpg',
         ],

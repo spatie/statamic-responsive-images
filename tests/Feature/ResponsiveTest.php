@@ -3,6 +3,7 @@
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Spatie\ResponsiveImages\AssetNotFoundException;
+use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Exceptions\InvalidAssetException;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Spatie\ResponsiveImages\Responsive;
@@ -13,10 +14,7 @@ use Statamic\Fields\Value;
 use Statamic\Tags\Parameters;
 
 beforeEach(function () {
-    $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
-    $path = ltrim('/' . $file->getClientOriginalName(), '/');
-    $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
-
+    $this->asset = $this->uploadTestImageToTestContainer();
     Stache::clear();
 });
 
@@ -127,8 +125,8 @@ it('can generate a set of breakpoints for an asset', function () {
     expect(
         $responsive->breakPoints()->toArray()
     )->toEqual([
-        ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'unit' => 'px', 'media' => '(min-width: 1024px)', 'parameters' => ['ratio' => 1.5]],
-        ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'unit' => 'px', 'media' => '', 'parameters' => ['ratio' => 1]],
+        ['asset' => $this->asset, 'label' => 'lg', 'minWidth' => 1024, 'parameters' => ['ratio' => 1.5], 'widthUnit' => 'px'],
+        ['asset' => $this->asset, 'label' => 'default', 'minWidth' => 0, 'parameters' => ['ratio' => 1], 'widthUnit' => 'px'],
     ]);
 });
 
@@ -141,8 +139,8 @@ it('can parse a basic fraction', function () {
     expect(
         $responsive->breakPoints()->toArray()
     )->toEqual([
-        ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'parameters' => ['ratio' => 1 / 2], 'unit' => 'px', 'media' => '(min-width: 1024px)'],
-        ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'parameters' => ['ratio' => 1.0], 'unit' => 'px', 'media' => ''],
+        ['asset' => $this->asset, 'label' => 'lg', 'minWidth' => 1024, 'parameters' => ['ratio' => 1 / 2], 'widthUnit' => 'px'],
+        ['asset' => $this->asset, 'label' => 'default', 'minWidth' => 0, 'parameters' => ['ratio' => 1.0], 'widthUnit' => 'px'],
     ]);
 });
 
@@ -154,8 +152,8 @@ it("uses the default asset ratio if a default isn't provided", function () {
     expect(
         $responsive->breakPoints()->toArray()
     )->toEqual([
-        ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'parameters' => ['ratio' => 1.5], 'unit' => 'px', 'media' => '(min-width: 1024px)'],
-        ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'parameters' => ['ratio' => 1.2142857142857142], 'unit' => 'px', 'media' => ''],
+        ['asset' => $this->asset, 'label' => 'lg', 'minWidth' => 1024, 'parameters' => ['ratio' => 1.5], 'widthUnit' => 'px'],
+        ['asset' => $this->asset, 'label' => 'default', 'minWidth' => 0, 'parameters' => ['ratio' => 1.2142857142857142], 'widthUnit' => 'px'],
     ]);
 });
 
@@ -168,8 +166,8 @@ test('unknown breakpoints get ignored', function () {
     expect(
         $responsive->breakPoints()->toArray()
     )->toEqual([
-        ['asset' => $this->asset, 'label' => 'lg', 'value' => 1024, 'parameters' => ['ratio' => 1.5, 'bla:ratio' => 2], 'unit' => 'px', 'media' => '(min-width: 1024px)'],
-        ['asset' => $this->asset, 'label' => 'default', 'value' => 0, 'parameters' => ['bla:ratio' => 2], 'unit' => 'px', 'media' => ''],
+        ['asset' => $this->asset, 'label' => 'lg', 'minWidth' => 1024, 'parameters' => ['ratio' => 1.5, 'bla:ratio' => 2], 'widthUnit' => 'px'],
+        ['asset' => $this->asset, 'label' => 'default', 'minWidth' => 0, 'parameters' => ['bla:ratio' => 2], 'widthUnit' => 'px'],
     ]);
 });
 
@@ -183,12 +181,11 @@ it('can retrieve the default breakpoint', function () {
     )->toEqual([
         'asset' => $this->asset,
         'label' => 'default',
-        'value' => 0,
+        'minWidth' => 0,
         'parameters' => [
             'ratio' => 1.2142857142857142,
         ],
-        'unit' => 'px',
-        'media' => ''
+        'widthUnit' => 'px'
     ]);
 });
 
@@ -206,10 +203,94 @@ it('can retrieve the height of an image for a breakpoint ratio', function () {
     expect($responsive->assetHeight('lg'))->toEqual(170.0); // Width = 340
 });
 
-it("returns `null` for a non-existing breakpoint", function () {
+it('asset height is `null` for a non-existing breakpoint', function () {
     $responsive = new Responsive($this->asset, new Parameters([
         'lg:ratio' => 2 / 1,
     ]));
 
     expect($responsive->assetHeight('bla'))->toEqual(null);
+});
+
+test('can toggle formats between all breakpoints', function () {
+    config()->set('statamic.responsive-images.webp', false);
+    config()->set('statamic.responsive-images.avif', false);
+
+    $responsive = new Responsive($this->asset, new Parameters([
+        'ratio' => 1,
+        'avif' => true,
+        'sm:ratio' => 1,
+        'sm:avif' => false,
+        'md:ratio' => 1,
+        'md:avif' => true,
+        'lg:ratio' => 1,
+        'lg:avif' => false,
+        'xl:ratio' => 1,
+        'xl:avif' => true,
+        '2xl:ratio' => 1,
+    ]));
+
+    $breakpointsWithSources = $responsive->breakPoints()->map(function (Breakpoint $breakpoint) {
+        $breakpointArr = $breakpoint->toArray();
+        $breakpointArr['sources'] = collect($breakpoint->getSources()->toArray());
+        return $breakpointArr;
+    });
+
+
+    $avifPerBreakpoint = [
+        'default' => true,
+        'sm' => false,
+        'md' => true,
+        'lg' => false,
+        'xl' => true,
+        '2xl' => true
+    ];
+
+    foreach ($avifPerBreakpoint as $breakpointLabel => $isAvifEnabled) {
+        expect(
+            $breakpointsWithSources
+                ->where('label', $breakpointLabel)
+                ->first()['sources']
+                ->where('format', 'avif')
+                ->count() === 1
+        )->toBe($isAvifEnabled);
+    }
+});
+
+test('can toggle placeholder in srcsets between all breakpoints', function () {
+    config()->set('statamic.responsive-images.webp', false);
+    config()->set('statamic.responsive-images.avif', false);
+
+    $responsive = new Responsive($this->asset, new Parameters([
+        'ratio' => 1,
+        'placeholder' => true,
+        'sm:ratio' => 1,
+        'sm:placeholder' => false,
+        'md:ratio' => 1,
+        'md:placeholder' => true,
+        'lg:ratio' => 1,
+    ]));
+
+    $breakpointsWithSources = $responsive->breakPoints()->map(function (Breakpoint $breakpoint) {
+        $breakpointArr = $breakpoint->toArray();
+        $breakpointArr['sources'] = collect($breakpoint->getSources()->toArray());
+        return $breakpointArr;
+    });
+
+    $avifPerBreakpoint = [
+        'default' => true,
+        'sm' => false,
+        'md' => true,
+        'lg' => true,
+    ];
+
+    foreach ($avifPerBreakpoint as $breakpointLabel => $isPlaceholderOutput) {
+        $srcset = $breakpointsWithSources
+            ->where('label', $breakpointLabel)
+            ->first()['sources']
+            ->first()['srcSet'];
+
+        preg_match('/data:image\/svg\+xml;base64,(.*) 32w/', $srcset, $svgMatches);
+
+        expect(isset($svgMatches[1]))->toBe($isPlaceholderOutput);
+    }
 });

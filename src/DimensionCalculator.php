@@ -10,10 +10,10 @@ interface DimensionCalculator
      * Used to generate dimensions for breakpoints.
      *
      * @param Asset $asset
-     * @param Breakpoint $breakpoint
+     * @param Source $source
      * @return Collection<Dimensions>
      */
-    public function calculate(Asset $asset, Breakpoint $breakpoint): Collection;
+    public function calculate(Asset $asset, Source $source): Collection;
 
     /**
      * Specific dimension calculation for <img> tag. Important for cases where it is important to maintain

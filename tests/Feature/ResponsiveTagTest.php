@@ -2,6 +2,7 @@
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Blade;
+use Intervention\Image\ImageManagerStatic;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Spatie\ResponsiveImages\Tags\ResponsiveTag;
 use Statamic\Facades\Stache;
@@ -85,10 +86,47 @@ it('generates responsive images with breakpoints without webp', function () {
     ]));
 });
 
+it('generates inlined placeholder image with correct dimensions', function () {
+    $tagOutput = ResponsiveTag::render($this->asset, [
+        'ratio' => '2/1',
+        'webp' => false,
+        'placeholder' => true,
+    ]);
+
+    // Find the base64 string of encoded SVG
+    preg_match('/data:image\/svg\+xml;base64,(.*) 32w/', $tagOutput, $svgMatches);
+
+    $svgBase64Decoded = base64_decode($svgMatches[1]);
+
+    expect($svgBase64Decoded)->toContain('width="32" height="16"');
+
+    // Find the base64 string of encoded JPG
+    preg_match('/data:image\/jpeg;base64,(.*)" \/>/', $svgBase64Decoded, $jpgMatches);
+
+    // Make image of it, so we can get the dimensions of encoded JPG
+    $placeholderImage = ImageManagerStatic::make($jpgMatches[1]);
+
+    expect($placeholderImage->getWidth())->toBe(32);
+    expect($placeholderImage->getHeight())->toBe(16);
+});
+
 it('generates responsive images without a placeholder', function () {
-    assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
+    assertMatchesSnapshot(ResponsiveTag::render($this->asset, [
         'placeholder' => false,
     ]));
+});
+
+it('does not generate placeholder when disabled through config', function () {
+    config()->set('statamic.responsive-images.placeholder', false);
+
+    $tagOutput = ResponsiveTag::render($this->asset, [
+        'ratio' => '1/1',
+        'webp' => false,
+    ]);
+
+    preg_match('/data:image\/svg\+xml;base64,(.*) 32w/', $tagOutput, $matches);
+
+    expect($matches)->toBeEmpty();
 });
 
 it('can add custom glide parameters', function () {
@@ -107,7 +145,7 @@ it('uses an alt field on the asset', function () {
     $this->asset->data(['alt' => 'My asset alt tag']);
     $this->asset->save();
 
-    assertFileExists(__DIR__ . "/../tmp/.meta/{$this->asset->filename()}.jpg.yaml");
+    assertFileExists($this->getTempDirectory() . "/assets/.meta/{$this->asset->filename()}.jpg.yaml");
 
     assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset->url()));
 });

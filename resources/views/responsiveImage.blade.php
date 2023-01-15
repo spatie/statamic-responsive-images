@@ -19,29 +19,15 @@
 @endonce
 
 <picture>
-    @foreach (($sources ?? []) as $source)
-        @isset($source['srcSetAvif'])
+    @foreach (($breakpoints ?? []) as $breakpoint)
+        @foreach($breakpoint->getSources() ?? [] as $source)
             <source
-                type="image/avif"
-                @isset($source['media']) media="{{ $source['media'] }}" @endisset
-                srcset="{{ $source['srcSetAvif'] }}"
+                @if($type = $source->getMimeType()) type="{{ $type }}" @endif
+                @if($media = $source->getMediaString()) media="{{ $media }}" @endif
+                srcset="{{ $source->getSrcSet() }}"
                 @if($includePlaceholder ?? false) sizes="1px" @endif
             >
-        @endisset
-        @isset($source['srcSetWebp'])
-            <source
-                type="image/webp"
-                @isset($source['media']) media="{{ $source['media'] }}" @endisset
-                srcset="{{ $source['srcSetWebp'] }}"
-                @if($includePlaceholder ?? false) sizes="1px" @endif
-            >
-        @endisset
-
-        <source
-            @isset($source['media']) media="{{ $source['media'] }}" @endisset
-            srcset="{{ $source['srcSet'] }}"
-            @if($includePlaceholder ?? false) sizes="1px" @endif
-        >
+        @endforeach
     @endforeach
 
     <img
@@ -52,8 +38,8 @@
         @endunless
         @isset($width) width="{{ $width }}" @endisset
         @isset($height) height="{{ $height }}" @endisset
-        @isset($sources)
+        @if($hasSources)
         data-statamic-responsive-images
-        @endisset
+        @endif
     >
 </picture>

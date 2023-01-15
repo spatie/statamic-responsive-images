@@ -68,31 +68,25 @@ class ResponsiveTag extends Tags
                 'width' => $width,
                 'height' => $height,
                 'asset' => $responsive->asset->toAugmentedArray(),
+                'hasSources' => false
             ])->render();
         }
 
         $includePlaceholder = $this->includePlaceholder();
 
-        $sources = $responsive->breakPoints()
-            ->map(function (Breakpoint $breakpoint) use ($includePlaceholder) {
-                return [
-                    'media' => $breakpoint->getMediaString(),
-                    'srcSet' => $breakpoint->getSrcSet($includePlaceholder),
-                    'srcSetWebp' => $this->getSrcSetFromBreakpoint($breakpoint, 'webp', $includePlaceholder),
-                    'srcSetAvif' => $this->getSrcSetFromBreakpoint($breakpoint, 'avif', $includePlaceholder),
-                    'placeholder' => $breakpoint->placeholder(),
-                ];
-            });
+        $breakpoints = $responsive->breakPoints();
 
         return view('responsive-images::responsiveImage', [
             'attributeString' => $this->getAttributeString(),
             'includePlaceholder' => $includePlaceholder,
-            'placeholder' => $sources->last()['placeholder'],
             'src' => $src,
-            'sources' => $sources,
+            'breakpoints' => $breakpoints,
             'width' => round($width),
             'height' => round($height),
             'asset' => $responsive->asset->toAugmentedArray(),
+            'hasSources' => $responsive->breakPoints()->map(function ($breakpoint) {
+                return $breakpoint->getSources();
+            })->flatten()->count() > 0,
         ])->render();
     }
 
@@ -123,16 +117,5 @@ class ResponsiveTag extends Tags
         return $this->params->has('placeholder')
             ? $this->params->get('placeholder')
             : config('statamic.responsive-images.placeholder', true);
-    }
-
-    private function getSrcSetFromBreakpoint(Breakpoint $breakpoint, string $format, bool $includePlaceholder): string|null
-    {
-        $isFormatIncluded = $this->params->has($format)
-            ? $this->params->get($format)
-            : config('statamic.responsive-images.' . $format, $format === 'webp');
-
-        return $isFormatIncluded
-            ? $breakpoint->getSrcSet($includePlaceholder, $format)
-            : null;
     }
 }

@@ -3,13 +3,15 @@
 namespace Spatie\ResponsiveImages\Tests;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Statamic\Assets\AssetContainer;
 use Statamic\Console\Commands\GlideClear;
 use Statamic\Extend\Manifest;
-use Statamic\Facades\Asset;
+use Statamic\Facades\Blueprint;
+use Statamic\Facades\Collection;
+use Statamic\Facades\Entry;
 use Statamic\Facades\Stache;
 use Statamic\Statamic;
 
@@ -27,13 +29,16 @@ class TestCase extends OrchestraTestCase
     {
         parent::setUp();
 
+        // Clean up from old tests
+        File::deleteDirectory($this->getTempDirectory());
+
         $this->setUpTempTestFiles();
 
         $this->artisan(GlideClear::class);
 
-        config(['filesystems.disks.test' => [
+        config(['filesystems.disks.assets' => [
             'driver' => 'local',
-            'root' => __DIR__ . '/tmp',
+            'root' => $this->getTempDirectory('assets'),
             'url' => '/test',
         ]]);
 
@@ -42,16 +47,13 @@ class TestCase extends OrchestraTestCase
         /** @var \Statamic\Assets\AssetContainer $assetContainer */
         $this->assetContainer = (new AssetContainer)
             ->handle('test_container')
-            ->disk('test')
+            ->disk('assets')
             ->save();
     }
 
     protected function tearDown(): void
     {
-        $this->assetContainer->delete();
-        File::deleteDirectory(__DIR__ . '/tmp');
-        Storage::disk('test')->delete('*');
-        Asset::all()->each->delete();
+        File::deleteDirectory($this->getTempDirectory());
         Stache::clear();
 
         parent::tearDown();
@@ -115,12 +117,21 @@ class TestCase extends OrchestraTestCase
             'collections' => true,
             'assets' => true,
         ]);
+
+        $app['config']->set('statamic.stache.stores.collections.directory', $this->getTempDirectory('/content/collections'));
+        $app['config']->set('statamic.stache.stores.entries.directory', $this->getTempDirectory('/content/collections'));
+        $app['config']->set('statamic.stache.stores.asset-containers.directory', $this->getTempDirectory( '/content/assets'));
+
+        Statamic::booted(function () {
+            Blueprint::setDirectory($this->getTempDirectory('/resources/blueprints'));
+        });
     }
 
     protected function setUpTempTestFiles()
     {
+        $this->initializeDirectory(__DIR__ . '/TestSupport/tmp');
         $this->initializeDirectory($this->getTestFilesDirectory());
-        File::copyDirectory(__DIR__ . '/TestSupport/testfiles', $this->getTestFilesDirectory());
+        File::copyDirectory(__DIR__ . '/TestSupport/TestFiles', $this->getTestFilesDirectory());
     }
 
     protected function initializeDirectory($directory)
@@ -134,7 +145,7 @@ class TestCase extends OrchestraTestCase
 
     public function getTempDirectory($suffix = ''): string
     {
-        return __DIR__ . '/TestSupport/temp' . ($suffix == '' ? '' : '/' . $suffix);
+        return __DIR__ . '/TestSupport/tmp' . ($suffix == '' ? '' : '/' . $suffix);
     }
 
     public function getTestFilesDirectory($suffix = ''): string
@@ -165,5 +176,33 @@ class TestCase extends OrchestraTestCase
     public function getTestGif(): string
     {
         return $this->getTestFilesDirectory('hackerman.gif');
+    }
+
+    public function setInBlueprints($namespace, $blueprintContents): void
+    {
+        $blueprint = tap(Blueprint::make('set-in-blueprints')->setContents($blueprintContents))->save();
+
+        Blueprint::shouldReceive('in')->with($namespace)->andReturn(collect([$blueprint]));
+    }
+
+    public function createDummyCollectionEntry($blueprintConfiguration, $entryData)
+    {
+        // Create collection
+        $collection = tap(Collection::make('articles'))->save();
+
+        $blueprintContents = $blueprintConfiguration;
+
+        // Create blueprint for collection
+        $this->setInBlueprints('collections/articles', $blueprintContents);
+
+        // Create entry in the collection
+        return tap(Entry::make()->collection($collection)->data($entryData))->save();
+    }
+
+    public function uploadTestImageToTestContainer()
+    {
+        $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
+        $path = ltrim('/' . $file->getClientOriginalName(), '/');
+        return $this->assetContainer->makeAsset($path)->upload($file);
     }
 }

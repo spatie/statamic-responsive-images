@@ -89,6 +89,9 @@ class Responsive
         return $asset;
     }
 
+    /**
+     * @return Collection<Breakpoint>
+     */
     public function breakPoints(): Collection
     {
         $parametersByBreakpoint = $this->parametersByBreakpoint();
@@ -150,7 +153,7 @@ class Responsive
         }
 
         return $breakpoints
-            ->sortByDesc('breakpointMinValue')
+            ->sortByDesc('minWidth')
             ->values();
     }
 
@@ -161,6 +164,12 @@ class Responsive
         });
     }
 
+    /**
+     * TODO: Could use better method name as it is currently used only for <img> tag.
+     *
+     * @param string $breakPointLabel
+     * @return float|null
+     */
     public function assetHeight(string $breakPointLabel = 'default'): ?float
     {
         if (! $this->asset->width()) {

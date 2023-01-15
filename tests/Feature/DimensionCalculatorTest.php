@@ -4,6 +4,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\DimensionCalculator;
+use Spatie\ResponsiveImages\Source;
 use Statamic\Assets\Asset;
 
 function stubAsset(int $width, int $height, int $fileSize)
@@ -17,8 +18,10 @@ function stubAsset(int $width, int $height, int $fileSize)
 
 function getWidths(Asset $asset, Breakpoint $breakpoint): array
 {
+    $source = new Source($breakpoint);
+
     return app(DimensionCalculator::class)
-        ->calculate($asset, $breakpoint)
+        ->calculate($asset, $source)
         ->map(function ($dimension) {
             return $dimension->width;
         })
