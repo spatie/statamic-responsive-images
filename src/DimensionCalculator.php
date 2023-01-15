@@ -4,6 +4,7 @@ namespace Spatie\ResponsiveImages;
 
 use Illuminate\Support\Collection;
 use Statamic\Contracts\Assets\Asset;
+
 interface DimensionCalculator
 {
     /**

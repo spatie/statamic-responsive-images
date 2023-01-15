@@ -23,7 +23,7 @@ class ResponsiveDimensionCalculator implements DimensionCalculator
             ->calculateDimensions($fileSize, $width, $height, $ratio)
             ->sort()
             // Filter out widths by max width
-            ->when((isset($glideParams['width']) || config('statamic.responsive-images.max_width') !== null), function ($dimensions) use($glideParams, $ratio) {
+            ->when((isset($glideParams['width']) || config('statamic.responsive-images.max_width') !== null), function ($dimensions) use ($glideParams, $ratio) {
                 $maxWidth = $glideParams['width'] ?? config('statamic.responsive-images.max_width');
 
                 $filtered = $dimensions->filter(function (Dimensions $dimensions) use ($maxWidth) {
