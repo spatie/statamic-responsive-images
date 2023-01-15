@@ -50,12 +50,18 @@ class Breakpoint implements Arrayable
 
         $breakpointParams = $this->breakpointParams;
 
-        return $formats->filter(function ($format) use($breakpointParams) {
-            if ($format === 'original') return true;
+        return $formats->filter(function ($format) use ($breakpointParams) {
+            if ($format === 'original') {
+                return true;
+            }
 
-            if (isset($breakpointParams[$format])) return $breakpointParams[$format];
+            if (isset($breakpointParams[$format])) {
+                return $breakpointParams[$format];
+            }
 
-            if(config('statamic.responsive-images.' . $format, false)) return true;
+            if (config('statamic.responsive-images.' . $format, false)) {
+                return true;
+            }
 
             return false;
         })->map(function ($format) {
@@ -182,12 +188,12 @@ class Breakpoint implements Arrayable
             'label' => $this->label,
             'minWidth' => $this->minWidth,
             'widthUnit' => $this->widthUnit,
-            'sources' => $this->getSources()->map(function (Source $source) use($args) {
+            'sources' => $this->getSources()->map(function (Source $source) use ($args) {
                 return $source->toGql($args);
             })->all(),
             // TODO: There is no neat way to separate placeholder string from srcset string,
             // TODO: cause placeholder argument affects both.
-            'placeholder' => $args['placeholder'] ? $this->placeholder() : null
+            'placeholder' => $args['placeholder'] ? $this->placeholder() : null,
         ];
 
         // Check if DimensionCalculator is instance of ResponsiveDimensionCalculator
@@ -206,7 +212,7 @@ class Breakpoint implements Arrayable
 
         $blinkKey = "placeholder-{$this->asset->id()}-{$this->asset->id()}-{$dimensions->width}-{$dimensions->height}";
 
-        return Blink::once($blinkKey, function () use($dimensions) {
+        return Blink::once($blinkKey, function () use ($dimensions) {
             $imageGenerator = app(ImageGenerator::class);
 
             $params = [

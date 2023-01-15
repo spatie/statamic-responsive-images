@@ -3,7 +3,6 @@
 namespace Spatie\ResponsiveImages\GraphQL;
 
 use Statamic\Facades\GraphQL;
-use Statamic\GraphQL\Types\AssetInterface;
 
 class SourceType extends \Rebing\GraphQL\Support\Type
 {

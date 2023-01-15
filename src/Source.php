@@ -23,7 +23,9 @@ class Source implements Arrayable
     // TODO: Test mimetype detection
     public function getMimeType(): string|null
     {
-        if ($this->format === 'original') return null;
+        if ($this->format === 'original') {
+            return null;
+        }
 
         $mimeTypesByFormat = [
             'jpg' => 'image/jpeg',
@@ -100,7 +102,7 @@ class Source implements Arrayable
     {
         $format = $this->format === 'original' ? null : $this->format;
 
-        $this->getDimensions()->map(function (Dimensions $dimensions) use($format) {
+        $this->getDimensions()->map(function (Dimensions $dimensions) use ($format) {
             dispatch($this->buildImageJob($dimensions->width, $dimensions->height, $format));
         });
     }
