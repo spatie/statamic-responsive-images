@@ -29,7 +29,9 @@ class Source implements Arrayable
             'avif' => 'image/avif',
         ];
 
-        if (isset($mimeTypesBySetFormat[$this->format])) return $mimeTypesBySetFormat[$this->format];
+        if (isset($mimeTypesBySetFormat[$this->format])) {
+            return $mimeTypesBySetFormat[$this->format];
+        }
 
         return $this->breakpoint->asset->mimeType();
     }
