@@ -3,7 +3,6 @@
 namespace Spatie\ResponsiveImages\Tags;
 
 use Spatie\ResponsiveImages\AssetNotFoundException;
-use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\DimensionCalculator;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Spatie\ResponsiveImages\Responsive;
@@ -68,7 +67,7 @@ class ResponsiveTag extends Tags
                 'width' => $width,
                 'height' => $height,
                 'asset' => $responsive->asset->toAugmentedArray(),
-                'hasSources' => false
+                'hasSources' => false,
             ])->render();
         }
 

@@ -101,7 +101,7 @@ class Source implements Arrayable
     {
         $format = $this->format === 'original' ? null : $this->format;
 
-        $this->getDimensions()->map(function (Dimensions $dimensions) use($format) {
+        $this->getDimensions()->map(function (Dimensions $dimensions) use ($format) {
             dispatch($this->buildImageJob($dimensions->width, $dimensions->height, $format));
         });
     }
