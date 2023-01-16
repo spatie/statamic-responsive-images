@@ -10,8 +10,9 @@ use Statamic\Contracts\Assets\Asset;
  */
 class ResponsiveDimensionCalculator implements DimensionCalculator
 {
-    public function calculate(Asset $asset, Source $source): Collection
+    public function calculate(Source $source): Collection
     {
+        $asset = $source->breakpoint->asset;
         $width = $asset->width();
         $height = $asset->height();
         $fileSize = $asset->size();
@@ -41,18 +42,18 @@ class ResponsiveDimensionCalculator implements DimensionCalculator
             });
     }
 
-    public function calculateForImgTag(Asset $asset, Breakpoint $breakpoint, ?int $maxWidth = null): Dimensions
+    public function calculateForImgTag(Breakpoint $breakpoint, ?int $maxWidth = null): Dimensions
     {
-        $ratio = $this->breakpointRatio($asset, $breakpoint);
+        $ratio = $this->breakpointRatio($breakpoint->asset, $breakpoint);
 
-        $width = $maxWidth ?? $asset->width();
+        $width = $maxWidth ?? $breakpoint->asset->width();
 
         return new Dimensions($width, round($width / $ratio));
     }
 
-    public function calculateForPlaceholder(Asset $asset, Breakpoint $breakpoint): Dimensions
+    public function calculateForPlaceholder(Breakpoint $breakpoint): Dimensions
     {
-        return new Dimensions(32, 32 / $this->breakpointRatio($asset, $breakpoint));
+        return new Dimensions(32, 32 / $this->breakpointRatio($breakpoint->asset, $breakpoint));
     }
 
     public function breakpointRatio(Asset $asset, Breakpoint $breakpoint): float

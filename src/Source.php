@@ -89,7 +89,7 @@ class Source implements Arrayable
      */
     private function getDimensions(): Collection
     {
-        return app(DimensionCalculator::class)->calculate($this->breakpoint->asset, $this);
+        return app(DimensionCalculator::class)->calculate($this);
     }
 
     public function getFormat(): string

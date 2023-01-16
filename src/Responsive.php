@@ -185,7 +185,7 @@ class Responsive
         }
 
         return app(DimensionCalculator::class)
-            ->calculateForImgTag($this->asset, $breakpoint)->getHeight();
+            ->calculateForImgTag($breakpoint)->getHeight();
     }
 
     private function parametersByBreakpoint(): Collection

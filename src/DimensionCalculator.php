@@ -14,7 +14,7 @@ interface DimensionCalculator
      * @param Source $source
      * @return Collection<Dimensions>
      */
-    public function calculate(Asset $asset, Source $source): Collection;
+    public function calculate(Source $source): Collection;
 
     /**
      * Specific dimension calculation for <img> tag. Important for cases where it is important to maintain
@@ -26,7 +26,7 @@ interface DimensionCalculator
      * @param Breakpoint $breakpoint
      * @return Dimensions
      */
-    public function calculateForImgTag(Asset $asset, Breakpoint $breakpoint): Dimensions;
+    public function calculateForImgTag(Breakpoint $breakpoint): Dimensions;
 
     /**
      * Used for generating dimensions for placeholder image which is blurred.
@@ -37,5 +37,5 @@ interface DimensionCalculator
      * @param Breakpoint $breakpoint
      * @return Dimensions
      */
-    public function calculateForPlaceholder(Asset $asset, Breakpoint $breakpoint): Dimensions;
+    public function calculateForPlaceholder(Breakpoint $breakpoint): Dimensions;
 }

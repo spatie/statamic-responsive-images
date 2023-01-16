@@ -21,7 +21,7 @@ function getWidths(Asset $asset, Breakpoint $breakpoint): array
     $source = new Source($breakpoint);
 
     return app(DimensionCalculator::class)
-        ->calculate($asset, $source)
+        ->calculate($source)
         ->map(function ($dimension) {
             return $dimension->width;
         })
@@ -54,6 +54,8 @@ it('can calculate the optimized widths from an asset', function () {
     ]);
 
     $smallAsset = createAsset(test()->getSmallTestJpg());
+
+    $breakpoint = new Breakpoint($smallAsset, 'default', 0, []);
 
     $widths = getWidths($smallAsset, $breakpoint);
 

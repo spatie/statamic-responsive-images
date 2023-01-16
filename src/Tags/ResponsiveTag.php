@@ -49,7 +49,7 @@ class ResponsiveTag extends Tags
 
         if ($maxWidth > 0 && $maxWidth < $responsive->asset->width()) {
             $dimensions = app(DimensionCalculator::class)
-                ->calculateForImgTag($responsive->asset, $responsive->defaultBreakpoint(), $maxWidth);
+                ->calculateForImgTag($responsive->defaultBreakpoint(), $maxWidth);
 
             $width = $dimensions->getWidth();
             $height = $dimensions->getHeight();

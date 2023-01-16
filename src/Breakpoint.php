@@ -208,7 +208,7 @@ class Breakpoint implements Arrayable
     public function placeholder(): string
     {
         $dimensions = app(DimensionCalculator::class)
-            ->calculateForPlaceholder($this->asset, $this);
+            ->calculateForPlaceholder($this);
 
         $blinkKey = "placeholder-{$this->asset->id()}-{$this->asset->id()}-{$dimensions->width}-{$dimensions->height}";
 
