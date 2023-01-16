@@ -6,6 +6,9 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 
+/**
+ * Representing <source> tag in HTML
+ */
 class Source implements Arrayable
 {
     public Breakpoint $breakpoint;
@@ -19,23 +22,16 @@ class Source implements Arrayable
         $this->mediaWidthUnit = config('statamic.responsive-images.breakpoint_unit', 'px');
     }
 
-    // TODO: Provide mimetype for original format
-    // TODO: Test mimetype detection
     public function getMimeType(): string|null
     {
-        if ($this->format === 'original') return null;
-
-        $mimeTypesByFormat = [
-            'jpg' => 'image/jpeg',
+        $mimeTypesBySetFormat = [
             'webp' => 'image/webp',
             'avif' => 'image/avif',
         ];
 
-        if (! isset($mimeTypesByFormat[$this->format])) {
-            throw new \Exception("Unsupported format `{$this->format}`");
-        }
+        if (isset($mimeTypesBySetFormat[$this->format])) return $mimeTypesBySetFormat[$this->format];
 
-        return $mimeTypesByFormat[$this->format];
+        return $this->breakpoint->asset->mimeType();
     }
 
     /**
@@ -94,6 +90,11 @@ class Source implements Arrayable
     private function getDimensions(): Collection
     {
         return app(DimensionCalculator::class)->calculate($this->breakpoint->asset, $this);
+    }
+
+    public function getFormat(): string
+    {
+        return $this->format;
     }
 
     public function dispatchImageJobs(): void

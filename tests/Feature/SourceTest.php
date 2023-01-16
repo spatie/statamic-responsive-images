@@ -142,3 +142,31 @@ it('generates relative url when absolute urls are disabled through config', func
         $source->buildImageJob(100)->handle()
     )->toStartWith('/img/asset/');
 });
+
+it('determines mimetype from pre-determined source formats', function () {
+    config()->set('statamic.responsive-images.avif', true);
+    config()->set('statamic.responsive-images.webp', true);
+
+    $breakpoint = new Breakpoint($this->asset, 'default', 0, []);
+
+    $expectedMimeTypes = [
+        'webp' => 'image/webp',
+        'avif' => 'image/avif'
+    ];
+
+    $breakpoint->getSources()->filter(function ($source) {
+        return $source->getFormat() !== 'original';
+    })->each(function ($source) use($expectedMimeTypes) {
+        expect($source->getMimeType())->toBe($expectedMimeTypes[$source->getFormat()]);
+    });
+});
+
+it('determines mimetype from asset for original source format', function () {
+    $breakpoint = new Breakpoint($this->asset, 'default', 0, []);
+
+    $source = $breakpoint->getSources()->first(function ($source) {
+        return $source->getFormat() === 'original';
+    });
+
+    expect($source->getMimeType())->toBe('image/jpeg');
+});
