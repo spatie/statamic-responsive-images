@@ -199,9 +199,13 @@ class TestCase extends OrchestraTestCase
         return tap(Entry::make()->collection($collection)->data($entryData))->save();
     }
 
-    public function uploadTestImageToTestContainer()
+    public function uploadTestImageToTestContainer(?string $testImagePath = null)
     {
-        $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
+        if ($testImagePath === null) {
+            $testImagePath = test()->getTestJpg();
+        }
+
+        $file = new UploadedFile($testImagePath, 'test.jpg');
         $path = ltrim('/' . $file->getClientOriginalName(), '/');
         return $this->assetContainer->makeAsset($path)->upload($file);
     }

@@ -3,6 +3,8 @@
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Blade;
 use Intervention\Image\ImageManagerStatic;
+use Spatie\ResponsiveImages\DimensionCalculator;
+use Spatie\ResponsiveImages\Dimensions;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Spatie\ResponsiveImages\Tags\ResponsiveTag;
 use Statamic\Facades\Stache;
@@ -301,4 +303,20 @@ it('can render an art directed image as array with the directive', function () {
     assertMatchesSnapshotWithoutSvg(Blade::render($blade, [
         'asset' => $asset->value(),
     ]));
+});
+
+it('does not output <source> when no dimensions are returned from dimension calculator', function () {
+    $this->mock(DimensionCalculator::class, function ($mock) {
+        $mock->shouldReceive('calculate')->andReturn(collect([]));
+        $mock->shouldReceive('calculateForImgTag')->andReturn(new Dimensions(100, 100));
+        $mock->shouldReceive('calculateForPlaceholder')->andReturn(new Dimensions(100, 100));
+    });
+
+    $asset = test()->uploadTestImageToTestContainer();
+
+    $tagOutput = ResponsiveTag::render($asset, [
+        'webp' => false,
+    ]);
+
+    expect($tagOutput)->not()->toContain('<source');
 });

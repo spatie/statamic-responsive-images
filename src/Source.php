@@ -39,16 +39,22 @@ class Source implements Arrayable
     /**
      * @param string|null $format
      * @param bool|null $includePlaceholder
-     * @return string
+     * @return string|null
      */
-    public function getSrcSet(string $format = null, ?bool $includePlaceholder = null): string
+    public function getSrcSet(string $format = null, ?bool $includePlaceholder = null): ?string
     {
         // In order of importance: override (e.g. from GraphQL), breakpoint param, config
         $includePlaceholder = $includePlaceholder
             ?? $this->breakpoint->breakpointParams['placeholder']
             ?? config('statamic.responsive-images.placeholder', false);
 
-        return $this->getDimensions()
+        $dimensionsCollection = $this->getDimensions();
+
+        if ($dimensionsCollection->isEmpty()) {
+            return null;
+        }
+
+        return $dimensionsCollection
             ->map(function (Dimensions $dimensions) use ($format) {
                 return "{$this->buildImageJob($dimensions->width, $dimensions->height, $this->format)->handle()} {$dimensions->width}w";
             })

@@ -21,12 +21,18 @@
 <picture>
     @foreach (($breakpoints ?? []) as $breakpoint)
         @foreach($breakpoint->getSources() ?? [] as $source)
-            <source
-                @if($type = $source->getMimeType()) type="{{ $type }}" @endif
-                @if($media = $source->getMediaString()) media="{{ $media }}" @endif
-                srcset="{{ $source->getSrcSet() }}"
-                @if($includePlaceholder ?? false) sizes="1px" @endif
-            >
+            @php
+                $srcSet = $source->getSrcset();
+            @endphp
+
+            @if($srcSet !== null)
+                <source
+                    @if($type = $source->getMimeType()) type="{{ $type }}" @endif
+                    @if($media = $source->getMediaString()) media="{{ $media }}" @endif
+                    srcset="{{ $srcSet }}"
+                    @if($includePlaceholder ?? false) sizes="1px" @endif
+                >
+            @endif
         @endforeach
     @endforeach
 

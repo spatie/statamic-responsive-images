@@ -3,9 +3,13 @@
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Spatie\ResponsiveImages\Breakpoint;
+use Spatie\ResponsiveImages\Dimensions;
 use Spatie\ResponsiveImages\DimensionCalculator;
+use Spatie\ResponsiveImages\Responsive;
 use Spatie\ResponsiveImages\Source;
+use Spatie\ResponsiveImages\Tags\ResponsiveTag;
 use Statamic\Assets\Asset;
+use Statamic\Tags\Parameters;
 
 function stubAsset(int $width, int $height, int $fileSize)
 {
@@ -28,20 +32,10 @@ function getWidths(Asset $asset, Breakpoint $breakpoint): array
         ->toArray();
 }
 
-function createAsset(?string $filePath = null)
-{
-    if (!$filePath) $filePath = test()->getTestJpg();
-
-    $file = new UploadedFile($filePath, 'test.jpg');
-    $path = ltrim('/' . $file->getClientOriginalName(), '/');
-    $asset = test()->assetContainer->makeAsset($path)->upload($file);
-    return $asset;
-}
-
 it('can calculate the optimized widths from an asset', function () {
     Storage::fake('public');
 
-    $asset = createAsset();
+    $asset = test()->uploadTestImageToTestContainer();
 
     $breakpoint = new Breakpoint($asset, 'default', 0, []);
 
@@ -53,7 +47,7 @@ it('can calculate the optimized widths from an asset', function () {
         2 => 237,
     ]);
 
-    $smallAsset = createAsset(test()->getSmallTestJpg());
+    $smallAsset = test()->uploadTestImageToTestContainer(test()->getSmallTestJpg());
 
     $breakpoint = new Breakpoint($smallAsset, 'default', 0, []);
 
@@ -139,7 +133,7 @@ it('can calculate the optimized widths for different dimensions', function () {
 it('filters out widths to be less than max width specified in config', function() {
     config()->set('statamic.responsive-images.max_width', 300);
 
-    $asset = createAsset();
+    $asset = test()->uploadTestImageToTestContainer();
 
     $breakpoint = new Breakpoint($asset, 'default', 0, []);
 
@@ -147,7 +141,7 @@ it('filters out widths to be less than max width specified in config', function(
 });
 
 it('filters out widths to be less than max width specified in glide width param', function() {
-    $asset = createAsset();
+    $asset = test()->uploadTestImageToTestContainer();
 
     $breakpoint = new Breakpoint($asset, 'default', 0, ['glide:width' => 300]);
 
@@ -157,7 +151,7 @@ it('filters out widths to be less than max width specified in glide width param'
 test('max width from glide width param takes precedence over config when filtering widths', function() {
     config()->set('statamic.responsive-images.max_width', 250);
 
-    $asset = createAsset();
+    $asset = test()->uploadTestImageToTestContainer();
 
     $breakpoint = new Breakpoint($asset, 'default', 0, ['glide:width' => 300]);
 
@@ -167,9 +161,25 @@ test('max width from glide width param takes precedence over config when filteri
 it('returns one dimension with equal width of max width when all dimensions have been filtered out', function () {
     config()->set('statamic.responsive-images.max_width', 25);
 
-    $asset = createAsset();
+    $asset = test()->uploadTestImageToTestContainer();
 
     $breakpoint = new Breakpoint($asset, 'default', 0, []);
 
     expect(getWidths($asset, $breakpoint))->toHaveCount(1);
+});
+
+it('uses custom dimension calculator', function () {
+    $this->mock(DimensionCalculator::class, function ($mock) {
+        $mock->shouldReceive('calculate')->andReturn(collect([new Dimensions(100, 100)]));
+        $mock->shouldReceive('calculateForImgTag')->andReturn(new Dimensions(100, 100));
+        $mock->shouldReceive('calculateForPlaceholder')->andReturn(new Dimensions(100, 100));
+    });
+
+    $asset = test()->uploadTestImageToTestContainer();
+
+    $responsive = new Responsive($asset, new Parameters(['placeholder' => false, 'webp' => false]));
+
+    expect(
+        $responsive->defaultBreakpoint()->getSources()->first()->toArray()['srcSet']
+    )->toContain('w=100&h=100');
 });
