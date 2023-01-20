@@ -42,8 +42,10 @@ class ResponsiveDimensionCalculator implements DimensionCalculator
             });
     }
 
-    public function calculateForImgTag(Breakpoint $breakpoint, ?int $maxWidth = null): Dimensions
+    public function calculateForImgTag(Breakpoint $breakpoint): Dimensions
     {
+        $maxWidth = ($breakpoint->breakpointParams['glide:width'] ?? config('statamic.responsive-images.max_width') ?? null);
+
         $ratio = $this->breakpointRatio($breakpoint->asset, $breakpoint);
 
         $width = $maxWidth ?? $breakpoint->asset->width();
