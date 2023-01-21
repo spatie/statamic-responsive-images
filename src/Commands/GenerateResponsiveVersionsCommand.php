@@ -40,7 +40,7 @@ class GenerateResponsiveVersionsCommand extends Command
             $responsive = new Responsive($asset, new Parameters());
 
             $responsive->breakPoints()->each(function (Breakpoint $breakpoint) {
-                $breakpoint->getSources()->each(function (Source $source) {
+                $breakpoint->sources()->each(function (Source $source) {
                     $source->dispatchImageJobs();
                 });
             });

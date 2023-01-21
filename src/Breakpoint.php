@@ -60,7 +60,7 @@ class Breakpoint implements Arrayable
      * TODO: Investigate if this is not being called too often and maybe implement some caching
      * @return Collection<Source>
      */
-    public function getSources(): Collection
+    public function sources(): Collection
     {
         if (isset($this->sources)) {
             return $this->sources;
@@ -208,7 +208,7 @@ class Breakpoint implements Arrayable
             'label' => $this->label,
             'minWidth' => $this->minWidth,
             'widthUnit' => $this->widthUnit,
-            'sources' => $this->getSources()->map(function (Source $source) use ($args) {
+            'sources' => $this->sources()->map(function (Source $source) use ($args) {
                 return $source->toGql($args);
             })->all(),
             // TODO: There is no neat way to separate placeholder string from srcset string,

@@ -154,7 +154,7 @@ it('determines mimetype from pre-determined source formats', function () {
         'avif' => 'image/avif'
     ];
 
-    $breakpoint->getSources()->filter(function ($source) {
+    $breakpoint->sources()->filter(function ($source) {
         return $source->getFormat() !== 'original';
     })->each(function ($source) use($expectedMimeTypes) {
         expect($source->getMimeType())->toBe($expectedMimeTypes[$source->getFormat()]);
@@ -164,7 +164,7 @@ it('determines mimetype from pre-determined source formats', function () {
 it('determines mimetype from asset for original source format', function () {
     $breakpoint = new Breakpoint($this->asset, 'default', 0, []);
 
-    $source = $breakpoint->getSources()->first(function ($source) {
+    $source = $breakpoint->sources()->first(function ($source) {
         return $source->getFormat() === 'original';
     });
 

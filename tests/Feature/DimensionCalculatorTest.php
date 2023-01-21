@@ -180,6 +180,6 @@ it('uses custom dimension calculator', function () {
     $responsive = new Responsive($asset, new Parameters(['placeholder' => false, 'webp' => false]));
 
     expect(
-        $responsive->defaultBreakpoint()->getSources()->first()->toArray()['srcSet']
+        $responsive->defaultBreakpoint()->sources()->first()->toArray()['srcSet']
     )->toContain('w=100&h=100');
 });

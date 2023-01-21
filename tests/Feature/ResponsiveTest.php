@@ -231,7 +231,7 @@ test('can toggle formats between all breakpoints', function () {
 
     $breakpointsWithSources = $responsive->breakPoints()->map(function (Breakpoint $breakpoint) {
         $breakpointArr = $breakpoint->toArray();
-        $breakpointArr['sources'] = collect($breakpoint->getSources()->toArray());
+        $breakpointArr['sources'] = collect($breakpoint->sources()->toArray());
         return $breakpointArr;
     });
 
@@ -272,7 +272,7 @@ test('can toggle placeholder in srcsets between all breakpoints', function () {
 
     $breakpointsWithSources = $responsive->breakPoints()->map(function (Breakpoint $breakpoint) {
         $breakpointArr = $breakpoint->toArray();
-        $breakpointArr['sources'] = collect($breakpoint->getSources()->toArray());
+        $breakpointArr['sources'] = collect($breakpoint->sources()->toArray());
         return $breakpointArr;
     });
 

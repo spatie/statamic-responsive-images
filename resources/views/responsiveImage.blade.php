@@ -20,7 +20,7 @@
 
 <picture>
     @foreach (($breakpoints ?? []) as $breakpoint)
-        @foreach($breakpoint->getSources() ?? [] as $source)
+        @foreach($breakpoint->sources() ?? [] as $source)
             @php
                 $srcSet = $source->getSrcset();
             @endphp
