@@ -39,7 +39,7 @@ class Breakpoint implements Arrayable
     /** @var string */
     public string $widthUnit;
 
-    /** @var Collection<Source> $sources */
+    /** @var Collection<Source> */
     private Collection $sources;
 
     public function __construct(Asset $asset, string $label, int $breakpointMinWidth, array $breakpointParams)
