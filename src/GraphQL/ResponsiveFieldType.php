@@ -36,9 +36,7 @@ class ResponsiveFieldType extends Type
 
                     return $responsive->breakPoints()->map(function (Breakpoint $breakpoint) {
                         return $breakpoint->toGql([
-                            'webp' => config('statamic.responsive-images.webp'),
-                            'avif' => config('statamic.responsive-images.avif'),
-                            'placeholder' => config('statamic.responsive-images.placeholder'),
+                            'placeholder' => config('statamic.responsive-images.placeholder')
                         ]);
                     })->toArray();
                 },

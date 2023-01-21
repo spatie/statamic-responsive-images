@@ -1,6 +1,11 @@
 <?php
 
+use Facades\Statamic\Fields\BlueprintRepository;
+use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
+use Statamic\Facades\Blueprint;
+use Spatie\ResponsiveImages\Tests\Factories\EntryFactory;
 use function Spatie\Snapshots\assertMatchesJsonSnapshot;
+use function Spatie\Snapshots\assertMatchesSnapshot;
 
 function assertMatchesJsonSnapshotWithoutSvg($value)
 {
@@ -28,7 +33,7 @@ test('responsive field returns data', function () {
                         format
                         mimeType
                         minWidth
-                        mediaString
+                        mediaWidthUnit
                         mediaString
                         srcSet
                     }
@@ -67,8 +72,77 @@ test('responsive field returns multiple breakpoints when specifying breakpoint r
 
 
 test('querying ResponsiveFieldType field resolves it to data', function () {
-    // TODO: Having some issues with Responsive fieldtype being registered.
-    // TODO: Streamline collection, it's blueprint, and entry creation
+    config()->set('statamic.responsive-images.webp', false);
+    config()->set('statamic.responsive-images.placeholder', false);
+
+    // Without this line, the GraphQL query will fail because the fieldtype is not registered somehow.
+    ResponsiveFieldtype::register();
+
+    $article = Blueprint::makeFromFields([
+        'hero' => [
+            'type' => 'responsive',
+            'container' => 'test_container',
+            'max_files' => 1,
+            'use_breakpoints' => true,
+            'allow_ratio' => false,
+            'allow_fit' => true,
+            'restrict' => false,
+            'allow_uploads' => true,
+            'display' => 'Hero image',
+            'icon' => 'assets',
+            'listable' => 'hidden',
+            'instructions_position' => 'above',
+            'visibility' => 'visible',
+        ],
+    ]);
+
+    BlueprintRepository::partialMock()->shouldReceive('in')->with('collections/blog')->andReturn(collect([
+        'article' => $article->setHandle('article'),
+    ]));
+
+    (new EntryFactory)->collection('blog')->id('1')->data([
+        'title' => 'Responsive Images addon is awesome',
+        'hero' => [
+            'src' => 'test_container::test.jpg',
+        ],
+    ])->create();
+
+    $query = '
+        {
+            entry(id: "1") {
+                title
+                ... on Entry_Blog_Article {
+                    hero {
+                        breakpoints {
+                            asset {
+                                path
+                            }
+                            label
+                            minWidth
+                            widthUnit
+                            ratio
+                            sources {
+                                format
+                                mimeType
+                                minWidth
+                                mediaWidthUnit
+                                mediaString
+                                srcSet
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ';
+
+    $response = $this
+        ->postJson('/graphql/', ['query' => $query])
+        ->getContent();
+
+    $output = json_decode($response, true)['data']['entry'];
+
+    assertMatchesSnapshot($output);
 });
 
 it('outputs avif sources when enabled through config', function () {
