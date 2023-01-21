@@ -41,35 +41,27 @@ class ResponsiveTag extends Tags
             return '';
         }
 
-        $maxWidth = (int) ($this->params->all()['glide:width'] ?? config('statamic.responsive-images.max_width') ?? 0);
-
-        $width = $responsive->asset->width();
-        $height = $responsive->assetHeight();
-        $src = $responsive->asset->url();
-
-        if ($maxWidth > 0 && $maxWidth < $responsive->asset->width()) {
-            $dimensions = app(DimensionCalculator::class)
-                ->calculateForImgTag($responsive->defaultBreakpoint());
-
-            $width = $dimensions->getWidth();
-            $height = $dimensions->getHeight();
-
-            $src = app(GenerateImageJob::class, ['asset' => $responsive->asset, 'params' => [
-                'width' => $width,
-                'height' => $height,
-            ]])->handle();
-        }
-
         if (in_array($responsive->asset->extension(), ['svg', 'gif'])) {
             return view('responsive-images::responsiveImage', [
                 'attributeString' => $this->getAttributeString(),
-                'src' => $src,
-                'width' => $width,
-                'height' => $height,
+                'src' => $responsive->asset->url(),
+                'width' => $responsive->asset->width(),
+                'height' => $responsive->asset->height(),
                 'asset' => $responsive->asset->toAugmentedArray(),
                 'hasSources' => false,
             ])->render();
         }
+
+        $dimensions = app(DimensionCalculator::class)
+            ->calculateForImgTag($responsive->defaultBreakpoint());
+
+        $width = $dimensions->getWidth();
+        $height = $dimensions->getHeight();
+
+        $src = app(GenerateImageJob::class, ['asset' => $responsive->asset, 'params' => [
+            'width' => $width,
+            'height' => $height,
+        ]])->handle();
 
         $includePlaceholder = $this->includePlaceholder();
 

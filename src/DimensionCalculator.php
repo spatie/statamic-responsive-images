@@ -30,7 +30,7 @@ interface DimensionCalculator
 
     /**
      * Used for generating dimensions for placeholder image which is blurred.
-     * We recommend a width of low value such as 32px, as the image contents will be turned into a string
+     * We recommend a width of low value of 32px, as the image contents will be turned into a string
      * that gets output in the srcset.
      *
      * @param Asset $asset

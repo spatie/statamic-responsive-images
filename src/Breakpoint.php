@@ -264,6 +264,8 @@ class Breakpoint implements Arrayable
             return '';
         }
 
+        // TODO: 32w value is hardcoded, but it is possible with custom DimensionCalculator to have different width,
+        // TODO: replace with dynamic value.
         return $placeholder . ' 32w';
     }
 

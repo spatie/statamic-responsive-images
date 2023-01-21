@@ -112,6 +112,35 @@ it('generates inlined placeholder image with correct dimensions', function () {
     expect($placeholderImage->getHeight())->toBe(16);
 });
 
+it('generates inlined placeholder image with correct dimensions from custom dimension calculator', function () {
+    $this->mock(DimensionCalculator::class, function ($mock) {
+        $mock->shouldReceive('calculate')->andReturn(collect([new Dimensions(100, 100)]));
+        $mock->shouldReceive('calculateForImgTag')->andReturn(new Dimensions(100, 100));
+        $mock->shouldReceive('calculateForPlaceholder')->andReturn(new Dimensions(10, 4));
+    });
+
+    $tagOutput = ResponsiveTag::render($this->asset, [
+        'webp' => false,
+        'placeholder' => true,
+    ]);
+
+    // Find the base64 string of encoded SVG
+    preg_match('/data:image\/svg\+xml;base64,(.*) 32w/', $tagOutput, $svgMatches);
+
+    $svgBase64Decoded = base64_decode($svgMatches[1]);
+
+    expect($svgBase64Decoded)->toContain('width="10" height="4"');
+
+    // Find the base64 string of encoded JPG
+    preg_match('/data:image\/jpeg;base64,(.*)" \/>/', $svgBase64Decoded, $jpgMatches);
+
+    // Make image of it, so we can get the dimensions of encoded JPG
+    $placeholderImage = ImageManagerStatic::make($jpgMatches[1]);
+
+    expect($placeholderImage->getWidth())->toBe(10);
+    expect($placeholderImage->getHeight())->toBe(4);
+});
+
 it('generates responsive images without a placeholder', function () {
     assertMatchesSnapshot(ResponsiveTag::render($this->asset, [
         'placeholder' => false,
@@ -319,4 +348,23 @@ it('does not output <source> when no dimensions are returned from dimension calc
     ]);
 
     expect($tagOutput)->not()->toContain('<source');
+});
+
+it('uses width and height for <img> tag from custom dimension calculator', function () {
+    $this->mock(DimensionCalculator::class, function ($mock) {
+        $mock->shouldReceive('calculate')->andReturn(collect([]));
+        $mock->shouldReceive('calculateForImgTag')->andReturn(new Dimensions(123, 123));
+        $mock->shouldReceive('calculateForPlaceholder')->andReturn(new Dimensions(100, 100));
+    });
+
+    $asset = test()->uploadTestImageToTestContainer();
+
+    $tagOutput = ResponsiveTag::render($asset, [
+        'webp' => false,
+        'placeholder' => false,
+    ]);
+
+    expect($tagOutput)
+        ->toContain('width="123"')
+        ->and('height="123"');
 });

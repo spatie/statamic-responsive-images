@@ -28,7 +28,7 @@
                         
     <img
         alt="Some alt tag"
-        src="/test/test.jpg"
+        src="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=280"
                  width="340"          height="280"                 data-statamic-responsive-images
             >
 </picture>
