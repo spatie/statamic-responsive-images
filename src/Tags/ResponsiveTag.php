@@ -75,7 +75,7 @@ class ResponsiveTag extends Tags
             'width' => round($width),
             'height' => round($height),
             'asset' => $responsive->asset->toAugmentedArray(),
-            'hasSources' => $responsive->breakPoints()->map(function ($breakpoint) {
+            'hasSources' => $breakpoints->map(function ($breakpoint) {
                 return $breakpoint->getSources();
             })->flatten()->count() > 0,
         ])->render();

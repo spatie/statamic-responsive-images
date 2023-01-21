@@ -16,10 +16,13 @@ use Statamic\Tags\Parameters;
 class Responsive
 {
     /** @var Asset */
-    public $asset;
+    public Asset $asset;
 
     /** @var \Statamic\Tags\Parameters */
     public $parameters;
+
+    /** @var Collection<Breakpoint> $breakpoints */
+    private Collection $breakpoints;
 
     public function __construct($assetParam, Parameters $parameters)
     {
@@ -94,6 +97,10 @@ class Responsive
      */
     public function breakPoints(): Collection
     {
+        if (isset($this->breakpoints)) {
+            return $this->breakpoints;
+        }
+
         $parametersByBreakpoint = $this->parametersByBreakpoint();
 
         $defaultParams = $parametersByBreakpoint->get('default') ?? collect();
@@ -152,7 +159,7 @@ class Responsive
             ]));
         }
 
-        return $breakpoints
+        return $this->breakpoints = $breakpoints
             ->sortByDesc('minWidth')
             ->values();
     }

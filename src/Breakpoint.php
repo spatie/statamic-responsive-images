@@ -22,22 +22,25 @@ use Statamic\Support\Str;
  */
 class Breakpoint implements Arrayable
 {
-    /** @var \Statamic\Assets\Asset */
-    public $asset;
+    /** @var Asset */
+    public Asset $asset;
 
     /** @var string */
-    public $label;
+    public string $label;
 
     /**
      * @var int The minimum width of when the breakpoint starts
      */
-    public $minWidth;
+    public int $minWidth;
 
     /** @var array */
-    public $params;
+    public array $params;
 
     /** @var string */
-    public $widthUnit;
+    public string $widthUnit;
+
+    /** @var Collection<Source> $sources */
+    private Collection $sources;
 
     public function __construct(Asset $asset, string $label, int $breakpointMinWidth, array $breakpointParams)
     {
@@ -59,11 +62,15 @@ class Breakpoint implements Arrayable
      */
     public function getSources(): Collection
     {
+        if (isset($this->sources)) {
+            return $this->sources;
+        }
+
         $formats = collect(['avif', 'webp', 'original']);
 
         $breakpointParams = $this->params;
 
-        return $formats->filter(function ($format) use ($breakpointParams) {
+        return $this->sources = $formats->filter(function ($format) use ($breakpointParams) {
             if ($format === 'original') {
                 return true;
             }
