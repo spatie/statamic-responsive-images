@@ -75,9 +75,6 @@ test('querying ResponsiveFieldType field resolves it to data', function () {
     config()->set('statamic.responsive-images.webp', false);
     config()->set('statamic.responsive-images.placeholder', false);
 
-    // Without this line, the GraphQL query will fail because the fieldtype is not registered somehow.
-    ResponsiveFieldtype::register();
-
     $article = Blueprint::makeFromFields([
         'hero' => [
             'type' => 'responsive',

@@ -83,7 +83,7 @@ class TestCase extends OrchestraTestCase
         $app->make(Manifest::class)->manifest = [
             'spatie/statamic-responsive-images' => [
                 'id' => 'spatie/statamic-responsive-images',
-                'namespace' => 'Spatie\\ResponsiveImages\\',
+                'namespace' => 'Spatie\\ResponsiveImages',
             ],
         ];
     }
