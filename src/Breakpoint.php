@@ -48,7 +48,8 @@ class Breakpoint implements Arrayable
         $this->widthUnit = config('statamic.responsive-images.breakpoint_unit', 'px');
     }
 
-    public function __set($name, $value): void {
+    public function __set($name, $value): void
+    {
         throw new Exception(sprintf('Cannot modify property %s', $name));
     }
 
