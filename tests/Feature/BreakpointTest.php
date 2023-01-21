@@ -34,7 +34,7 @@ it('generates placeholder data url when toggling cache form on to off', function
 
     // Generate placeholder
     $breakpoint = new Breakpoint($this->asset, 'default', 0, []);
-    $firstPlaceholder = $breakpoint->placeholder();
+    $firstPlaceholder = $breakpoint->placeholderSrc();
 
     /**
      * We use Blink cache for placeholder generation that we need to clear just in case
@@ -53,7 +53,7 @@ it('generates placeholder data url when toggling cache form on to off', function
 
     // Generate placeholder again
     $breakpoint = new Breakpoint($this->asset, 'default', 0, []);
-    $secondPlaceholder = $breakpoint->placeholder();
+    $secondPlaceholder = $breakpoint->placeholderSrc();
 
     expect($secondPlaceholder)->toEqual($firstPlaceholder)
         ->and($cacheDiskPathAfter)->not->toEqual($cacheDiskPathBefore);
@@ -63,7 +63,7 @@ it("doesn't crash when the placeholder image cannot be read", function () {
     $breakpoint = new Breakpoint($this->asset, 'default', 0, []);
 
     // Generate placeholder to trigger caching
-    $breakpoint->placeholder();
+    $breakpoint->placeholderSrc();
 
     // Forget cached files
     $pathPrefix = \Statamic\Imaging\ImageGenerator::assetCachePathPrefix($this->asset);
@@ -73,5 +73,5 @@ it("doesn't crash when the placeholder image cannot be read", function () {
     Blink::store()->flush();
 
     // Generate new placeholder
-    $breakpoint->placeholder();
+    $breakpoint->placeholderSrc();
 })->expectNotToPerformAssertions();

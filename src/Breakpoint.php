@@ -2,6 +2,7 @@
 
 namespace Spatie\ResponsiveImages;
 
+use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
@@ -12,6 +13,13 @@ use Statamic\Facades\Glide as GlideManager;
 use Statamic\Imaging\ImageGenerator;
 use Statamic\Support\Str;
 
+/**
+ * @property-read \Statamic\Assets\Asset $asset
+ * @property-read string $label
+ * @property-read int $minWidth
+ * @property-read array $params
+ * @property-read string $widthUnit
+ */
 class Breakpoint implements Arrayable
 {
     /** @var \Statamic\Assets\Asset */
@@ -26,7 +34,7 @@ class Breakpoint implements Arrayable
     public $minWidth;
 
     /** @var array */
-    public $breakpointParams;
+    public $params;
 
     /** @var string */
     public $widthUnit;
@@ -36,8 +44,12 @@ class Breakpoint implements Arrayable
         $this->asset = $asset;
         $this->label = $label;
         $this->minWidth = $breakpointMinWidth;
-        $this->breakpointParams = $breakpointParams;
+        $this->params = $breakpointParams;
         $this->widthUnit = config('statamic.responsive-images.breakpoint_unit', 'px');
+    }
+
+    public function __set($name, $value): void {
+        throw new Exception(sprintf('Cannot modify property %s', $name));
     }
 
     /**
@@ -48,7 +60,7 @@ class Breakpoint implements Arrayable
     {
         $formats = collect(['avif', 'webp', 'original']);
 
-        $breakpointParams = $this->breakpointParams;
+        $breakpointParams = $this->params;
 
         return $formats->filter(function ($format) use ($breakpointParams) {
             if ($format === 'original') {
@@ -135,7 +147,7 @@ class Breakpoint implements Arrayable
         }
 
         // Backwards compatible if someone used glide:quality to adjust quality
-        $glideParamsQualityValue = $this->breakpointParams['glide:quality'] ?? $this->breakpointParams['glide:q'] ?? null;
+        $glideParamsQualityValue = $this->params['glide:quality'] ?? $this->params['glide:q'] ?? null;
 
         if ($glideParamsQualityValue) {
             return intval($glideParamsQualityValue);
@@ -145,8 +157,8 @@ class Breakpoint implements Arrayable
             $format = $this->asset->extension();
         }
 
-        if (isset($this->breakpointParams['quality:' . $format])) {
-            return intval($this->breakpointParams['quality:' . $format]);
+        if (isset($this->params['quality:' . $format])) {
+            return intval($this->params['quality:' . $format]);
         }
 
         $configQualityValue = config('statamic.responsive-images.quality.' . $format);
@@ -165,13 +177,13 @@ class Breakpoint implements Arrayable
             'label' => $this->label,
             'minWidth' => $this->minWidth,
             'widthUnit' => $this->widthUnit,
-            'parameters' => $this->breakpointParams,
+            'parameters' => $this->params,
         ];
     }
 
     private function getGlideParams(): array
     {
-        return collect($this->breakpointParams)
+        return collect($this->params)
             ->filter(function ($value, $name) {
                 return Str::contains($name, 'glide:');
             })
@@ -205,7 +217,7 @@ class Breakpoint implements Arrayable
         return $data;
     }
 
-    public function placeholder(): string
+    private function placeholder(): string
     {
         $dimensions = app(DimensionCalculator::class)
             ->calculateForPlaceholder($this);

@@ -2,12 +2,14 @@
 
 namespace Spatie\ResponsiveImages;
 
+use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 
 /**
  * Representing <source> tag in HTML
+ * @property-read Breakpoint $breakpoint
  */
 class Source implements Arrayable
 {
@@ -20,6 +22,10 @@ class Source implements Arrayable
         $this->breakpoint = $breakpoint;
         $this->format = $format;
         $this->mediaWidthUnit = config('statamic.responsive-images.breakpoint_unit', 'px');
+    }
+
+    public function __set($name, $value): void {
+        throw new Exception(sprintf('Cannot modify property %s', $name));
     }
 
     public function getMimeType(): string|null
@@ -45,7 +51,7 @@ class Source implements Arrayable
     {
         // In order of importance: override (e.g. from GraphQL), breakpoint param, config
         $includePlaceholder = $includePlaceholder
-            ?? $this->breakpoint->breakpointParams['placeholder']
+            ?? $this->breakpoint->params['placeholder']
             ?? config('statamic.responsive-images.placeholder', false);
 
         $dimensionsCollection = $this->getDimensions();
