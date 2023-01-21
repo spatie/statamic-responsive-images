@@ -14,7 +14,7 @@ interface DimensionCalculator
      * @param Source $source
      * @return Collection<Dimensions>
      */
-    public function calculate(Source $source): Collection;
+    public function calculateForBreakpoint(Source $source): Collection;
 
     /**
      * Specific dimension calculation for <img> tag. Important for cases where it is important to maintain

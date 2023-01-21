@@ -10,7 +10,7 @@ use Statamic\Contracts\Assets\Asset;
  */
 class ResponsiveDimensionCalculator implements DimensionCalculator
 {
-    public function calculate(Source $source): Collection
+    public function calculateForBreakpoint(Source $source): Collection
     {
         $asset = $source->breakpoint->asset;
         $width = $asset->width();

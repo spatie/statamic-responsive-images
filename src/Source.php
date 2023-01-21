@@ -104,7 +104,7 @@ class Source implements Arrayable
      */
     private function getDimensions(): Collection
     {
-        return app(DimensionCalculator::class)->calculate($this);
+        return app(DimensionCalculator::class)->calculateForBreakpoint($this);
     }
 
     public function getFormat(): string

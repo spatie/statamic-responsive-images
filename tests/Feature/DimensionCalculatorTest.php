@@ -25,7 +25,7 @@ function getWidths(Asset $asset, Breakpoint $breakpoint): array
     $source = new Source($breakpoint);
 
     return app(DimensionCalculator::class)
-        ->calculate($source)
+        ->calculateForBreakpoint($source)
         ->map(function ($dimension) {
             return $dimension->width;
         })
@@ -170,7 +170,7 @@ it('returns one dimension with equal width of max width when all dimensions have
 
 it('uses custom dimension calculator', function () {
     $this->mock(DimensionCalculator::class, function ($mock) {
-        $mock->shouldReceive('calculate')->andReturn(collect([new Dimensions(100, 100)]));
+        $mock->shouldReceive('calculateForBreakpoint')->andReturn(collect([new Dimensions(100, 100)]));
         $mock->shouldReceive('calculateForImgTag')->andReturn(new Dimensions(100, 100));
         $mock->shouldReceive('calculateForPlaceholder')->andReturn(new Dimensions(100, 100));
     });

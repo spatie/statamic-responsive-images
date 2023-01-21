@@ -114,7 +114,7 @@ it('generates inlined placeholder image with correct dimensions', function () {
 
 it('generates inlined placeholder image with correct dimensions from custom dimension calculator', function () {
     $this->mock(DimensionCalculator::class, function ($mock) {
-        $mock->shouldReceive('calculate')->andReturn(collect([new Dimensions(100, 100)]));
+        $mock->shouldReceive('calculateForBreakpoint')->andReturn(collect([new Dimensions(100, 100)]));
         $mock->shouldReceive('calculateForImgTag')->andReturn(new Dimensions(100, 100));
         $mock->shouldReceive('calculateForPlaceholder')->andReturn(new Dimensions(10, 4));
     });
@@ -336,7 +336,7 @@ it('can render an art directed image as array with the directive', function () {
 
 it('does not output <source> when no dimensions are returned from dimension calculator', function () {
     $this->mock(DimensionCalculator::class, function ($mock) {
-        $mock->shouldReceive('calculate')->andReturn(collect([]));
+        $mock->shouldReceive('calculateForBreakpoint')->andReturn(collect([]));
         $mock->shouldReceive('calculateForImgTag')->andReturn(new Dimensions(100, 100));
         $mock->shouldReceive('calculateForPlaceholder')->andReturn(new Dimensions(100, 100));
     });
@@ -352,7 +352,7 @@ it('does not output <source> when no dimensions are returned from dimension calc
 
 it('uses width and height for <img> tag from custom dimension calculator', function () {
     $this->mock(DimensionCalculator::class, function ($mock) {
-        $mock->shouldReceive('calculate')->andReturn(collect([]));
+        $mock->shouldReceive('calculateForBreakpoint')->andReturn(collect([]));
         $mock->shouldReceive('calculateForImgTag')->andReturn(new Dimensions(123, 123));
         $mock->shouldReceive('calculateForPlaceholder')->andReturn(new Dimensions(100, 100));
     });
