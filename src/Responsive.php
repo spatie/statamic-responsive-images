@@ -21,7 +21,7 @@ class Responsive
     /** @var \Statamic\Tags\Parameters */
     public $parameters;
 
-    /** @var Collection<Breakpoint> $breakpoints */
+    /** @var Collection<Breakpoint> */
     private Collection $breakpoints;
 
     public function __construct($assetParam, Parameters $parameters)
