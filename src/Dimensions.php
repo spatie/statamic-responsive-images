@@ -14,10 +14,10 @@ class Dimensions
      */
     public int $height;
 
-    public function __construct(int $width, int $height)
+    public function __construct($width, $height)
     {
-        $this->width = $width;
-        $this->height = $height;
+        $this->width = (int) $width;
+        $this->height = (int) $height;
     }
 
     public function setWidth(int $width)
