@@ -165,7 +165,10 @@ it('returns one dimension with equal width of max width when all dimensions have
 
     $breakpoint = new Breakpoint($asset, 'default', 0, []);
 
-    expect(getWidths($asset, $breakpoint))->toHaveCount(1);
+    $widths = getWidths($asset, $breakpoint);
+
+    expect($widths)->toHaveCount(1);
+    expect($widths[0])->toBe(25);
 });
 
 it('uses custom dimension calculator', function () {
