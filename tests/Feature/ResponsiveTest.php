@@ -189,28 +189,6 @@ it('can retrieve the default breakpoint', function () {
     ]);
 });
 
-it('can retrieve the height of an image for a ratio', function () {
-    $responsive = new Responsive($this->asset, new Parameters());
-
-    expect($responsive->assetHeight())->toEqual(280.0);
-});
-
-it('can retrieve the height of an image for a breakpoint ratio', function () {
-    $responsive = new Responsive($this->asset, new Parameters([
-        'lg:ratio' => 2 / 1,
-    ]));
-
-    expect($responsive->assetHeight('lg'))->toEqual(170.0); // Width = 340
-});
-
-it('asset height is `null` for a non-existing breakpoint', function () {
-    $responsive = new Responsive($this->asset, new Parameters([
-        'lg:ratio' => 2 / 1,
-    ]));
-
-    expect($responsive->assetHeight('bla'))->toEqual(null);
-});
-
 test('can toggle formats between all breakpoints', function () {
     config()->set('statamic.responsive-images.webp', false);
     config()->set('statamic.responsive-images.avif', false);

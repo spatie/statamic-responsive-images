@@ -171,30 +171,6 @@ class Responsive
         });
     }
 
-    /**
-     * TODO: Could use better method name as it is currently used only for <img> tag.
-     *
-     * @param string $breakPointLabel
-     * @return float|null
-     */
-    public function assetHeight(string $breakPointLabel = 'default'): ?float
-    {
-        if (! $this->asset->width()) {
-            return null;
-        }
-
-        $breakpoint = $this->breakPoints()->first(function (Breakpoint $breakpoint) use ($breakPointLabel) {
-            return $breakpoint->label === $breakPointLabel;
-        });
-
-        if (! $breakpoint) {
-            return null;
-        }
-
-        return app(DimensionCalculator::class)
-            ->calculateForImgTag($breakpoint)->getHeight();
-    }
-
     private function parametersByBreakpoint(): Collection
     {
         $breakpoints = collect(config('statamic.responsive-images.breakpoints'));

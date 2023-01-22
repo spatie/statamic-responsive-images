@@ -183,3 +183,23 @@ it('uses custom dimension calculator', function () {
         $responsive->defaultBreakpoint()->sources()->first()->toArray()['srcSet']
     )->toContain('w=100&h=100');
 });
+
+test('ResponsiveDimensionCalculator returns correct height for img tag without specifying ratio', function () {
+    $asset = test()->uploadTestImageToTestContainer();
+
+    $breakpoint = new Breakpoint($asset, 'default', 0, []);
+
+    $calculatedDimensions = app(DimensionCalculator::class)->calculateForImgTag($breakpoint);
+
+    expect($calculatedDimensions->getHeight())->toEqual(280);
+});
+
+test('ResponsiveDimensionCalculator returns correct height for img tag when specifying ratio', function () {
+    $asset = test()->uploadTestImageToTestContainer();
+
+    $breakpoint = new Breakpoint($asset, 'default', 0, ['ratio' => 2 / 1]);
+
+    $calculatedDimensions = app(DimensionCalculator::class)->calculateForImgTag($breakpoint);
+
+    expect($calculatedDimensions->getHeight())->toEqual(170);
+});
