@@ -52,7 +52,7 @@ class Source implements Arrayable
     {
         // In order of importance: override (e.g. from GraphQL), breakpoint param, config
         $includePlaceholder = $includePlaceholder
-            ?? $this->breakpoint->params['placeholder']
+            ?? $this->breakpoint->parameters['placeholder']
             ?? config('statamic.responsive-images.placeholder', false);
 
         $dimensionsCollection = $this->getDimensions();

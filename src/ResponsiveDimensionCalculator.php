@@ -44,7 +44,7 @@ class ResponsiveDimensionCalculator implements DimensionCalculator
 
     public function calculateForImgTag(Breakpoint $breakpoint): Dimensions
     {
-        $maxWidth = ($breakpoint->params['glide:width'] ?? config('statamic.responsive-images.max_width') ?? null);
+        $maxWidth = ($breakpoint->parameters['glide:width'] ?? config('statamic.responsive-images.max_width') ?? null);
 
         $ratio = $this->breakpointRatio($breakpoint->asset, $breakpoint);
 
@@ -60,7 +60,7 @@ class ResponsiveDimensionCalculator implements DimensionCalculator
 
     public function breakpointRatio(Asset $asset, Breakpoint $breakpoint): float
     {
-        return $breakpoint->params['ratio'] ?? ($asset->width() / $asset->height());
+        return $breakpoint->parameters['ratio'] ?? ($asset->width() / $asset->height());
     }
 
     private function calculateDimensions(int $assetFilesize, int $assetWidth, int $assetHeight, $ratio): Collection
