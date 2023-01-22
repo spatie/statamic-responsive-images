@@ -10,7 +10,6 @@ interface DimensionCalculator
     /**
      * Used to generate dimensions for breakpoints.
      *
-     * @param Asset $asset
      * @param Source $source
      * @return Collection<Dimensions>
      */
@@ -22,7 +21,6 @@ interface DimensionCalculator
      * On other hand the returned values here are not as important if you plan to control <img> styling in other ways
      * e.g. with the following CSS: width: 100%, height 100%.
      *
-     * @param Asset $asset
      * @param Breakpoint $breakpoint
      * @return Dimensions
      */
@@ -33,7 +31,6 @@ interface DimensionCalculator
      * We recommend a width of low value of 32px, as the image contents will be turned into a string
      * that gets output in the srcset.
      *
-     * @param Asset $asset
      * @param Breakpoint $breakpoint
      * @return Dimensions
      */
