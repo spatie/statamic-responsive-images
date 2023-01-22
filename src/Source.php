@@ -77,15 +77,12 @@ class Source implements Arrayable
             ->implode(', ');
     }
 
-    public function buildImageJob(int $width, ?int $height = null, ?string $format = null): GenerateImageJob
+    public function buildImageJob(int $width, int $height = null, ?string $format = null): GenerateImageJob
     {
         $params = $this->breakpoint->getImageManipulationParams($format);
 
         $params['width'] = $width;
-
-        if ($height) {
-            $params['height'] = $height;
-        }
+        $params['height'] = $height;
 
         return app(GenerateImageJob::class, ['asset' => $this->breakpoint->asset, 'params' => $params]);
     }
