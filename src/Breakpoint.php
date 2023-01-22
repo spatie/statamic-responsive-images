@@ -229,7 +229,7 @@ class Breakpoint implements Arrayable
         $dimensions = app(DimensionCalculator::class)
             ->calculateForPlaceholder($this);
 
-        $blinkKey = "placeholder-{$this->asset->id()}-{$this->asset->id()}-{$dimensions->width}-{$dimensions->height}";
+        $blinkKey = "placeholder-{$this->asset->id()}-{$dimensions->width}-{$dimensions->height}";
 
         return Blink::once($blinkKey, function () use ($dimensions) {
             $imageGenerator = app(ImageGenerator::class);
