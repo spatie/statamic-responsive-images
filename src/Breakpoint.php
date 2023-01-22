@@ -57,7 +57,6 @@ class Breakpoint implements Arrayable
     }
 
     /**
-     * TODO: Investigate if this is not being called too often and maybe implement some caching
      * @return Collection<Source>
      */
     public function sources(): Collection
