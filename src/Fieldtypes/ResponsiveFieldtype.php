@@ -163,7 +163,7 @@ class ResponsiveFieldtype extends Fieldtype
                 if ($isImage) {
                     $arr['thumbnail'] = cp_route('assets.thumbnails.show', [
                         'encoded_asset' => base64_encode($breakpoint->asset->id()),
-                        'size' => 'thumbnail',
+                        'size' => 'small',
                     ]);
                 }
 
