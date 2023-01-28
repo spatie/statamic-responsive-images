@@ -12,8 +12,7 @@ jobs:
         php: [8.0, 8.1]
         statamic: [3.3.*, 3.4.*]
         include:
-          - statamic: 3.3.*
-            testbench: 7.*
+          - testbench: 7.*
     
     name: PHP ${{ matrix.php }} - Statamic ${{ matrix.statamic }}
     
