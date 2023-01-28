@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.15.1 - 2023-01-12
+
+### What's Changed
+
+- Fix ResponsiveFieldtype erroring out in Replicator sets due to PublishContainer by @ncla in https://github.com/spatie/statamic-responsive-images/pull/192
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.15.0...v2.15.1
+
 ## v2.15.0 - 2023-01-09
 
 ### What's Changed

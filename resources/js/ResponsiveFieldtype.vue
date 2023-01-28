@@ -1,7 +1,7 @@
 <template>
   <div class="publish-fields">
     <publish-container
-        :name="name"
+        :name="publishContainerName"
         :values="value"
         :meta="meta"
         :errors="errors"
@@ -21,10 +21,16 @@
 </template>
 
 <script>
+import { generateId } from "./helpers";
+
 export default {
   mixins: [Fieldtype],
 
   computed: {
+    publishContainerName() {
+      return this.$props.handle + '.' + generateId(10)
+    },
+
     fields() {
       return _.chain(this.meta.fields)
           .map(field => {
