@@ -2,7 +2,7 @@
 
 # Upgrading to 3.x from 2.x
 
-`Breakpoint` now contain `Source` objects which represent the `<source>` tag.
+`Breakpoint` object now contains `Source` objects which represent the `<source>` tag.
 
 ## High impact
 
