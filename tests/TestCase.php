@@ -4,6 +4,7 @@ namespace Spatie\ResponsiveImages\Tests;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Statamic\Assets\AssetContainer;
@@ -199,13 +200,17 @@ class TestCase extends OrchestraTestCase
         return tap(Entry::make()->collection($collection)->data($entryData))->save();
     }
 
-    public function uploadTestImageToTestContainer(?string $testImagePath = null)
+    public function uploadTestImageToTestContainer(?string $testImagePath = null, ?string $filename = 'test.jpg')
     {
         if ($testImagePath === null) {
             $testImagePath = test()->getTestJpg();
         }
 
-        $file = new UploadedFile($testImagePath, 'test.jpg');
+        // Duplicate file because in Statamic 3.4 the source asset is deleted after upload
+        $duplicateImagePath = preg_replace('/(\.[^.]+)$/', '-' . Carbon::now()->timestamp . '$1', $testImagePath);
+        File::copy($testImagePath, $duplicateImagePath);
+
+        $file = new UploadedFile($duplicateImagePath, $filename);
         $path = ltrim('/' . $file->getClientOriginalName(), '/');
         return $this->assetContainer->makeAsset($path)->upload($file);
     }
