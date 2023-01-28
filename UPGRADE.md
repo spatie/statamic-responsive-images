@@ -94,6 +94,6 @@ To easily test the GraphQL changes and see what is available, we recommend using
 
 This is low impact change because most modern browsers will not hit the URL provided in `<img>` tag if `<source>` tags are provided.
 
-## Very low impact changes
+## Very low impact
 
 If you had made any changes or used objects in a way that are out of scope of the provided README in this project then please review the commits manually.
