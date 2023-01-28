@@ -84,7 +84,7 @@ A new addition is `mimeType` property which you should set on `<source>` tags to
 
 These changes are also in effect when you query responsive fieldtype, except the data is under `breakpoints` key, just like before.
 
-To easily test the GraphQL changes and see what is available, we recommend using built-in GUI which you can visit through `/cp/graphiql` in  your Statamic project. This tool provides auto-complete.
+To easily test the GraphQL changes and see what is available, we recommend using built-in GUI which you can visit through `/cp/graphiql` in your Statamic project. This tool provides auto-complete.
 
 ## Low impact
 
