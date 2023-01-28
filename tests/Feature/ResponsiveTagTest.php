@@ -19,27 +19,15 @@ function assertMatchesSnapshotWithoutSvg($value)
 }
 
 beforeEach(function () {
-    $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
-    $path = ltrim('/' . $file->getClientOriginalName(), '/');
-    $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
-
-    $file2 = new UploadedFile($this->getTestJpg(), 'test2.jpg');
-    $path = ltrim('/' . $file2->getClientOriginalName(), '/');
-    $this->asset2 = $this->assetContainer->makeAsset($path)->upload($file2);
-
-    $svg = new UploadedFile($this->getTestSvg(), 'test.svg');
-    $path = ltrim('/' . $file->getClientOriginalName(), '/');
-    $this->svgAsset = $this->assetContainer->makeAsset($path)->upload($svg);
-
-    $gif = new UploadedFile($this->getTestGif(), 'hackerman.gif');
-    $path = ltrim('/' . $file->getClientOriginalName(), '/');
-    $this->gifAsset = $this->assetContainer->makeAsset($path)->upload($gif);
-
+    $this->asset = $this->uploadTestImageToTestContainer();
+    $this->asset2 = $this->uploadTestImageToTestContainer($this->getTestJpg(), 'test2.jpg');
+    $this->svgAsset = $this->uploadTestImageToTestContainer($this->getTestSvg(), 'test.svg');
+    $this->gifAsset = $this->uploadTestImageToTestContainer($this->getTestGif(), 'hackerman.gif');
     Stache::clear();
 });
 
 it('generates responsive images')
-    ->tap(fn () =>  assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset)));
+    ->tap(fn () => assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset)));
 
 it('generates no conversions for svgs')
     ->tap(fn () => assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->svgAsset)));
