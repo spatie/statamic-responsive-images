@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v2.15.2 - 2023-01-28
+
+### What's Changed
+
+- Fix broken thumbnails on control panel entry index pages on Statamic v3.4 by @ncla in https://github.com/spatie/statamic-responsive-images/pull/201
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.15.1...v2.15.2
+
 ## v2.15.1 - 2023-01-12
 
 ### What's Changed
