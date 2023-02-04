@@ -9,17 +9,15 @@ All notable changes to `statamic-responsive-images` will be documented in this f
 ### What's Changed
 
 - Extensible dimension calculators by @ncla in https://github.com/spatie/statamic-responsive-images/pull/193
-- - Developers now can customize the amount of images that get generated and their exact dimensions through a custom `DimensionCalculator` that developers bind in `ServiceProvider`. Calculations can be done for each breakpoint and source, and receive `Breakpoint` / `Source` in the calculation methods, which allows to access breakpoint parameters, original asset and more. For motivation and examples of this, please see the PR and the original issue associated with it.
-- 
+  - Developers now can customize the amount of images that get generated and their exact dimensions through a custom `DimensionCalculator` that developers bind in `ServiceProvider`. Calculations can be done for each breakpoint and source, and receive `Breakpoint` / `Source` in the calculation methods, which allows to access breakpoint parameters, original asset and more. For motivation and examples of this, please see the PR and the original issue associated with it.
 - Fix max widths config value or glide width param not being respected in some cases
 - Fix floating numbers being output for width and height values for Glide endpoint, they are now rounded integers
 - Placeholder now can be toggled per breakpoint
 - `<img>` tag src will now go through Glide instead of pointing to the original asset file, due to `DimensionCalculators` ability to return specific widths and heights for `<img>` tag
 - Empty `media` attributes will no longer be outputted
 - Properties have been renamed to be more descriptive:
-- - `value` to `minWidth`
-- - `unit` to `widthUnit`
-- 
+  - `value` to `minWidth`
+  - `unit` to `widthUnit`
 - Add `mimeType` property to explicitly help browsers determine what images does the `<source>` contain
 - Housekeeping: add additional tests for dimension calculator and GraphQL
 
