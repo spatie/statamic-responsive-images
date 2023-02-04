@@ -12,92 +12,9 @@ use Statamic\Facades\YAML;
 use Statamic\Facades\Blink;
 
 beforeEach(function () {
-    Storage::disk('test')->delete('*');
-
-    $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
-    $path = ltrim('/' . $file->getClientOriginalName(), '/');
-    $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
+    Storage::disk('assets')->delete('*');
+    $this->asset = test()->uploadTestImageToTestContainer();
     Stache::clear();
-});
-
-it('can build an image', function () {
-    $responsive = new Breakpoint($this->asset, 'default', 0, []);
-
-    expect(
-        $responsive->buildImageJob(100)->handle()
-    )->toContain('?q=90&fit=crop-50-50&w=100');
-});
-
-it('can build an image with parameters', function () {
-    $responsive = new Breakpoint($this->asset, 'default', 0, []);
-
-    expect(
-        $responsive->buildImageJob(100, 'webp')->handle()
-    )->toContain('?fm=webp&q=90&fit=crop-50-50&w=100');
-});
-
-it('can build an image with a ratio', function () {
-    $responsive = new Breakpoint($this->asset, 'default', 0, []);
-
-    expect(
-        $responsive->buildImageJob(100, 'webp', 1.0)->handle()
-    )->toContain('?fm=webp&q=90&fit=crop-50-50&w=100&h=100');
-});
-
-it("doesn't crash with a `null` ratio", function () {
-
-    $breakpoint = new Breakpoint($this->asset, 'default', 0, [
-        'ratio' => null,
-    ]);
-
-    $breakpoint->getSrcSet();
-})->expectNotToPerformAssertions();
-
-it('does not generate image url with crop focus when auto crop is disabled', function () {
-    config()->set('statamic.assets.auto_crop', false);
-
-    $breakpoint = new Breakpoint($this->asset, 'default', 0, []);
-
-    expect(
-        $breakpoint->buildImageJob(100, 'webp', 1.0)->handle()
-    )->toContain('?fm=webp&q=90&w=100&h=100',);
-});
-
-it('does not generate image url with crop focus when a `glide:fit` param is provided', function () {
-    $breakpoint = new Breakpoint($this->asset, 'default', 0, ['glide:fit' => 'fill']);
-
-    expect(
-        $breakpoint->buildImageJob(100, 'webp', 1.0)->handle()
-    )->toContain('?fit=fill&fm=webp&q=90&w=100&h=100');
-});
-
-it('uses crop focus value from assets metadata', function () {
-    $metaDataPath = $this->asset->metaPath();
-
-    // Get original metadata that was generated when the asset was uploaded
-    $metaData = YAML::file(
-        Storage::disk('test')->path($metaDataPath)
-    )->parse();
-
-    // Set some focus value
-    $metaData['data'] = [
-        'focus' => '29-71-3.6'
-    ];
-
-    // Dump the YAML data back into the metadata yaml file
-    Storage::disk('test')->put($metaDataPath, YAML::dump($metaData));
-
-    // Flush the cache so Statamic is not using outdated metadata
-    Cache::flush();
-
-    // Fetch the asset from the container again, triggering metadata hydration
-    $asset = $this->assetContainer->asset('test.jpg');
-
-    $breakpoint = new Breakpoint($asset, 'default', 0, []);
-
-    expect(
-        $breakpoint->buildImageJob(100)->handle()
-    )->toContain('?q=90&fit=crop-29-71-3.6&w=100');
 });
 
 it('generates placeholder data url when toggling cache form on to off', function () {
@@ -116,8 +33,8 @@ it('generates placeholder data url when toggling cache form on to off', function
     $cacheDiskPathBefore = \Statamic\Facades\Glide::cacheDisk()->getConfig()['root'];
 
     // Generate placeholder
-    $responsive = new Breakpoint($this->asset, 'default', 0, []);
-    $firstPlaceholder = $responsive->placeholder();
+    $breakpoint = new Breakpoint($this->asset, 'default', 0, []);
+    $firstPlaceholder = $breakpoint->placeholderSrc();
 
     /**
      * We use Blink cache for placeholder generation that we need to clear just in case
@@ -135,18 +52,18 @@ it('generates placeholder data url when toggling cache form on to off', function
     $cacheDiskPathAfter = \Statamic\Facades\Glide::cacheDisk()->getConfig()['root'];
 
     // Generate placeholder again
-    $responsive = new Breakpoint($this->asset, 'default', 0, []);
-    $secondPlaceholder = $responsive->placeholder();
+    $breakpoint = new Breakpoint($this->asset, 'default', 0, []);
+    $secondPlaceholder = $breakpoint->placeholderSrc();
 
     expect($secondPlaceholder)->toEqual($firstPlaceholder)
         ->and($cacheDiskPathAfter)->not->toEqual($cacheDiskPathBefore);
 });
 
 it("doesn't crash when the placeholder image cannot be read", function () {
-    $responsive = new Breakpoint($this->asset, 'default', 0, []);
+    $breakpoint = new Breakpoint($this->asset, 'default', 0, []);
 
     // Generate placeholder to trigger caching
-    $responsive->placeholder();
+    $breakpoint->placeholderSrc();
 
     // Forget cached files
     $pathPrefix = \Statamic\Imaging\ImageGenerator::assetCachePathPrefix($this->asset);
@@ -156,47 +73,5 @@ it("doesn't crash when the placeholder image cannot be read", function () {
     Blink::store()->flush();
 
     // Generate new placeholder
-    $responsive->placeholder();
+    $breakpoint->placeholderSrc();
 })->expectNotToPerformAssertions();
-
-it('generates absolute url when using custom filesystem with custom url for glide cache', function () {
-    config(['filesystems.disks.absolute_test' => [
-        'driver' => 'local',
-        'root' => __DIR__ . '/tmp',
-        'url' => 'https://responsive.test/test',
-    ]]);
-
-    config([
-        'statamic.assets.image_manipulation.cache' => 'absolute_test',
-    ]);
-
-    $responsive = new Breakpoint($this->asset, 'default', 0, []);
-
-    expect(
-        $responsive->buildImageJob(100)->handle()
-    )->toStartWith('https://responsive.test/');
-});
-
-it('generates absolute url when force enabled through config', function () {
-    config([
-        'statamic.responsive-images.force_absolute_urls' => true,
-    ]);
-
-    $responsive = new Breakpoint($this->asset, 'default', 0, []);
-
-    expect(
-        $responsive->buildImageJob(100)->handle()
-    )->toStartWith('http://localhost/');
-});
-
-it('generates relative url when absolute urls are disabled through config', function () {
-    config([
-        'statamic.responsive-images.force_absolute_urls' => false,
-    ]);
-
-    $responsive = new Breakpoint($this->asset, 'default', 0, []);
-
-    expect(
-        $responsive->buildImageJob(100)->handle()
-    )->toStartWith('/img/asset/');
-});

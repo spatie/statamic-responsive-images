@@ -19,29 +19,21 @@
 @endonce
 
 <picture>
-    @foreach (($sources ?? []) as $source)
-        @isset($source['srcSetAvif'])
-            <source
-                type="image/avif"
-                @isset($source['media']) media="{{ $source['media'] }}" @endisset
-                srcset="{{ $source['srcSetAvif'] }}"
-                @if($includePlaceholder ?? false) sizes="1px" @endif
-            >
-        @endisset
-        @isset($source['srcSetWebp'])
-            <source
-                type="image/webp"
-                @isset($source['media']) media="{{ $source['media'] }}" @endisset
-                srcset="{{ $source['srcSetWebp'] }}"
-                @if($includePlaceholder ?? false) sizes="1px" @endif
-            >
-        @endisset
+    @foreach (($breakpoints ?? []) as $breakpoint)
+        @foreach($breakpoint->sources() ?? [] as $source)
+            @php
+                $srcSet = $source->getSrcset();
+            @endphp
 
-        <source
-            @isset($source['media']) media="{{ $source['media'] }}" @endisset
-            srcset="{{ $source['srcSet'] }}"
-            @if($includePlaceholder ?? false) sizes="1px" @endif
-        >
+            @if($srcSet !== null)
+                <source
+                    @if($type = $source->getMimeType()) type="{{ $type }}" @endif
+                    @if($media = $source->getMediaString()) media="{{ $media }}" @endif
+                    srcset="{{ $srcSet }}"
+                    @if($includePlaceholder ?? false) sizes="1px" @endif
+                >
+            @endif
+        @endforeach
     @endforeach
 
     <img
@@ -52,8 +44,8 @@
         @endunless
         @isset($width) width="{{ $width }}" @endisset
         @isset($height) height="{{ $height }}" @endisset
-        @isset($sources)
+        @if($hasSources)
         data-statamic-responsive-images
-        @endisset
+        @endif
     >
 </picture>

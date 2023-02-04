@@ -3,13 +3,14 @@
 namespace Spatie\ResponsiveImages\GraphQL;
 
 use GraphQL\Type\Definition\ResolveInfo;
+use Rebing\GraphQL\Support\Type;
 use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Responsive;
 use Statamic\Facades\GraphQL;
 use Statamic\Fields\Value;
 use Statamic\Tags\Parameters;
 
-class ResponsiveFieldType extends \Rebing\GraphQL\Support\Type
+class ResponsiveFieldType extends Type
 {
     const NAME = 'ResponsiveType';
 
@@ -35,8 +36,6 @@ class ResponsiveFieldType extends \Rebing\GraphQL\Support\Type
 
                     return $responsive->breakPoints()->map(function (Breakpoint $breakpoint) {
                         return $breakpoint->toGql([
-                            'webp' => config('statamic.responsive-images.webp'),
-                            'avif' => config('statamic.responsive-images.avif'),
                             'placeholder' => config('statamic.responsive-images.placeholder'),
                         ]);
                     })->toArray();

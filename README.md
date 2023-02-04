@@ -194,41 +194,20 @@ You can retrieve a responsive version of an asset like this:
     data {
       id,
       image {
-        responsive {
-          label
-          value
-          unit
-          ratio
-          mediaString
-          srcSet
-          srcSetWebp
-          srcSetAvif
-          placeholder
-        }
-      }
-    }
-  }
-}
-```
-
-Setting parameters like a ratio is also possible:
-
-```graphql
-{
-  entries {
-    data {
-      id,
-      image {
         responsive(ratio: 1.2) {
           label
-          value
-          unit
+          minWidth
+          widthUnit
           ratio
-          mediaString
-          srcSet
-          srcSetWebp
-          srcSetAvif
-          placeholder
+          sources {
+            format
+            mimeType
+            minWidth
+            mediaWidthUnit
+            mediaString
+            srcSet
+            placeholder
+          }
         }
       }
     }
@@ -248,14 +227,18 @@ A responsive fieldtype has all the same fields as a normal responsive field from
       art_image {
         breakpoints {
           label
-          value
-          unit
-          ratio
-          mediaString
-          srcSet
-          srcSetWebp
-          srcSetAvif
-          placeholder
+          minWidth
+          widthUnit
+          ratio 
+          sources {
+            format
+            mimeType
+            minWidth
+            mediaWidthUnit
+            mediaString
+            srcSet
+            placeholder
+          }
         }
       }
     }

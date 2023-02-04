@@ -2,80 +2,103 @@
 
 namespace Spatie\ResponsiveImages;
 
+use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use League\Flysystem\FilesystemException;
-use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Statamic\Contracts\Assets\Asset;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Glide as GlideManager;
 use Statamic\Imaging\ImageGenerator;
 use Statamic\Support\Str;
 
+/**
+ * @property-read \Statamic\Assets\Asset $asset
+ * @property-read string $label
+ * @property-read int $minWidth
+ * @property-read array $parameters
+ * @property-read string $widthUnit
+ */
 class Breakpoint implements Arrayable
 {
-    /** @var \Statamic\Assets\Asset */
-    public $asset;
+    /** @var Asset */
+    public Asset $asset;
 
     /** @var string */
-    public $label;
+    public string $label;
 
-    /** @var ?int */
-    public $value;
+    /**
+     * @var int The minimum width of when the breakpoint starts
+     */
+    public int $minWidth;
 
     /** @var array */
-    public $parameters;
-
-    /** @var float */
-    public $ratio;
+    public array $parameters;
 
     /** @var string */
-    public $unit;
+    public string $widthUnit;
 
-    public function __construct(Asset $asset, string $label, int $value, array $parameters)
+    /** @var Collection<Source> */
+    private Collection $sources;
+
+    public function __construct(Asset $asset, string $label, int $breakpointMinWidth, array $breakpointParams)
     {
         $this->asset = $asset;
         $this->label = $label;
-        $this->value = $value;
-        $this->parameters = $parameters;
-        $this->ratio = $this->parameters['ratio'] ?? $this->asset->width() / $this->asset->height();
-
-        $this->unit = config('statamic.responsive-images.breakpoint_unit', 'px');
+        $this->minWidth = $breakpointMinWidth;
+        $this->parameters = $breakpointParams;
+        $this->widthUnit = config('statamic.responsive-images.breakpoint_unit', 'px');
     }
 
-    public function getMediaString(): string
+    public function __set($name, $value): void
     {
-        if (! $this->value) {
-            return '';
+        throw new Exception(sprintf('Cannot modify property %s', $name));
+    }
+
+    /**
+     * @return Collection<Source>
+     */
+    public function sources(): Collection
+    {
+        if (isset($this->sources)) {
+            return $this->sources;
         }
 
-        return "(min-width: {$this->value}{$this->unit})";
+        $formats = collect(['avif', 'webp', 'original']);
+
+        $breakpointParams = $this->parameters;
+
+        return $this->sources = $formats->filter(function ($format) use ($breakpointParams) {
+            if ($format === 'original') {
+                return true;
+            }
+
+            if (isset($breakpointParams[$format])) {
+                return $breakpointParams[$format];
+            }
+
+            if (config('statamic.responsive-images.' . $format, false)) {
+                return true;
+            }
+
+            return false;
+        })->map(function ($format) {
+            return new Source($this, $format);
+        });
     }
 
-    public function getSrcSet(bool $includePlaceholder = true, string $format = null): string
-    {
-        return $this->getWidths()
-            ->map(function (int $width) use ($format) {
-                return "{$this->buildImageJob($width, $format, $this->ratio)->handle()} {$width}w";
-            })
-            ->when($includePlaceholder, function (Collection $widths) {
-                $placeholderSrc = $this->placeholderSrc();
-
-                if (empty($placeholderSrc)) {
-                    return $widths;
-                }
-
-                return $widths->prepend($placeholderSrc);
-            })
-            ->implode(', ');
-    }
-
-    private function getParams(string $format = null): array
+    /**
+     * Get only Glide params.
+     *
+     * @param string|null $format
+     * @return array
+     */
+    public function getImageManipulationParams(string $format = null): array
     {
         $params = $this->getGlideParams();
 
-        if ($format) {
+        if ($format && $format !== 'original') {
             $params['fm'] = $format;
         }
 
@@ -85,14 +108,22 @@ class Breakpoint implements Arrayable
             $params['q'] = $quality;
         }
 
-        /* We don't want any heights specified other than our own */
-        unset($params['height']);
-        unset($params['h']);
-
         $crop = $this->getCropFocus($params);
 
         if ($crop) {
             $params['fit'] = $crop;
+        }
+
+        // There are two ways to pass in width, so we just use one: "width"
+        if (isset($params['w'])) {
+            $params['width'] = $params['width'] ?? $params['w'];
+            unset($params['w']);
+        }
+
+        // Same for height
+        if (isset($params['h'])) {
+            $params['height'] = $params['height'] ?? $params['height'];
+            unset($params['h']);
         }
 
         return $params;
@@ -118,6 +149,10 @@ class Breakpoint implements Arrayable
      */
     private function getFormatQuality(string $format = null): int|null
     {
+        if ($format === 'original') {
+            $format = null;
+        }
+
         // Backwards compatible if someone used glide:quality to adjust quality
         $glideParamsQualityValue = $this->parameters['glide:quality'] ?? $this->parameters['glide:q'] ?? null;
 
@@ -142,66 +177,14 @@ class Breakpoint implements Arrayable
         return null;
     }
 
-    private function getWidths(): Collection
-    {
-        $params = $this->getParams();
-
-        return app(WidthCalculator::class)
-            ->calculateWidthsFromAsset($this->asset)
-            /* If a width is specified, consider it a max width */
-            ->when(isset($params['width']) || isset($params['w']), function ($widths) use ($params) {
-                $maxWidth = $params['width'] ?? $params['w'];
-
-                $filtered = $widths->filter(function (int $width) use ($maxWidth) {
-                    return $width <= $maxWidth;
-                });
-
-                /* We want at least one width to be returned */
-                if (! $filtered->count()) {
-                    $filtered = collect($maxWidth);
-                }
-
-                return $filtered;
-            });
-    }
-
-    public function buildImageJob(int $width, ?string $format = null, ?float $ratio = null): GenerateImageJob
-    {
-        $params = $this->getParams($format);
-
-        $params['width'] = $width;
-
-        if (! is_null($ratio)) {
-            $params['height'] = $width / $ratio;
-        }
-
-        return app(GenerateImageJob::class, ['asset' => $this->asset, 'params' => $params]);
-    }
-
-    public function dispatchImageJobs(): void
-    {
-        $this->getWidths()
-            ->map(function (int $width) {
-                dispatch($this->buildImageJob($width, null, $this->ratio));
-                if (config('statamic.responsive-images.webp', true)) {
-                    dispatch($this->buildImageJob($width, 'webp', $this->ratio));
-                }
-
-                if (config('statamic.responsive-images.avif', false)) {
-                    dispatch($this->buildImageJob($width, 'avif', $this->ratio));
-                }
-            });
-    }
-
     public function toArray(): array
     {
         return [
             'asset' => $this->asset,
             'label' => $this->label,
-            'value' => $this->value,
-            'media' => $this->getMediaString(),
+            'minWidth' => $this->minWidth,
+            'widthUnit' => $this->widthUnit,
             'parameters' => $this->parameters,
-            'unit' => $this->unit,
         ];
     }
 
@@ -222,39 +205,46 @@ class Breakpoint implements Arrayable
         $data = [
             'asset' => $this->asset,
             'label' => $this->label,
-            'value' => $this->value,
-            'unit' => $this->unit,
-            'ratio' => $this->ratio,
-            'mediaString' => $this->getMediaString(),
+            'minWidth' => $this->minWidth,
+            'widthUnit' => $this->widthUnit,
+            'sources' => $this->sources()->map(function (Source $source) use ($args) {
+                return $source->toGql($args);
+            })->all(),
+            // TODO: There is no neat way to separate placeholder string from srcset string,
+            // TODO: cause placeholder argument affects both.
             'placeholder' => $args['placeholder'] ? $this->placeholder() : null,
-            'srcSet' => $this->getSrcSet($args['placeholder']),
         ];
 
-        if ($args['webp']) {
-            $data['srcSetWebp'] = $this->getSrcSet($args['placeholder'], 'webp');
-        }
-
-        if ($args['avif']) {
-            $data['srcSetAvif'] = $this->getSrcSet($args['placeholder'], 'avif');
+        // Check if DimensionCalculator is instance of ResponsiveDimensionCalculator
+        // as ratio is only property applicable only for this DimensionCalculator
+        if (app(DimensionCalculator::class) instanceof ResponsiveDimensionCalculator) {
+            $data['ratio'] = app(DimensionCalculator::class)->breakpointRatio($this->asset, $this);
         }
 
         return $data;
     }
 
-    public function placeholder(): string
+    private function placeholder(): string
     {
-        return Blink::once("placeholder-{$this->asset->id()}-{$this->ratio}", function () {
+        $dimensions = app(DimensionCalculator::class)
+            ->calculateForPlaceholder($this);
+
+        $blinkKey = "placeholder-{$this->asset->id()}-{$dimensions->width}-{$dimensions->height}";
+
+        return Blink::once($blinkKey, function () use ($dimensions) {
             $imageGenerator = app(ImageGenerator::class);
 
-            $manipulationPath = $imageGenerator->generateByAsset($this->asset, [
-                'w' => 32,
-                'h' => round(32 / $this->ratio),
+            $params = [
+                'w' => $dimensions->getWidth(),
+                'h' => $dimensions->getHeight(),
                 'blur' => 5,
                 // Arbitrary parameter to change md5 hash for Glide manipulation cache key
                 // to force Glide to generate new manipulated image if cache setting changes.
                 // TODO: Remove this line once the issue has been resolved in statamic/cms package
                 'cache' => Config::get('statamic.assets.image_manipulation.cache', false),
-            ]);
+            ];
+
+            $manipulationPath = $imageGenerator->generateByAsset($this->asset, $params);
 
             $base64Image = $this->readImageToBase64($manipulationPath);
 
@@ -263,8 +253,8 @@ class Breakpoint implements Arrayable
             }
 
             $placeholderSvg = view('responsive-images::placeholderSvg', [
-                'width' => 32,
-                'height' => round(32 / $this->ratio),
+                'width' => $dimensions->getWidth(),
+                'height' => $dimensions->getHeight(),
                 'image' => $base64Image,
                 'asset' => $this->asset->toAugmentedArray(),
             ])->render();
@@ -273,7 +263,7 @@ class Breakpoint implements Arrayable
         });
     }
 
-    private function placeholderSrc(): string
+    public function placeholderSrc(): string
     {
         $placeholder = $this->placeholder();
 
@@ -281,6 +271,8 @@ class Breakpoint implements Arrayable
             return '';
         }
 
+        // TODO: 32w value is hardcoded, but it is possible with custom DimensionCalculator to have different width,
+        // TODO: replace with dynamic value.
         return $placeholder . ' 32w';
     }
 

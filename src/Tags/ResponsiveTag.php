@@ -3,7 +3,7 @@
 namespace Spatie\ResponsiveImages\Tags;
 
 use Spatie\ResponsiveImages\AssetNotFoundException;
-use Spatie\ResponsiveImages\Breakpoint;
+use Spatie\ResponsiveImages\DimensionCalculator;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Spatie\ResponsiveImages\Responsive;
 use Statamic\Support\Str;
@@ -41,53 +41,43 @@ class ResponsiveTag extends Tags
             return '';
         }
 
-        $maxWidth = (int) ($this->params->all()['glide:width'] ?? 0);
-        $width = $responsive->asset->width();
-        $height = $responsive->assetHeight();
-        $src = $responsive->asset->url();
-
-        if ($maxWidth > 0 && $maxWidth < $responsive->asset->width()) {
-            $width = $maxWidth;
-            $height = $width / $responsive->defaultBreakpoint()->ratio;
-
-            $src = app(GenerateImageJob::class, ['asset' => $responsive->asset, 'params' => [
-                'width' => $width,
-                'height' => $height,
-            ]])->handle();
-        }
-
         if (in_array($responsive->asset->extension(), ['svg', 'gif'])) {
             return view('responsive-images::responsiveImage', [
                 'attributeString' => $this->getAttributeString(),
-                'src' => $src,
-                'width' => $width,
-                'height' => $height,
+                'src' => $responsive->asset->url(),
+                'width' => $responsive->asset->width(),
+                'height' => $responsive->asset->height(),
                 'asset' => $responsive->asset->toAugmentedArray(),
+                'hasSources' => false,
             ])->render();
         }
 
+        $dimensions = app(DimensionCalculator::class)
+            ->calculateForImgTag($responsive->defaultBreakpoint());
+
+        $width = $dimensions->getWidth();
+        $height = $dimensions->getHeight();
+
+        $src = app(GenerateImageJob::class, ['asset' => $responsive->asset, 'params' => [
+            'width' => $width,
+            'height' => $height,
+        ]])->handle();
+
         $includePlaceholder = $this->includePlaceholder();
 
-        $sources = $responsive->breakPoints()
-            ->map(function (Breakpoint $breakpoint) use ($includePlaceholder) {
-                return [
-                    'media' => $breakpoint->getMediaString(),
-                    'srcSet' => $breakpoint->getSrcSet($includePlaceholder),
-                    'srcSetWebp' => $this->getSrcSetFromBreakpoint($breakpoint, 'webp', $includePlaceholder),
-                    'srcSetAvif' => $this->getSrcSetFromBreakpoint($breakpoint, 'avif', $includePlaceholder),
-                    'placeholder' => $breakpoint->placeholder(),
-                ];
-            });
+        $breakpoints = $responsive->breakPoints();
 
         return view('responsive-images::responsiveImage', [
             'attributeString' => $this->getAttributeString(),
             'includePlaceholder' => $includePlaceholder,
-            'placeholder' => $sources->last()['placeholder'],
             'src' => $src,
-            'sources' => $sources,
+            'breakpoints' => $breakpoints,
             'width' => round($width),
             'height' => round($height),
             'asset' => $responsive->asset->toAugmentedArray(),
+            'hasSources' => $breakpoints->map(function ($breakpoint) {
+                return $breakpoint->sources();
+            })->flatten()->count() > 0,
         ])->render();
     }
 
@@ -118,16 +108,5 @@ class ResponsiveTag extends Tags
         return $this->params->has('placeholder')
             ? $this->params->get('placeholder')
             : config('statamic.responsive-images.placeholder', true);
-    }
-
-    private function getSrcSetFromBreakpoint(Breakpoint $breakpoint, string $format, bool $includePlaceholder): string|null
-    {
-        $isFormatIncluded = $this->params->has($format)
-            ? $this->params->get($format)
-            : config('statamic.responsive-images.' . $format, $format === 'webp');
-
-        return $isFormatIncluded
-            ? $breakpoint->getSrcSet($includePlaceholder, $format)
-            : null;
     }
 }
