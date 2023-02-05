@@ -32,5 +32,10 @@ abstract class GenerateImageJob implements ShouldQueue
         return $this->imageUrl();
     }
 
+    public function getParams(): array
+    {
+        return $this->params;
+    }
+
     abstract protected function imageUrl(): string;
 }

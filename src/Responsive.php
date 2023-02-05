@@ -16,10 +16,13 @@ use Statamic\Tags\Parameters;
 class Responsive
 {
     /** @var Asset */
-    public $asset;
+    public Asset $asset;
 
     /** @var \Statamic\Tags\Parameters */
     public $parameters;
+
+    /** @var Collection<Breakpoint> */
+    private Collection $breakpoints;
 
     public function __construct($assetParam, Parameters $parameters)
     {
@@ -89,13 +92,19 @@ class Responsive
         return $asset;
     }
 
+    /**
+     * @return Collection<Breakpoint>
+     */
     public function breakPoints(): Collection
     {
+        if (isset($this->breakpoints)) {
+            return $this->breakpoints;
+        }
+
         $parametersByBreakpoint = $this->parametersByBreakpoint();
 
         $defaultParams = $parametersByBreakpoint->get('default') ?? collect();
         $currentParams = array_merge([
-            'ratio' => $this->asset->width() / $this->asset->height(),
             'src' => $this->asset,
         ], $defaultParams->mapWithKeys(function ($param) {
             return [$param['key'] => $param['value']];
@@ -108,8 +117,6 @@ class Responsive
                 if (! $value && $breakpoint !== 'default') {
                     return null;
                 }
-
-                unset($currentParams['ratio']);
 
                 foreach ($parameters as $parameter) {
                     if ($parameter['key'] === 'src' && ! $parameter['value'] instanceof Asset) {
@@ -152,8 +159,8 @@ class Responsive
             ]));
         }
 
-        return $breakpoints
-            ->sortByDesc('value')
+        return $this->breakpoints = $breakpoints
+            ->sortByDesc('minWidth')
             ->values();
     }
 
@@ -162,27 +169,6 @@ class Responsive
         return $this->breakPoints()->first(function (Breakpoint $breakpoint) {
             return $breakpoint->label === 'default';
         });
-    }
-
-    public function assetHeight(string $breakPointLabel = 'default'): ?float
-    {
-        if (! $this->asset->width()) {
-            return null;
-        }
-
-        $breakpoint = $this->breakPoints()->first(function (Breakpoint $breakpoint) use ($breakPointLabel) {
-            return $breakpoint->label === $breakPointLabel;
-        });
-
-        if (! $breakpoint) {
-            return null;
-        }
-
-        if (isset($breakpoint->parameters['ratio'])) {
-            return $this->asset->width() / $breakpoint->parameters['ratio'];
-        }
-
-        return $this->asset->height();
     }
 
     private function parametersByBreakpoint(): Collection

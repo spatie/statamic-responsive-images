@@ -2,6 +2,9 @@
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Blade;
+use Intervention\Image\ImageManagerStatic;
+use Spatie\ResponsiveImages\DimensionCalculator;
+use Spatie\ResponsiveImages\Dimensions;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Spatie\ResponsiveImages\Tags\ResponsiveTag;
 use Statamic\Facades\Stache;
@@ -73,10 +76,76 @@ it('generates responsive images with breakpoints without webp', function () {
     ]));
 });
 
+it('generates inlined placeholder image with correct dimensions', function () {
+    $tagOutput = ResponsiveTag::render($this->asset, [
+        'ratio' => '2/1',
+        'webp' => false,
+        'placeholder' => true,
+    ]);
+
+    // Find the base64 string of encoded SVG
+    preg_match('/data:image\/svg\+xml;base64,(.*) 32w/', $tagOutput, $svgMatches);
+
+    $svgBase64Decoded = base64_decode($svgMatches[1]);
+
+    expect($svgBase64Decoded)->toContain('width="32" height="16"');
+
+    // Find the base64 string of encoded JPG
+    preg_match('/data:image\/jpeg;base64,(.*)" \/>/', $svgBase64Decoded, $jpgMatches);
+
+    // Make image of it, so we can get the dimensions of encoded JPG
+    $placeholderImage = ImageManagerStatic::make($jpgMatches[1]);
+
+    expect($placeholderImage->getWidth())->toBe(32);
+    expect($placeholderImage->getHeight())->toBe(16);
+});
+
+it('generates inlined placeholder image with correct dimensions from custom dimension calculator', function () {
+    $this->mock(DimensionCalculator::class, function ($mock) {
+        $mock->shouldReceive('calculateForBreakpoint')->andReturn(collect([new Dimensions(100, 100)]));
+        $mock->shouldReceive('calculateForImgTag')->andReturn(new Dimensions(100, 100));
+        $mock->shouldReceive('calculateForPlaceholder')->andReturn(new Dimensions(10, 4));
+    });
+
+    $tagOutput = ResponsiveTag::render($this->asset, [
+        'webp' => false,
+        'placeholder' => true,
+    ]);
+
+    // Find the base64 string of encoded SVG
+    preg_match('/data:image\/svg\+xml;base64,(.*) 32w/', $tagOutput, $svgMatches);
+
+    $svgBase64Decoded = base64_decode($svgMatches[1]);
+
+    expect($svgBase64Decoded)->toContain('width="10" height="4"');
+
+    // Find the base64 string of encoded JPG
+    preg_match('/data:image\/jpeg;base64,(.*)" \/>/', $svgBase64Decoded, $jpgMatches);
+
+    // Make image of it, so we can get the dimensions of encoded JPG
+    $placeholderImage = ImageManagerStatic::make($jpgMatches[1]);
+
+    expect($placeholderImage->getWidth())->toBe(10);
+    expect($placeholderImage->getHeight())->toBe(4);
+});
+
 it('generates responsive images without a placeholder', function () {
-    assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
+    assertMatchesSnapshot(ResponsiveTag::render($this->asset, [
         'placeholder' => false,
     ]));
+});
+
+it('does not generate placeholder when disabled through config', function () {
+    config()->set('statamic.responsive-images.placeholder', false);
+
+    $tagOutput = ResponsiveTag::render($this->asset, [
+        'ratio' => '1/1',
+        'webp' => false,
+    ]);
+
+    preg_match('/data:image\/svg\+xml;base64,(.*) 32w/', $tagOutput, $matches);
+
+    expect($matches)->toBeEmpty();
 });
 
 it('can add custom glide parameters', function () {
@@ -95,15 +164,28 @@ it('uses an alt field on the asset', function () {
     $this->asset->data(['alt' => 'My asset alt tag']);
     $this->asset->save();
 
-    assertFileExists(__DIR__ . "/../tmp/.meta/{$this->asset->filename()}.jpg.yaml");
+    assertFileExists($this->getTempDirectory() . "/assets/.meta/{$this->asset->filename()}.jpg.yaml");
 
     assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset->url()));
 });
 
-test('a glide width parameter counts as max width', function () {
-    assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset, [
+test('a glide width parameter counts as max width for img tag', function () {
+    expect(ResponsiveTag::render($this->asset, [
         'glide:width' => '50',
-    ]));
+    ]))->toContain('width="50"');
+});
+
+test('max width from config is used for img tag', function () {
+    config()->set('statamic.responsive-images.max_width', 50);
+
+    expect(ResponsiveTag::render($this->asset))->toContain('width="50"');
+});
+
+test('max width from glide width parameter takes precedence over config max width', function() {
+    config()->set('statamic.responsive-images.max_width', 45);
+
+    expect(ResponsiveTag::render($this->asset, ['glide:width' => '50']))
+        ->toContain('width="50"');
 });
 
 it('generates responsive images in webp and avif formats', function () {
@@ -238,4 +320,39 @@ it('can render an art directed image as array with the directive', function () {
     assertMatchesSnapshotWithoutSvg(Blade::render($blade, [
         'asset' => $asset->value(),
     ]));
+});
+
+it('does not output <source> when no dimensions are returned from dimension calculator', function () {
+    $this->mock(DimensionCalculator::class, function ($mock) {
+        $mock->shouldReceive('calculateForBreakpoint')->andReturn(collect([]));
+        $mock->shouldReceive('calculateForImgTag')->andReturn(new Dimensions(100, 100));
+        $mock->shouldReceive('calculateForPlaceholder')->andReturn(new Dimensions(100, 100));
+    });
+
+    $asset = test()->uploadTestImageToTestContainer();
+
+    $tagOutput = ResponsiveTag::render($asset, [
+        'webp' => false,
+    ]);
+
+    expect($tagOutput)->not()->toContain('<source');
+});
+
+it('uses width and height for <img> tag from custom dimension calculator', function () {
+    $this->mock(DimensionCalculator::class, function ($mock) {
+        $mock->shouldReceive('calculateForBreakpoint')->andReturn(collect([]));
+        $mock->shouldReceive('calculateForImgTag')->andReturn(new Dimensions(123, 123));
+        $mock->shouldReceive('calculateForPlaceholder')->andReturn(new Dimensions(100, 100));
+    });
+
+    $asset = test()->uploadTestImageToTestContainer();
+
+    $tagOutput = ResponsiveTag::render($asset, [
+        'webp' => false,
+        'placeholder' => false,
+    ]);
+
+    expect($tagOutput)
+        ->toContain('width="123"')
+        ->and('height="123"');
 });

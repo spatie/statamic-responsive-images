@@ -5,6 +5,7 @@ namespace Spatie\ResponsiveImages\Commands;
 use Illuminate\Console\Command;
 use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Responsive;
+use Spatie\ResponsiveImages\Source;
 use Statamic\Console\RunsInPlease;
 use Statamic\Contracts\Assets\Asset;
 use Statamic\Contracts\Assets\AssetRepository;
@@ -37,8 +38,11 @@ class GenerateResponsiveVersionsCommand extends Command
         /** @var \Statamic\Assets\AssetCollection $assets */
         $assets->each(function (Asset $asset) {
             $responsive = new Responsive($asset, new Parameters());
+
             $responsive->breakPoints()->each(function (Breakpoint $breakpoint) {
-                $breakpoint->dispatchImageJobs();
+                $breakpoint->sources()->each(function (Source $source) {
+                    $source->dispatchImageJobs();
+                });
             });
 
             $this->getOutput()->progressAdvance();

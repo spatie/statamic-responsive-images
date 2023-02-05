@@ -7,10 +7,7 @@ use Spatie\ResponsiveImages\Jobs\GenerateGlideImageJob;
 use Statamic\Facades\Stache;
 
 beforeEach(function () {
-    $file = new UploadedFile($this->getTestJpg(), 'test.jpg');
-    $path = ltrim('/' . $file->getClientOriginalName(), '/');
-    $this->asset = $this->assetContainer->makeAsset($path)->upload($file);
-
+    $this->asset = $this->uploadTestImageToTestContainer();
     Stache::clear();
 });
 
@@ -28,6 +25,18 @@ it('dispatches jobs for all assets that are images', function () {
         ->expectsOutput("Generating responsive image versions for 1 assets.")
         ->assertExitCode(0);
 
+    $pushedJobs = Queue::pushed(GenerateGlideImageJob::class);
+
+    $noFormatJobCount = $pushedJobs->filter(function ($job) {
+        return !isset($job->getParams()['fm']);
+    })->count();
+
+    $webpFormatJobCount = $pushedJobs->filter(function ($job) {
+        return isset($job->getParams()['fm']) && $job->getParams()['fm'] === 'webp';
+    })->count();
+
+    expect($noFormatJobCount)->toBe(3);
+    expect($webpFormatJobCount)->toBe(3);
     Queue::assertPushed(GenerateGlideImageJob::class, 6);
 });
 
@@ -40,6 +49,18 @@ it('dispatches less jobs when webp is disabled', function () {
         ->expectsOutput("Generating responsive image versions for 1 assets.")
         ->assertExitCode(0);
 
+    $pushedJobs = Queue::pushed(GenerateGlideImageJob::class);
+
+    $noFormatJobCount = $pushedJobs->filter(function ($job) {
+        return !isset($job->getParams()['fm']);
+    })->count();
+
+    $webpFormatJobCount = $pushedJobs->filter(function ($job) {
+        return isset($job->getParams()['fm']) && $job->getParams()['fm'] === 'webp';
+    })->count();
+
+    expect($noFormatJobCount)->toBe(3);
+    expect($webpFormatJobCount)->toBe(0);
     Queue::assertPushed(GenerateGlideImageJob::class, 3);
 });
 
@@ -53,5 +74,22 @@ it('dispatches more jobs when avif and webp is enabled', function () {
         ->expectsOutput("Generating responsive image versions for 1 assets.")
         ->assertExitCode(0);
 
+    $pushedJobs = Queue::pushed(GenerateGlideImageJob::class);
+
+    $noFormatJobCount = $pushedJobs->filter(function ($job) {
+        return !isset($job->getParams()['fm']);
+    })->count();
+
+    $webpFormatJobCount = $pushedJobs->filter(function ($job) {
+        return isset($job->getParams()['fm']) && $job->getParams()['fm'] === 'webp';
+    })->count();
+
+    $avifFormatJobCount = $pushedJobs->filter(function ($job) {
+        return isset($job->getParams()['fm']) && $job->getParams()['fm'] === 'avif';
+    })->count();
+
+    expect($noFormatJobCount)->toBe(3);
+    expect($webpFormatJobCount)->toBe(3);
+    expect($avifFormatJobCount)->toBe(3);
     Queue::assertPushed(GenerateGlideImageJob::class, 9);
 });

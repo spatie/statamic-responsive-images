@@ -17,18 +17,18 @@
     </script>
 
 <picture>
-                                <source
-                type="image/webp"
-                 media=""                 srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?blur=10&amp;fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=237&amp;h=195.17647058824 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?blur=10&amp;fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=284&amp;h=233.88235294118 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?blur=10&amp;fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
-                 sizes="1px"             >
-        
-        <source
-             media=""             srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?blur=10&amp;q=90&amp;fit=crop-50-50&amp;w=237&amp;h=195.17647058824 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?blur=10&amp;q=90&amp;fit=crop-50-50&amp;w=284&amp;h=233.88235294118 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?blur=10&amp;q=90&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
-             sizes="1px"         >
-    
+                        
+                            <source
+                     type="image/webp"                                         srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?blur=10&amp;fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=237&amp;h=195 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?blur=10&amp;fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=284&amp;h=234 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?blur=10&amp;fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
+                     sizes="1px"                 >
+                                
+                            <source
+                     type="image/jpeg"                                         srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?blur=10&amp;q=90&amp;fit=crop-50-50&amp;w=237&amp;h=195 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?blur=10&amp;q=90&amp;fit=crop-50-50&amp;w=284&amp;h=234 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?blur=10&amp;q=90&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
+                     sizes="1px"                 >
+                        
     <img
         
-        src="/test/test.jpg"
+        src="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=280"
                 alt="test.jpg"
                  width="340"          height="280"                 data-statamic-responsive-images
             >

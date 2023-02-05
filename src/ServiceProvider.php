@@ -9,6 +9,7 @@ use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Spatie\ResponsiveImages\GraphQL\BreakpointType;
 use Spatie\ResponsiveImages\GraphQL\ResponsiveField;
 use Spatie\ResponsiveImages\GraphQL\ResponsiveFieldType as GraphQLResponsiveFieldType;
+use Spatie\ResponsiveImages\GraphQL\SourceType;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Spatie\ResponsiveImages\Listeners\GenerateResponsiveVersions;
 use Spatie\ResponsiveImages\Listeners\UpdateResponsiveReferences;
@@ -61,6 +62,7 @@ class ServiceProvider extends AddonServiceProvider
             ->bootAddonConfig()
             ->bootDirectives()
             ->bindImageJob()
+            ->bindDimensionCalculator()
             ->bootGraphQL();
     }
 
@@ -102,10 +104,18 @@ class ServiceProvider extends AddonServiceProvider
         return $this;
     }
 
+    private function bindDimensionCalculator(): self
+    {
+        $this->app->bind(DimensionCalculator::class, ResponsiveDimensionCalculator::class);
+
+        return $this;
+    }
+
     private function bootGraphQL(): self
     {
         GraphQL::addType(BreakpointType::class);
         GraphQL::addType(GraphQLResponsiveFieldType::class);
+        GraphQL::addType(SourceType::class);
 
         GraphQL::addField('AssetInterface', 'responsive', function () {
             return (new ResponsiveField())->toArray();

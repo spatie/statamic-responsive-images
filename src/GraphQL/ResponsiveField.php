@@ -30,20 +30,23 @@ class ResponsiveField extends Field
                 'description' => 'The ratio of the image',
             ],
             'width' => [
-                'description' => 'The maximum width of the image',
                 'type' => Type::int(),
+                'description' => 'The maximum width of the image',
             ],
             'webp' => [
                 'type' => Type::boolean(),
                 'defaultValue' => config('statamic.responsive-images.webp'),
+                'description' => 'Whether to generate WEBP images',
             ],
             'avif' => [
                 'type' => Type::boolean(),
                 'defaultValue' => config('statamic.responsive-images.avif'),
+                'description' => 'Whether to generate AVIF images',
             ],
             'placeholder' => [
                 'type' => Type::boolean(),
                 'defaultValue' => config('statamic.responsive-images.placeholder'),
+                'description' => 'Whether to generate and output placeholder string in the srcsets',
             ],
         ];
 
