@@ -33,7 +33,7 @@ trait ResponsiveGraphqlArguments
             'quality' => [
                 'type' => Type::int(),
                 'description' => 'The quality of the images',
-            ]
+            ],
         ];
 
         // https://statamic.dev/tags/glide#parameters
