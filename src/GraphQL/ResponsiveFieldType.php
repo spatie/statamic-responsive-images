@@ -41,6 +41,7 @@ class ResponsiveFieldType extends Type
                     })->toArray();
                 },
             ],
+            'responsive' => ResponsiveField::class
         ];
     }
 }
