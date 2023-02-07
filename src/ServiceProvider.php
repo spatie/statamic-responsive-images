@@ -106,7 +106,7 @@ class ServiceProvider extends AddonServiceProvider
 
     private function bindDimensionCalculator(): self
     {
-        $this->app->bind(DimensionCalculator::class, ResponsiveDimensionCalculator::class);
+        $this->app->bind(DimensionCalculator::class, config('statamic.responsive-images.dimension_calculator'));
 
         return $this;
     }
