@@ -129,5 +129,16 @@ return [
     */
 
     'breakpoint_unit' => 'px',
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Dimension Calculator Class
+    |--------------------------------------------------------------------------
+    |
+    | The class that will be used for the breakpoint srcset calculations
+    |
+    */
+    
+    'dimension_calculator' => \Spatie\ResponsiveImages\ResponsiveDimensionCalculator::class,
 
 ];
