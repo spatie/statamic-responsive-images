@@ -182,11 +182,11 @@ By default, the job is queued under the 'default' queue. This can be changed via
 
 ## GraphQL
 
-This addon comes with 2 GraphQL goodies, it adds a `responsive` field to all assets, and allows you to retrieve art directed images through GraphQL as well.
+This addon comes with 2 GraphQL goodies, it adds a `responsive` field to assets and responsive fieldtype, allowing you to use this addon like you would with the Antlers tag. Secondly you can just let responsive fieldtype augment itself without passing any arguments.
 
-### Responsive field on assets
+### Responsive field on assets / assets fieldtype / responsive fieldtype
 
-You can retrieve a responsive version of an asset like this:
+You can retrieve a responsive version of an `image` asset fieldtype like this:
 
 ```graphql
 {
@@ -215,9 +215,13 @@ You can retrieve a responsive version of an asset like this:
 }
 ```
 
-## Image from the responsive fieldtype with GraphQL
+Majority of tag parameters are available as arguments in the responsive field, the parameters just need to have colons replaced with underscores. For example, `lg:glide:filter` would become `lg_glide_filter`.
 
-A responsive fieldtype has all the same fields as a normal responsive field from an asset, except they're under a `breakpoints` key.
+If you are unsure what arguments are available, try out the GraphQL explorer in the control panel located at `/cp/graphiql` and utilize the autocomplete feature.
+
+### Images from the responsive fieldtype
+
+A responsive fieldtype has all the same fields as a normal responsive field from an asset, except they're under a `breakpoints` key and you cannot pass any arguments to it.
 
 ```graphql
 {
@@ -246,7 +250,7 @@ A responsive fieldtype has all the same fields as a normal responsive field from
 }
 ```
 
-### Changelog
+## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
 

@@ -212,7 +212,7 @@ class Breakpoint implements Arrayable
             })->all(),
             // TODO: There is no neat way to separate placeholder string from srcset string,
             // TODO: cause placeholder argument affects both.
-            'placeholder' => $args['placeholder'] ? $this->placeholder() : null,
+            'placeholder' => (isset($args['placeholder']) && $args['placeholder'] === true) ? $this->placeholder() : null,
         ];
 
         // Check if DimensionCalculator is instance of ResponsiveDimensionCalculator

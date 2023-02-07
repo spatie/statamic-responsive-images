@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Spatie\ResponsiveImages\GraphQL;
 
 use GraphQL\Type\Definition\Type;
@@ -24,44 +23,10 @@ class ResponsiveField extends Field
 
     public function args(): array
     {
-        $args = [
-            'ratio' => [
-                'type' => Type::float(),
-                'description' => 'The ratio of the image',
-            ],
-            'width' => [
-                'type' => Type::int(),
-                'description' => 'The maximum width of the image',
-            ],
-            'webp' => [
-                'type' => Type::boolean(),
-                'defaultValue' => config('statamic.responsive-images.webp'),
-                'description' => 'Whether to generate WEBP images',
-            ],
-            'avif' => [
-                'type' => Type::boolean(),
-                'defaultValue' => config('statamic.responsive-images.avif'),
-                'description' => 'Whether to generate AVIF images',
-            ],
-            'placeholder' => [
-                'type' => Type::boolean(),
-                'defaultValue' => config('statamic.responsive-images.placeholder'),
-                'description' => 'Whether to generate and output placeholder string in the srcsets',
-            ],
-        ];
-
-        $unit = config('statamic.responsive-images.breakpoint_unit');
-        foreach (config('statamic.responsive-images.breakpoints') as $key => $width) {
-            $args["{$key}_ratio"] = [
-                'type' => Type::float(),
-                'description' => "The ratio for the {$key} ({$width}{$unit}) breakpoint of the image",
-            ];
-        }
-
-        return $args;
+        return ResponsiveGraphqlArguments::args();
     }
 
-    protected function resolve(Asset $root, array $args)
+    protected function resolve(Asset|array $root, array $args)
     {
         $args = collect($args)->mapWithKeys(function ($value, $key) {
             return [str_replace('_', ':', $key) => $value];

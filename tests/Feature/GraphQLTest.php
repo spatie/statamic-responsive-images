@@ -13,6 +13,38 @@ function assertMatchesJsonSnapshotWithoutSvg($value)
     assertMatchesJsonSnapshot($value);
 }
 
+function createEntryWithResponsiveField()
+{
+    $article = Blueprint::makeFromFields([
+        'hero' => [
+            'type' => 'responsive',
+            'container' => 'test_container',
+            'max_files' => 1,
+            'use_breakpoints' => true,
+            'allow_ratio' => false,
+            'allow_fit' => true,
+            'restrict' => false,
+            'allow_uploads' => true,
+            'display' => 'Hero image',
+            'icon' => 'assets',
+            'listable' => 'hidden',
+            'instructions_position' => 'above',
+            'visibility' => 'visible',
+        ],
+    ]);
+
+    BlueprintRepository::partialMock()->shouldReceive('in')->with('collections/blog')->andReturn(collect([
+        'article' => $article->setHandle('article'),
+    ]));
+
+    (new EntryFactory)->collection('blog')->id('1')->data([
+        'title' => 'Responsive Images addon is awesome',
+        'hero' => [
+            'src' => 'test_container::test.jpg',
+        ],
+    ])->create();
+}
+
 beforeEach(function () {
     $this->uploadTestImageToTestContainer();
 });
@@ -75,34 +107,7 @@ test('querying ResponsiveFieldType field resolves it to data', function () {
     config()->set('statamic.responsive-images.webp', false);
     config()->set('statamic.responsive-images.placeholder', false);
 
-    $article = Blueprint::makeFromFields([
-        'hero' => [
-            'type' => 'responsive',
-            'container' => 'test_container',
-            'max_files' => 1,
-            'use_breakpoints' => true,
-            'allow_ratio' => false,
-            'allow_fit' => true,
-            'restrict' => false,
-            'allow_uploads' => true,
-            'display' => 'Hero image',
-            'icon' => 'assets',
-            'listable' => 'hidden',
-            'instructions_position' => 'above',
-            'visibility' => 'visible',
-        ],
-    ]);
-
-    BlueprintRepository::partialMock()->shouldReceive('in')->with('collections/blog')->andReturn(collect([
-        'article' => $article->setHandle('article'),
-    ]));
-
-    (new EntryFactory)->collection('blog')->id('1')->data([
-        'title' => 'Responsive Images addon is awesome',
-        'hero' => [
-            'src' => 'test_container::test.jpg',
-        ],
-    ])->create();
+    createEntryWithResponsiveField();
 
     $query = '
         {
@@ -207,4 +212,68 @@ test('ratio is outputted if using ResponsiveDimensionCalculator', function () {
 
     $response = $this->post('/graphql/', ['query' => $query]);
     assertMatchesJsonSnapshotWithoutSvg($response->getContent());
+});
+
+test('responsive field accepts responsive fieldtype data', function () {
+    createEntryWithResponsiveField();
+
+    $query = '
+        {
+            entry(id: "1") {
+                title
+                ... on Entry_Blog_Article {
+                    hero {
+                        responsive(placeholder: false, webp: false) {
+                            asset {
+                                id
+                            }
+                            label
+                            minWidth
+                            widthUnit
+                            ratio
+                            sources {
+                                format
+                                mimeType
+                                minWidth
+                                mediaWidthUnit
+                                mediaString
+                                srcSet
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ';
+
+    $response = $this
+        ->postJson('/graphql/', ['query' => $query])
+        ->getContent();
+
+    $output = json_decode($response, true)['data']['entry'];
+
+    assertMatchesSnapshot($output);
+});
+
+it('accepts glide parameters just like responsive tag would', function () {
+    $query = '
+            {
+                asset(id: "test_container::test.jpg") {
+                    responsive(glide_filter: "greyscale", lg_glide_filter: "greyscale", webp: false, placeholder: false) {
+                        sources {
+                            srcSet
+                        }
+                    }
+                }
+            }
+        ';
+
+    $response = $this
+        ->postJson('/graphql/', ['query' => $query])
+        ->getContent();
+
+    $response = json_decode($response, true)['data'];
+
+    expect($response['asset']['responsive'][0]['sources'][0]['srcSet'])->toContain('?filt=greyscale');
+    expect($response['asset']['responsive'][1]['sources'][0]['srcSet'])->toContain('?filt=greyscale');
 });
