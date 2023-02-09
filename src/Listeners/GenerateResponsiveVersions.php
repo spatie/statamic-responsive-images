@@ -4,6 +4,7 @@ namespace Spatie\ResponsiveImages\Listeners;
 
 use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Responsive;
+use Spatie\ResponsiveImages\Source;
 use Statamic\Events\AssetUploaded;
 use Statamic\Tags\Parameters;
 
@@ -29,7 +30,9 @@ class GenerateResponsiveVersions
 
         $responsive = new Responsive($event->asset, new Parameters());
         $responsive->breakPoints()->each(function (Breakpoint $breakpoint) {
-            $breakpoint->dispatchImageJobs();
+            $breakpoint->sources()->each(function (Source $source) {
+                $source->dispatchImageJobs();
+            });
         });
     }
 }

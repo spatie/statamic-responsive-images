@@ -56,7 +56,6 @@ class ServiceProvider extends AddonServiceProvider
         parent::boot();
 
         $this
-            ->bootEvents()
             ->bootCommands()
             ->bootAddonViews()
             ->bootAddonConfig()
