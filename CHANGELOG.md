@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v3.1.3 - 2023-02-11
+
+### What's Changed
+
+- Rethrow `Unable to read file` exception for placeholder generation in SSG context by @ncla in https://github.com/spatie/statamic-responsive-images/pull/209. Developers must be aware of failed placeholder generation when running SSG due to a SSG bug. Workaround and discussion about it can be found [here](https://github.com/spatie/statamic-responsive-images/issues/178#issuecomment-1310963543), alternatively just disable placeholder generation.
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v3.1.2...v3.1.3
+
 ## v3.1.2 - 2023-02-11
 
 ### What's Changed
@@ -41,6 +49,7 @@ GraphQL improvements by @ncla in https://github.com/spatie/statamic-responsive-i
 - 
 - 
 - 
+- 
 - Fix max widths config value or glide width param not being respected in some cases
 - Fix floating numbers being output for width and height values for Glide endpoint, they are now rounded integers
 - Placeholder now can be toggled per breakpoint
@@ -50,7 +59,9 @@ GraphQL improvements by @ncla in https://github.com/spatie/statamic-responsive-i
 - - `value` to `minWidth`
 - 
 - 
+- 
 - - `unit` to `widthUnit`
+- 
 - 
 - 
 - 
