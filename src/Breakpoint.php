@@ -4,7 +4,9 @@ namespace Spatie\ResponsiveImages;
 
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use League\Flysystem\FilesystemException;
 use Statamic\Contracts\Assets\Asset;
@@ -288,7 +290,10 @@ class Breakpoint implements Arrayable
             $assetContent = $cache->read($assetPath);
             $assetMimeType = $cache->mimeType($assetPath);
         } catch (FilesystemException $e) {
-            if (config('app.debug')) {
+            $isSsgRunning = App::runningInConsole() &&
+                Str::startsWith(Arr::get(request()->server(), 'argv.1'), ['statamic:ssg:generate', 'ssg:generate']);
+
+            if (config('app.debug') || $isSsgRunning) {
                 throw $e;
             }
 
