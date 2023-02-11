@@ -1,6 +1,8 @@
 <?php
 
 use Facades\Statamic\Fields\BlueprintRepository;
+use Illuminate\Support\Facades\Route;
+use Spatie\ResponsiveImages\AssetNotFoundException;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Statamic\Facades\Blueprint;
 use Spatie\ResponsiveImages\Tests\Factories\EntryFactory;
@@ -13,10 +15,10 @@ function assertMatchesJsonSnapshotWithoutSvg($value)
     assertMatchesJsonSnapshot($value);
 }
 
-function createEntryWithResponsiveField()
+function createEntryWithField($additionalFieldConfig = [], $additionalEntryData = [])
 {
     $article = Blueprint::makeFromFields([
-        'hero' => [
+        'hero' => array_merge([
             'type' => 'responsive',
             'container' => 'test_container',
             'max_files' => 1,
@@ -30,7 +32,7 @@ function createEntryWithResponsiveField()
             'listable' => 'hidden',
             'instructions_position' => 'above',
             'visibility' => 'visible',
-        ],
+        ], $additionalFieldConfig),
     ]);
 
     BlueprintRepository::partialMock()->shouldReceive('in')->with('collections/blog')->andReturn(collect([
@@ -39,9 +41,7 @@ function createEntryWithResponsiveField()
 
     (new EntryFactory)->collection('blog')->id('1')->data([
         'title' => 'Responsive Images addon is awesome',
-        'hero' => [
-            'src' => 'test_container::test.jpg',
-        ],
+        'hero' => empty($additionalEntryData) ? ['src' => 'test.jpg'] : $additionalEntryData,
     ])->create();
 }
 
@@ -107,7 +107,7 @@ test('querying ResponsiveFieldType field resolves it to data', function () {
     config()->set('statamic.responsive-images.webp', false);
     config()->set('statamic.responsive-images.placeholder', false);
 
-    createEntryWithResponsiveField();
+    createEntryWithField();
 
     $query = '
         {
@@ -215,7 +215,7 @@ test('ratio is outputted if using ResponsiveDimensionCalculator', function () {
 });
 
 test('responsive field accepts responsive fieldtype data', function () {
-    createEntryWithResponsiveField();
+    createEntryWithField();
 
     $query = '
         {
@@ -276,4 +276,124 @@ it('accepts glide parameters just like responsive tag would', function () {
 
     expect($response['asset']['responsive'][0]['sources'][0]['srcSet'])->toContain('?filt=greyscale');
     expect($response['asset']['responsive'][1]['sources'][0]['srcSet'])->toContain('?filt=greyscale');
+});
+
+it('fails silently and returns null when asset is not found when using fieldtype data', function () {
+    createEntryWithField([], ['src' => 'not-exist.jpg']);
+
+    $query = '
+        {
+            entry(id: "1") {
+                title
+                ... on Entry_Blog_Article {
+                    hero {
+                        breakpoints {
+                            sources {
+                                srcSet
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ';
+
+    $response = $this
+        ->withoutExceptionHandling()
+        ->postJson('/graphql/', ['query' => $query])
+        ->getContent();
+
+    $response = json_decode($response, true);
+
+    expect(isset($response['errors']))->toBeFalse();
+    expect($response['data']['entry']['hero']['breakpoints'])->toBeNull();
+});
+
+it('fails silently and returns null when asset is not found when using responsive field on asset', function () {
+    test()->createEntryWithField(
+        ['type' => 'assets'],
+        'not-exist.jpg'
+    );
+
+    $query = '
+        {
+            entry(id: "1") {
+                title
+                ... on Entry_Blog_Article {
+                    hero {
+                        responsive(placeholder: false, webp: false) {
+                            asset {
+                                id
+                            }
+                            label
+                            minWidth
+                            widthUnit
+                            ratio
+                            sources {
+                                format
+                                mimeType
+                                minWidth
+                                mediaWidthUnit
+                                mediaString
+                                srcSet
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ';
+
+    $response = $this
+        ->withoutExceptionHandling()
+        ->postJson('/graphql/', ['query' => $query])
+        ->getContent();
+
+    $response = json_decode($response, true);
+
+    expect(isset($response['errors']))->toBeFalse();
+    expect($response['data']['entry']['hero'])->toBeNull();
+});
+
+it('missing lg breakpoint asset uses default breakpoint asset instead', function () {
+    test()->createEntryWithField(
+        [
+            'breakpoints' => [
+                'lg'
+            ]
+        ],
+        [
+            'src' => 'test.jpg',
+            'lg:src' => 'not-exist.jpg',
+        ]
+    );
+
+    $query = '
+        {
+            entry(id: "1") {
+                title
+                ... on Entry_Blog_Article {
+                    hero {
+                        breakpoints {
+                            label
+                            sources {
+                                srcSet
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ';
+
+    $response = $this
+        ->withoutExceptionHandling()
+        ->postJson('/graphql/', ['query' => $query])
+        ->getContent();
+
+    $response = json_decode($response, true);
+
+    expect(isset($response['errors']))->toBeFalse();
+    expect($response['data']['entry']['hero']['breakpoints'][0]['sources'][0]['srcSet'])
+        ->toEqual($response['data']['entry']['hero']['breakpoints'][1]['sources'][0]['srcSet']);
 });
