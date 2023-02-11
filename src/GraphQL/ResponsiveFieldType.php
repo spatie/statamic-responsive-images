@@ -10,7 +10,6 @@ use Spatie\ResponsiveImages\Responsive;
 use Statamic\Facades\GraphQL;
 use Statamic\Fields\Value;
 use Statamic\Tags\Parameters;
-use ZipStream\Exception;
 
 class ResponsiveFieldType extends Type
 {
@@ -48,6 +47,7 @@ class ResponsiveFieldType extends Type
                         })->toArray();
                     } catch (AssetNotFoundException $e) {
                         logger()->error($e->getMessage());
+
                         return null;
                     }
                 },

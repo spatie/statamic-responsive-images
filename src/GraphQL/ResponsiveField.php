@@ -41,6 +41,7 @@ class ResponsiveField extends Field
             $responsive = new Responsive($root, new Parameters($args));
         } catch (AssetNotFoundException $e) {
             logger()->error($e->getMessage());
+
             return null;
         }
 
