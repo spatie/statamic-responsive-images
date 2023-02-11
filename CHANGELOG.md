@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v3.1.2 - 2023-02-11
+
+### What's Changed
+
+- GraphQL: let responsive field/fieldtype fail more gracefully when default breakpoint asset has not been found by @ncla in https://github.com/spatie/statamic-responsive-images/pull/208
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v3.1.1...v3.1.2
+
 ## v3.1.1 - 2023-02-09
 
 ### What's Changed
@@ -32,6 +40,7 @@ GraphQL improvements by @ncla in https://github.com/spatie/statamic-responsive-i
 - - Developers now can customize the amount of images that get generated and their exact dimensions through a custom `DimensionCalculator` that developers bind in `ServiceProvider`. Calculations can be done for each breakpoint and source, and receive `Breakpoint` / `Source` in the calculation methods, which allows to access breakpoint parameters, original asset and more. For motivation and examples of this, please see the PR and the original issue associated with it.
 - 
 - 
+- 
 - Fix max widths config value or glide width param not being respected in some cases
 - Fix floating numbers being output for width and height values for Glide endpoint, they are now rounded integers
 - Placeholder now can be toggled per breakpoint
@@ -40,7 +49,9 @@ GraphQL improvements by @ncla in https://github.com/spatie/statamic-responsive-i
 - Properties have been renamed to be more descriptive:
 - - `value` to `minWidth`
 - 
+- 
 - - `unit` to `widthUnit`
+- 
 - 
 - 
 - Add `mimeType` property to explicitly help browsers determine what images does the `<source>` contain
