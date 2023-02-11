@@ -24,6 +24,12 @@ class Responsive
     /** @var Collection<Breakpoint> */
     private Collection $breakpoints;
 
+    /**
+     * @param $assetParam
+     * @param Parameters $parameters
+     * @throws AssetNotFoundException
+     * @throws InvalidAssetException
+     */
     public function __construct($assetParam, Parameters $parameters)
     {
         $this->parameters = $parameters;
@@ -47,6 +53,11 @@ class Responsive
         }
     }
 
+    /**
+     * @param $assetParam
+     * @return Asset
+     * @throws AssetNotFoundException
+     */
     private function retrieveAsset($assetParam): Asset
     {
         if ($assetParam instanceof Asset) {

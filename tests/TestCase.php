@@ -114,6 +114,7 @@ class TestCase extends OrchestraTestCase
         $app['config']->set('statamic.assets.image_manipulation.driver', 'imagick');
 
         $app['config']->set('statamic.graphql.enabled', true);
+        $app['config']->set('statamic.graphql.cache', false);
         $app['config']->set('statamic.graphql.resources', [
             'collections' => true,
             'assets' => true,
