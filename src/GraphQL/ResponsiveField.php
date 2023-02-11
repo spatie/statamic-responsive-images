@@ -4,6 +4,7 @@ namespace Spatie\ResponsiveImages\GraphQL;
 
 use GraphQL\Type\Definition\Type;
 use Rebing\GraphQL\Support\Field;
+use Spatie\ResponsiveImages\AssetNotFoundException;
 use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Responsive;
 use Statamic\Assets\Asset;
@@ -18,7 +19,11 @@ class ResponsiveField extends Field
 
     public function type(): Type
     {
-        return GraphQL::listOf(GraphQL::type(BreakPointType::NAME));
+        return GraphQL::listOf(
+            GraphQL::nonNull(
+                GraphQL::type(BreakPointType::NAME)
+            )
+        );
     }
 
     public function args(): array
@@ -32,7 +37,12 @@ class ResponsiveField extends Field
             return [str_replace('_', ':', $key) => $value];
         })->toArray();
 
-        $responsive = new Responsive($root, new Parameters($args));
+        try {
+            $responsive = new Responsive($root, new Parameters($args));
+        } catch (AssetNotFoundException $e) {
+            logger()->error($e->getMessage());
+            return null;
+        }
 
         return $responsive->breakPoints()->map(function (Breakpoint $breakpoint) use ($args) {
             return $breakpoint->toGql($args);

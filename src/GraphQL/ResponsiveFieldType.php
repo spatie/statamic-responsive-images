@@ -4,11 +4,13 @@ namespace Spatie\ResponsiveImages\GraphQL;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Rebing\GraphQL\Support\Type;
+use Spatie\ResponsiveImages\AssetNotFoundException;
 use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Responsive;
 use Statamic\Facades\GraphQL;
 use Statamic\Fields\Value;
 use Statamic\Tags\Parameters;
+use ZipStream\Exception;
 
 class ResponsiveFieldType extends Type
 {
@@ -22,7 +24,11 @@ class ResponsiveFieldType extends Type
     {
         return [
             'breakpoints' => [
-                'type' => GraphQL::listOf(GraphQL::type(BreakpointType::NAME)),
+                'type' => GraphQL::listOf(
+                    GraphQL::nonNull(
+                        GraphQL::type(BreakpointType::NAME)
+                    )
+                ),
                 'resolve' => function (array $field, array $args, ?array $context, ResolveInfo $info) {
                     $field = array_map(function ($value) {
                         if ($value instanceof Value) {
@@ -32,13 +38,18 @@ class ResponsiveFieldType extends Type
                         return $value;
                     }, $field);
 
-                    $responsive = new Responsive($field['src'], new Parameters($field));
+                    try {
+                        $responsive = new Responsive($field['src'], new Parameters($field));
 
-                    return $responsive->breakPoints()->map(function (Breakpoint $breakpoint) {
-                        return $breakpoint->toGql([
-                            'placeholder' => config('statamic.responsive-images.placeholder'),
-                        ]);
-                    })->toArray();
+                        return $responsive->breakPoints()->map(function (Breakpoint $breakpoint) {
+                            return $breakpoint->toGql([
+                                'placeholder' => config('statamic.responsive-images.placeholder'),
+                            ]);
+                        })->toArray();
+                    } catch (AssetNotFoundException $e) {
+                        logger()->error($e->getMessage());
+                        return null;
+                    }
                 },
             ],
             'responsive' => ResponsiveField::class,
