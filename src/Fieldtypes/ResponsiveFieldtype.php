@@ -137,6 +137,11 @@ class ResponsiveFieldtype extends Fieldtype
 
     public function preProcess($data)
     {
+        if (!is_array($data)) {
+            $data = [
+                'src' => $data,
+            ];
+        }
         return $this->getFieldsWithValues($data)->preProcess()->values()->all();
     }
 
