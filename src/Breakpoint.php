@@ -304,4 +304,19 @@ class Breakpoint implements Arrayable
 
         return 'data:' . $assetMimeType . ';base64,' . base64_encode($assetContent);
     }
+
+    // TODO: rename
+    public function getAspectRatioDimensions()
+    {
+        return app(DimensionCalculator::class)->calculateForImgTag($this);
+    }
+
+    public function getMediaString(): null|string
+    {
+        if (! $this->minWidth) {
+            return null;
+        }
+
+        return "(min-width: {$this->minWidth}{$this->widthUnit})";
+    }
 }

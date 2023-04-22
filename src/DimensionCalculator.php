@@ -7,7 +7,8 @@ use Illuminate\Support\Collection;
 interface DimensionCalculator
 {
     /**
-     * Used to generate dimensions for breakpoints.
+     * Used to generate dimensions for breakpoints. Starting with the smallest dimensions and ending with largest.
+     *
      *
      * @param Source $source
      * @return Collection<Dimensions>
