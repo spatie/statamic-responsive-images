@@ -130,4 +130,16 @@ return [
 
     'breakpoint_unit' => 'px',
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Srcset dimensions multiplier
+    |--------------------------------------------------------------------------
+    |
+    | When generating the srcset for an image, this value will be used to calculate the different sizes.
+    |
+    */
+
+    'srcset_dimensions_multiplier' => 0.7,
+
 ];
