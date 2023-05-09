@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: [8.0, 8.1]
-        statamic: [3.3.*, 3.4.*]
+        php: [8.0, 8.1, 8.2]
+        statamic: [4.0.*]
         include:
           - testbench: 7.*
     
