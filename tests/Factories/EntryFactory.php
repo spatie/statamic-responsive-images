@@ -117,6 +117,7 @@ class EntryFactory
         return Collection::findByHandle($this->collection)
             ?? Collection::make($this->collection)
                 ->sites(['en'])
+                ->dated(true)
                 ->save();
     }
 
