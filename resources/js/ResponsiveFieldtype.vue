@@ -1,5 +1,4 @@
 <template>
-  <div class="publish-fields">
     <publish-container
         :name="publishContainerName"
         :values="value"
@@ -17,7 +16,6 @@
         />
       </div>
     </publish-container>
-  </div>
 </template>
 
 <script>
