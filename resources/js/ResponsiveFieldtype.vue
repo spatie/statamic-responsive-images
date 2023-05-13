@@ -71,24 +71,24 @@ export default {
 
 <style scoped>
 @container (max-width: 125px)  {
-  .responsive-field .assets-fieldtype .assets-fieldtype-picker {
+  .responsive-field >>> .assets-fieldtype .assets-fieldtype-picker {
     flex-direction: row;
   }
 
-  .responsive-field .assets-fieldtype .assets-fieldtype-picker .btn.btn-with-icon {
+  .responsive-field >>> .assets-fieldtype .assets-fieldtype-picker .btn.btn-with-icon {
     white-space: nowrap;
     overflow: hidden;
   }
 }
 
 @container (max-width: 148px)  {
-  .responsive-field .assets-fieldtype .assets-fieldtype-picker .btn.btn-with-icon svg {
+  .responsive-field >>> .assets-fieldtype .assets-fieldtype-picker .btn.btn-with-icon svg {
     display: none;
   }
 }
 
 @container (max-width: 265px)  {
-  .responsive-field .assets-fieldtype .assets-fieldtype-drag-container .asset-table-listing td.w-24 {
+  .responsive-field >>> .assets-fieldtype .assets-fieldtype-drag-container .asset-table-listing td.w-24 {
     display: none;
   }
 }
