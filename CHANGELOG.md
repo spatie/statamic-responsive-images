@@ -2,6 +2,15 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v4.0.0 - 2023-05-13
+
+### What's Changed
+
+- Statamic v4 support by @bengs @ncla in https://github.com/spatie/statamic-responsive-images/pull/221
+- Asset fieldtype styles within Responsive field have been adjusted for narrow spaces
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v3.1.3...v4.0.0
+
 ## v3.1.3 - 2023-02-11
 
 ### What's Changed
@@ -50,6 +59,7 @@ GraphQL improvements by @ncla in https://github.com/spatie/statamic-responsive-i
 - 
 - 
 - 
+- 
 - Fix max widths config value or glide width param not being respected in some cases
 - Fix floating numbers being output for width and height values for Glide endpoint, they are now rounded integers
 - Placeholder now can be toggled per breakpoint
@@ -60,7 +70,9 @@ GraphQL improvements by @ncla in https://github.com/spatie/statamic-responsive-i
 - 
 - 
 - 
+- 
 - - `unit` to `widthUnit`
+- 
 - 
 - 
 - 
