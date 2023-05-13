@@ -1,4 +1,5 @@
 <template>
+  <div class="responsive-field">
     <publish-container
         :name="publishContainerName"
         :values="value"
@@ -16,10 +17,11 @@
         />
       </div>
     </publish-container>
+  </div>
 </template>
 
 <script>
-import { generateId } from "./helpers";
+import {generateId} from "./helpers";
 
 export default {
   mixins: [Fieldtype],
@@ -66,3 +68,28 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+@container (max-width: 125px)  {
+  .responsive-field .assets-fieldtype .assets-fieldtype-picker {
+    flex-direction: row;
+  }
+
+  .responsive-field .assets-fieldtype .assets-fieldtype-picker .btn.btn-with-icon {
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
+
+@container (max-width: 148px)  {
+  .responsive-field .assets-fieldtype .assets-fieldtype-picker .btn.btn-with-icon svg {
+    display: none;
+  }
+}
+
+@container (max-width: 265px)  {
+  .responsive-field .assets-fieldtype .assets-fieldtype-drag-container .asset-table-listing td.w-24 {
+    display: none;
+  }
+}
+</style>
