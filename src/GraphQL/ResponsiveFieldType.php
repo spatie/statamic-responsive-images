@@ -37,7 +37,7 @@ class ResponsiveFieldType extends Type
                         return $value;
                     }, $field);
 
-                    if (!isset($field['src'])) {
+                    if (! isset($field['src'])) {
                         return null;
                     }
 
