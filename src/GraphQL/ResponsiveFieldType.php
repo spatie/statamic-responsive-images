@@ -37,6 +37,10 @@ class ResponsiveFieldType extends Type
                         return $value;
                     }, $field);
 
+                    if (! isset($field['src'])) {
+                        return null;
+                    }
+
                     try {
                         $responsive = new Responsive($field['src'], new Parameters($field));
 
