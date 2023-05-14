@@ -15,7 +15,7 @@ function assertMatchesJsonSnapshotWithoutSvg($value)
     assertMatchesJsonSnapshot($value);
 }
 
-function createEntryWithField($additionalFieldConfig = [], $additionalEntryData = [])
+function createEntryWithField($additionalFieldConfig = [], $additionalEntryData = null)
 {
     $article = Blueprint::makeFromFields([
         'hero' => array_merge([
@@ -41,7 +41,7 @@ function createEntryWithField($additionalFieldConfig = [], $additionalEntryData 
 
     (new EntryFactory)->collection('blog')->id('1')->data([
         'title' => 'Responsive Images addon is awesome',
-        'hero' => empty($additionalEntryData) ? ['src' => 'test.jpg'] : $additionalEntryData,
+        'hero' => $additionalEntryData === null ? ['src' => 'test.jpg'] : $additionalEntryData,
     ])->create();
 }
 
@@ -396,4 +396,37 @@ it('missing lg breakpoint asset uses default breakpoint asset instead', function
     expect(isset($response['errors']))->toBeFalse();
     expect($response['data']['entry']['hero']['breakpoints'][0]['sources'][0]['srcSet'])
         ->toEqual($response['data']['entry']['hero']['breakpoints'][1]['sources'][0]['srcSet']);
+});
+
+// https://github.com/spatie/statamic-responsive-images/issues/214
+it('returns null for breakpoints if src is not set in a newly made collection', function () {
+    test()->createEntryWithField([], []);
+
+    $query = '
+        {
+            entry(id: "1") {
+                title
+                ... on Entry_Blog_Article {
+                    hero {
+                        breakpoints {
+                            label
+                            sources {
+                                srcSet
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ';
+
+    $response = $this
+        ->withoutExceptionHandling()
+        ->postJson('/graphql/', ['query' => $query])
+        ->getContent();
+
+    $response = json_decode($response, true);
+
+    expect(isset($response['errors']))->toBeFalse();
+    expect($response['data']['entry']['hero']['breakpoints'])->toBeNull();
 });
