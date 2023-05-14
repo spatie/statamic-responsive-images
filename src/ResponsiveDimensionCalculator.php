@@ -63,7 +63,7 @@ class ResponsiveDimensionCalculator implements DimensionCalculator
         return $breakpoint->parameters['ratio'] ?? ($asset->width() / $asset->height());
     }
 
-    private function calculateDimensions(int $assetFilesize, int $assetWidth, int $assetHeight, $ratio): Collection
+    protected function calculateDimensions(int $assetFilesize, int $assetWidth, int $assetHeight, $ratio): Collection
     {
         $dimensions = collect();
 
@@ -89,7 +89,7 @@ class ResponsiveDimensionCalculator implements DimensionCalculator
         }
     }
 
-    private function finishedCalculating(float $predictedFileSize, int $newWidth): bool
+    protected function finishedCalculating(float $predictedFileSize, int $newWidth): bool
     {
         if ($newWidth < 20) {
             return true;
