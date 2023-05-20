@@ -70,6 +70,10 @@ Or different assets:
 
 All parameters described below can be prefixed with a breakpoint key and the parameters will apply from smallest breakpoint going up to largest breakpoints, with default breakpoint (no breakpoint prefix) applying settings to all breakpoints. Breakpoints are only used if they are explictly asked for either through tag params or entry values.
 
+### Source image
+
+You can pass source image in different way through `src` tag parameter. You can pass asset ID string or asset fieldtype value (you are not limited to Responsive fieldtype btw!). If it can resolve to an asset, the tag will try to use it.
+
 ### Image ratio
 
 You can make sure images are a certain ratio by passing a `ratio` parameter, either as a string `16/10` or as a float `1.6`.
