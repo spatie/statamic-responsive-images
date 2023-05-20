@@ -2,13 +2,11 @@
 [![Latest Version](https://img.shields.io/github/release/spatie/statamic-responsive-images.svg?style=flat-square)](https://github.com/spatie/statamic-responsive-images/releases)
 ![Statamic 4.0+](https://img.shields.io/badge/Statamic-4.0+-FF269E?style=flat-square&link=https://statamic.com)
 
-# Responsive Images
-
-> Responsive Images for Statamic 3.
-
 <!-- /statamic:hide -->
 
-This Addon provides responsive images inspired by [Our Medialibrary Package](https://github.com/spatie/laravel-medialibrary).
+# Responsive Images
+
+This addon provides responsive images in Statamic inspired by [Our Medialibrary Package](https://github.com/spatie/laravel-medialibrary).
 
 ## Support us
 
@@ -26,7 +24,7 @@ Require it using Composer.
 composer require spatie/statamic-responsive-images
 ```
 
-Upon installation, it will publish this addon config file and the Blade templates used to generate the output of responsive images. If you do not plan to customize the template, feel free to delete the published view directory `resources/views/vendor/responsive-images`, the addon will use the default template.
+Upon installation, it will publish this addons config file and the Blade templates used to generate the output of responsive images. If you do not plan to customize the template, feel free to delete the published view directory `resources/views/vendor/responsive-images`, the addon will use the default template.
 
 ## Using Responsive Images
 
@@ -52,6 +50,26 @@ This addon relies on Statamic Glide and its assets, so a quick tour to `config/s
 
 ## Tag parameters
 
+### Breakpoints & Art direction
+
+You can define breakpoints in the config file, by default the breakpoints of TailwindCSS are used in the config file and are referenced here in these examples.
+
+Breakpoints allow you to use any tag parameter described below for that specific breakpoint onwards. For example you can have different ratios for different breakpoints:
+
+```twig
+{{ responsive:image_field ratio="1/1" lg:ratio="16/9" 2xl:ratio="2/1" }}
+```
+
+This will apply a default ratio of `1/1`. From breakpoint `lg` up to `2xl`, the ratio will be `16/9`. From `2xl` up, the ratio will be `2/1`.
+
+Or different assets:
+
+```twig
+{{ responsive:image_field :lg:src="image_field_lg" :2xl:src="image_field_2xl" }}
+```
+
+All parameters described below can be prefixed with a breakpoint key and the parameters will apply from smallest breakpoint going up to largest breakpoints, with default breakpoint (no breakpoint prefix) applying settings to all breakpoints. Breakpoints are only used if they are explictly asked for either through tag params or entry values.
+
 ### Image ratio
 
 You can make sure images are a certain ratio by passing a `ratio` parameter, either as a string `16/10` or as a float `1.6`.
@@ -60,7 +78,7 @@ You can make sure images are a certain ratio by passing a `ratio` parameter, eit
 {{ responsive:image_field ratio="16/9" }}
 ```
 
-### Responsive placeholder
+### Blurry placeholder
 
 By default, responsive images generates a small base64 encoded placeholder to show while your image loads. If you want to disable this you can pass `placeholder="false"` to the tag.
 
@@ -93,12 +111,14 @@ Image format quality settings can be set globally through config. If you wish to
 
 ### Glide parameters
 
-You can still pass any parameters from the Glide tag that you would want to, just make sure to prefix them with `glide:`.
+You can pass any parameters from the Glide tag that you would want to, just make sure to prefix them with `glide:`.
 Passing `glide:width` will consider the width as a max width, which can prevent unnecessary large images from being generated.
 
 ```twig
 {{ responsive:image_field glide:blur="20" glide:width="1600" }}
 ```
+
+For a list of available Glide manipulation parameters please check out the Statamic Glide documentation page [here](https://statamic.dev/tags/glide#parameters)
 
 ### HTML Attributes
 
@@ -108,34 +128,34 @@ If you want to add additional attributes (for example a title attribute) to your
 {{ responsive:image_field alt="{title}" class="my-class" }}
 ```
 
-### Breakpoints & Art direction
-
-You can define breakpoints in the config file, by default the breakpoints of TailwindCSS are used.
-
-Breakpoints allow you to use, for example, different ratios:
+If you want to conditionally render something based on a tag parameter, you can do the following by utilizing `$attributeString` variable in Blade template. For example, to add lazy loading we have this Antlers tag usage:
 
 ```twig
-{{ responsive:image_field ratio="1/1" lg:ratio="16/9" 2xl:ratio="2/1" }}
+{{ responsive:responsive_field lazyLoad="true" }}
 ```
 
-This will apply a default ratio of `1/1`. From breakpoint `lg` up to `2xl`, the ratio will be `16/9`. From `2xl` up, the ratio will be `2/1`.
-The breakpoints can be configured in the config and default to the breakpoints of Tailwind CSS.
+Then in the [published addon Blade template](https://github.com/spatie/statamic-responsive-images/blob/main/resources/views/responsiveImage.blade.php) you can do the following (template stripped down for demonstration purposes):
 
-Or different assets:
-
-```twig
-{{ responsive:image_field :lg:src="image_field_lg" :2xl:src="image_field_2xl" }}
+```blade
+<img
+    src="{{ $src }}"
+    @if(\Illuminate\Support\Str::contains($attributeString, 'lazyLoad="1"'))
+        loading="lazy"
+    @endif
+>
 ```
 
-Breakpoints support the `ratio`, `src`, `quality` and `glide` parameters.
+And now you have conditional lazy-loading based on the tag parameter.
 
 ## Publishing config and templates
+
+Run the following command in your console
 
 ```bash
 php artisan vendor:publish
 ```
 
-and choose `Spatie\ResponsiveImages\ServiceProvider`
+and choose `Spatie\ResponsiveImages\ServiceProvider` from the menu.
 
 ## Generate command
 
