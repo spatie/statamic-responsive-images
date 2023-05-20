@@ -77,7 +77,7 @@ class ResponsiveFields
                     'required' => in_array('required', $this->config['validate'] ?? []) && $index === 0,
                     'validate' => array_filter([
                         new ImageRule(),
-                        ((in_array('sometimes', $this->config['validate'] ?? []) && $index === 0) ? 'sometimes' : null)
+                        ((in_array('sometimes', $this->config['validate'] ?? []) && $index === 0) ? 'sometimes' : null),
                     ]),
                 ],
             ];
