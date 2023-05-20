@@ -1,35 +1,19 @@
-<script>
-        window.addEventListener('load', function () {
-            window.responsiveResizeObserver = new ResizeObserver((entries) => {
-                entries.forEach(entry => {
-                    const imgWidth = entry.target.getBoundingClientRect().width;
-                    entry.target.parentNode.querySelectorAll('source').forEach((source) => {
-                        source.sizes = Math.ceil(imgWidth / window.innerWidth * 100) + 'vw';
-                    });
-                });
-            });
-
-            document.querySelectorAll('[data-statamic-responsive-images]').forEach(responsiveImage => {
-                responsiveResizeObserver.onload = null;
-                responsiveResizeObserver.observe(responsiveImage);
-            });
-        });
-    </script>
-
+<div class="sri__container unique-id">
+<style>
+.unique-id:before {
+--width: 340;
+--height: 280;
+}
+@media screen and (min-width: 1024px) {
+.unique-id:before {
+--width: 340;
+--height: 340;
+}
+}
+</style>
 <picture>
-                        
-                            <source
-                     type="image/jpeg"                      media="(min-width: 1024px)"                     srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=237&amp;h=237 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=284&amp;h=284 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=340&amp;h=340 340w"
-                     sizes="1px"                 >
-                                            
-                            <source
-                     type="image/jpeg"                                         srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=237&amp;h=195 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=284&amp;h=234 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
-                     sizes="1px"                 >
-                        
-    <img
-        
-        src="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=280"
-                alt="test.jpg"
-                 width="340"          height="280"                 data-statamic-responsive-images
-            >
-</picture>
+<source type="image/jpeg" media="(min-width: 1024px)" srcset="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=237&amp;h=237 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=284&amp;h=284 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=340&amp;h=340 340w" sizes="1px">
+<source type="image/jpeg" srcset="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=237&amp;h=195 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=284&amp;h=234 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w" sizes="1px">
+<img src="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=280" alt="test.jpg" width="340" height="280" data-statamic-responsive-images>
+</source></source></picture>
+</div>
