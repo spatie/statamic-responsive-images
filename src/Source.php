@@ -102,6 +102,7 @@ class Source implements Arrayable
     private function getDimensions(): Collection
     {
         ray("Source::getDimensions");
+
         return app(DimensionCalculator::class)->calculateForBreakpoint($this);
     }
 
