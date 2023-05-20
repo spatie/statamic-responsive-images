@@ -17,7 +17,7 @@ use function Spatie\Snapshots\assertMatchesSnapshot;
 
 function assertMatchesMinimalHtmlSnapshot($value)
 {
-    $value = preg_replace('/data:image\/svg\+xml(.*) 32w/', '', $value);
+    $value = preg_replace('/data:image\/svg\+xml(.*) 32w, /', '', $value);
 
     // Remove script tag
     $value = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $value);
