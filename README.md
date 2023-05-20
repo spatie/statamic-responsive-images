@@ -1,6 +1,3 @@
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/support-ukraine.svg?t=1" />](https://supportukrainenow.org)
-
 <!-- statamic:hide -->
 [![Latest Version](https://img.shields.io/github/release/spatie/statamic-responsive-images.svg?style=flat-square)](https://github.com/spatie/statamic-responsive-images/releases)
 ![Statamic 4.0+](https://img.shields.io/badge/Statamic-4.0+-FF269E?style=flat-square&link=https://statamic.com)
@@ -25,64 +22,37 @@ We highly appreciate you sending us a postcard from your hometown, mentioning wh
 
 Require it using Composer.
 
-```
+```bash
 composer require spatie/statamic-responsive-images
 ```
 
-## Fieldtype
-
-This addon includes a fieldtype that allows for full Art direction with responsive images.
-
-![fieldtype](./docs/fieldtype.png)
-
-This fieldtype is configured with the following yaml configuration:
-
-```yaml
--
-    handle: image
-    field:
-      use_breakpoints: true
-      allow_ratio: true
-      allow_fit: true
-      breakpoints:
-        - sm
-        - md
-        - lg
-      display: Image
-      instructions: 'Choose image using art direction.'
-      type: responsive
-      icon: assets
-      listable: hidden
-      container: assets
-      restrict: false
-      allow_uploads: true
-```
-
-The configuration above can be used within Antlers using the responsive tag:
-
-```twig
-{{ responsive:image }}
-```
-
-The breakpoints are configured in the `breakpoints` array of the config file.
+Upon installation, it will publish this addon config file and the Blade templates used to generate the output of responsive images. If you do not plan to customize the template, feel free to delete the published view directory `resources/views/vendor/responsive-images`, the addon will use the default template.
 
 ## Using Responsive Images
 
-Responsive Images will generate responsive versions of the images whenever a new asset is uploaded. These presets are determined by this package and not by your own Glide presets.
+This addon includes a fieldtype that allows for full art direction with responsive images. When you are editing your blueprint and adding a new field, a new fieldtype called "Responsive" should appear under the "Media" category. Configuration is similar to an asset fieldtype with additional configurations such as breakpoints, ratio and fit.
 
-We generally recommend setting `statamic.assets.image_manipulation.cache` to `false` so only images actually requested by a browser are generated. The first time the conversion is loaded will be slow, but Glide still has an internal cache that it will serve from the next time. This saves a lot on server resources and storage requirements.
+![fieldtype](./docs/fieldtype.png)
 
-## Templating
+Once you have filled out the responsive field in your entry, simply call the responsive tag in your Antlers template like so:
 
-Pass an image to the `responsive` tag.
-
-```twig
-{{ responsive:image_field }}
+```antlers
+{{ responsive:image }}
 ```
 
-This will render an image tag with the default srcsets. The tag uses JS to define the value of the sizes attribute. This way the browser will always download the correct image.
+Where `image` is the handle of our responsive field.
 
-## Image ratio
+This will render an `<picture>` tag with srcsets. The tag uses JavaScript to define the value of the sizes attribute. This way the browser will always download the correct image depending on the your screens pixel density and the parent container element width.
+
+## Configuration
+
+This addon comes with its own config file. The config lives in `config/statamic/responsive-images.php`. Please take a look at the file yourself and go through each setting. We have configured it to some defaults. These config values apply globally, and can be overriden either through entry values or through tag parameters on individual basis.
+
+This addon relies on Statamic Glide and its assets, so a quick tour to `config/statamic/assets.php` is a also good idea. Particularly the `statamic.assets.image_manipulation.cache` setting. We recommend setting it to `false` so only images actually requested by a browser are generated. The first time the image is loaded will be slow, but Glide still has an internal cache that it will serve from the next time. This saves a lot on server resources and storage requirements. If you are curious about this more, we recommend reading Statamic documentation about this [here](https://statamic.dev/image-manipulation#caching).
+
+## Tag parameters
+
+### Image ratio
 
 You can make sure images are a certain ratio by passing a `ratio` parameter, either as a string `16/10` or as a float `1.6`.
 
@@ -90,7 +60,7 @@ You can make sure images are a certain ratio by passing a `ratio` parameter, eit
 {{ responsive:image_field ratio="16/9" }}
 ```
 
-## Responsive placeholder
+### Responsive placeholder
 
 By default, responsive images generates a small base64 encoded placeholder to show while your image loads. If you want to disable this you can pass `placeholder="false"` to the tag.
 
@@ -98,7 +68,7 @@ By default, responsive images generates a small base64 encoded placeholder to sh
 {{ responsive:image_field placeholder="false" }}
 ```
 
-## Additional image format generation
+### Additional image format generation
 
 By default, responsive tag generates original source image file format and WEBP variants of the image, so if you use a JPG image as source then by default JPG and WEBP variants will be generated. You can toggle WEBP and AVIF variant generation with the tag parameters.
 
@@ -113,7 +83,7 @@ You can also toggle this in responsive-images.php config file, it will apply you
 'avif' => false,
 ```
 
-## Image quality
+### Image quality
 
 Image format quality settings can be set globally through config. If you wish to override the config quality values you can use tag parameters. You can utilize breakpoints for the quality parameter too!
 
@@ -121,7 +91,7 @@ Image format quality settings can be set globally through config. If you wish to
 {{ responsive:image_field quality:webp="50" md:quality:webp="75" }}
 ```
 
-## Glide parameters
+### Glide parameters
 
 You can still pass any parameters from the Glide tag that you would want to, just make sure to prefix them with `glide:`.
 Passing `glide:width` will consider the width as a max width, which can prevent unnecessary large images from being generated.
@@ -130,7 +100,7 @@ Passing `glide:width` will consider the width as a max width, which can prevent 
 {{ responsive:image_field glide:blur="20" glide:width="1600" }}
 ```
 
-## HTML Attributes
+### HTML Attributes
 
 If you want to add additional attributes (for example a title attribute) to your image, you can add them as parameters to the tag, any attributes will be added to the image.
 
@@ -138,7 +108,7 @@ If you want to add additional attributes (for example a title attribute) to your
 {{ responsive:image_field alt="{title}" class="my-class" }}
 ```
 
-## Breakpoints & Art direction
+### Breakpoints & Art direction
 
 You can define breakpoints in the config file, by default the breakpoints of TailwindCSS are used.
 
@@ -159,15 +129,13 @@ Or different assets:
 
 Breakpoints support the `ratio`, `src`, `quality` and `glide` parameters.
 
-## Customizing the generated html
-
-If you want to customize the generated html, you can publish the views using
+## Publishing config and templates
 
 ```bash
 php artisan vendor:publish
 ```
 
-and choosing `Spatie\ResponsiveImages\ServiceProvider`
+and choose `Spatie\ResponsiveImages\ServiceProvider`
 
 ## Generate command
 
