@@ -40,7 +40,7 @@ Once you have filled out the responsive field in your entry, simply call the res
 
 Where `image` is the handle of our responsive field.
 
-This will render an `<picture>` tag with srcsets. The tag uses JavaScript to define the value of the sizes attribute. This way the browser will always download the correct image depending on the your screens pixel density and the parent container element width.
+This will render an `<picture>` tag with srcsets. The tag uses JavaScript to define the value of the `sizes` attribute. This way the browser will always download the correct image depending on the your screens pixel density and the parent container element width.
 
 ## Configuration
 
