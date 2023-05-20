@@ -306,7 +306,7 @@ class Breakpoint implements Arrayable
     }
 
     // TODO: rename
-    public function getAspectRatioDimensions()
+    public function getRatioDimensions()
     {
         return app(DimensionCalculator::class)->calculateForImgTag($this);
     }

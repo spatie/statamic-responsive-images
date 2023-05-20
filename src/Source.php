@@ -101,6 +101,7 @@ class Source implements Arrayable
      */
     private function getDimensions(): Collection
     {
+        ray("Source::getDimensions");
         return app(DimensionCalculator::class)->calculateForBreakpoint($this);
     }
 
@@ -135,7 +136,7 @@ class Source implements Arrayable
         ];
     }
 
-    private function getLastDimensionObject(): Dimensions|null
+    private function getLastDimensionObjectFromCalculations(): Dimensions|null
     {
         $dimensions = $this->getDimensions();
 
@@ -148,14 +149,14 @@ class Source implements Arrayable
 
     public function getWidth(): int|null
     {
-        $dimensions = $this->getLastDimensionObject();
+        $dimensions = $this->getLastDimensionObjectFromCalculations();
 
         return $dimensions ? $dimensions->width : null;
     }
 
     public function getHeight(): int|null
     {
-        $dimensions = $this->getLastDimensionObject();
+        $dimensions = $this->getLastDimensionObjectFromCalculations();
 
         return $dimensions ? $dimensions->height : null;
     }
