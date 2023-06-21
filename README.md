@@ -250,6 +250,11 @@ A responsive fieldtype has all the same fields as a normal responsive field from
 }
 ```
 
+## Using with Alpine.js
+You may optionally remove the inline script in the `responsiveImage.blade.php` view in favor of a simple `x-statamic-responsive-images` Alpine directive. Using this directive resolves the issue of images not loading on subsequent page loads when using this addon together with Laravel Livewire or pjax libraries like Swup, BarbaJS, and Turbolinks.
+
+Learn more about [Alpine Statamic Responsive Images](https://github.com/aerni/alpine-statamic-responsive-images).
+
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
