@@ -99,6 +99,9 @@ trait ResponsiveGraphqlArguments
             'glide_markpos' => [
                 'type' => Type::string(),
             ],
+            'glide_width' => [
+                'type' => Type::int(),
+            ],
         ];
 
         $defaultBreakpointArgs = array_merge($defaultBreakpointArgs, $glideArgs);
