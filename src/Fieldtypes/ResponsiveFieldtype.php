@@ -3,7 +3,9 @@
 namespace Spatie\ResponsiveImages\Fieldtypes;
 
 use Illuminate\Support\Arr as IlluminateArr;
+use Spatie\ResponsiveImages\AssetNotFoundException;
 use Spatie\ResponsiveImages\Breakpoint;
+use Spatie\ResponsiveImages\Exceptions\InvalidAssetException;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFields as ResponsiveFields;
 use Spatie\ResponsiveImages\GraphQL\ResponsiveFieldType as GraphQLResponsiveFieldtype;
 use Spatie\ResponsiveImages\Responsive;
@@ -148,7 +150,11 @@ class ResponsiveFieldtype extends Fieldtype
             return [];
         }
 
-        $responsive = new Responsive($data['src'], Parameters::make($data, Context::make()));
+        try {
+            $responsive = new Responsive($data['src'], Parameters::make($data, Context::make()));
+        } catch (AssetNotFoundException | InvalidAssetException) {
+            return [];
+        }
 
         return $responsive->breakPoints()
             ->map(function (Breakpoint $breakpoint) {
