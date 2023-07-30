@@ -2,6 +2,31 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v4.1.1 - 2023-07-23
+
+### What's Changed
+
+- Fail silently on asset exceptions when processing data for fieldtype index (entry lists, tables), fixes #231 by @ncla in https://github.com/spatie/statamic-responsive-images/pull/235
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v4.1.0...v4.1.1
+
+## v4.1.0 - 2023-07-23
+
+### What's Changed
+
+- Accept `width` param from GraphQL arguments for dimension calculations; fixes #233 by @ncla in https://github.com/spatie/statamic-responsive-images/pull/234
+- Add `glide_width` as possible argument for GraphQL `responsive` field
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v4.0.3...v4.1.0
+
+## v4.0.3 - 2023-05-20
+
+### What's Changed
+
+- Fix `sometimes` validation not working when hiding responsive field by @ncla in https://github.com/spatie/statamic-responsive-images/pull/229
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v4.0.2...v4.0.3
+
 ## v4.0.2 - 2023-05-14
 
 ### What's Changed
@@ -78,6 +103,9 @@ GraphQL improvements by @ncla in https://github.com/spatie/statamic-responsive-i
 - 
 - 
 - 
+- 
+- 
+- 
 - Fix max widths config value or glide width param not being respected in some cases
 - Fix floating numbers being output for width and height values for Glide endpoint, they are now rounded integers
 - Placeholder now can be toggled per breakpoint
@@ -91,7 +119,13 @@ GraphQL improvements by @ncla in https://github.com/spatie/statamic-responsive-i
 - 
 - 
 - 
+- 
+- 
+- 
 - - `unit` to `widthUnit`
+- 
+- 
+- 
 - 
 - 
 - 

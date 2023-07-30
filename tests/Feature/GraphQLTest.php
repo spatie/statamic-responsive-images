@@ -430,3 +430,64 @@ it('returns null for breakpoints if src is not set in a newly made collection', 
     expect(isset($response['errors']))->toBeFalse();
     expect($response['data']['entry']['hero']['breakpoints'])->toBeNull();
 });
+
+// https://github.com/spatie/statamic-responsive-images/issues/233
+it('sets maximum limit for width from width parameter', function () {
+    test()->createEntryWithField([], []);
+
+    $query = '
+        {
+            asset(id: "test_container::test.jpg") {
+                responsive(webp: false, placeholder: false, width: 250) {
+                    sources {
+                        srcSet
+                    }
+                }
+            }
+        }
+    ';
+
+    $response = $this
+        ->withoutExceptionHandling()
+        ->postJson('/graphql/', ['query' => $query])
+        ->getContent();
+
+    $response = json_decode($response, true);
+
+    $srcset = $response['data']['asset']['responsive'][0]['sources'][0]['srcSet'];
+
+    preg_match_all('/ (\d+)w/', $srcset, $matches);
+
+    expect($matches[1])->toHaveCount(1);
+    expect($matches[1])->toContain('237');
+});
+
+it('sets maximum limit for width from glide:width parameter', function () {
+    test()->createEntryWithField([], []);
+
+    $query = '
+        {
+            asset(id: "test_container::test.jpg") {
+                responsive(webp: false, placeholder: false, glide_width: 250) {
+                    sources {
+                        srcSet
+                    }
+                }
+            }
+        }
+    ';
+
+    $response = $this
+        ->withoutExceptionHandling()
+        ->postJson('/graphql/', ['query' => $query])
+        ->getContent();
+
+    $response = json_decode($response, true);
+
+    $srcset = $response['data']['asset']['responsive'][0]['sources'][0]['srcSet'];
+
+    preg_match_all('/ (\d+)w/', $srcset, $matches);
+
+    expect($matches[1])->toHaveCount(1);
+    expect($matches[1])->toContain('237');
+});

@@ -98,7 +98,9 @@ class Breakpoint implements Arrayable
      */
     public function getImageManipulationParams(string $format = null): array
     {
-        $params = $this->getGlideParams();
+        $glideParams = $this->getGlideParams();
+
+        $params = [];
 
         if ($format && $format !== 'original') {
             $params['fm'] = $format;
@@ -110,25 +112,42 @@ class Breakpoint implements Arrayable
             $params['q'] = $quality;
         }
 
-        $crop = $this->getCropFocus($params);
+        $crop = $this->getCropFocus($glideParams);
 
         if ($crop) {
             $params['fit'] = $crop;
         }
 
-        // There are two ways to pass in width, so we just use one: "width"
-        if (isset($params['w'])) {
-            $params['width'] = $params['width'] ?? $params['w'];
-            unset($params['w']);
+        $width = $this->getWidth();
+
+        if ($width) {
+            $params['width'] = $width;
+            unset($glideParams['width'], $glideParams['w']);
         }
 
-        // Same for height
-        if (isset($params['h'])) {
-            $params['height'] = $params['height'] ?? $params['height'];
-            unset($params['h']);
+        if (isset($glideParams['height']) || isset($glideParams['h'])) {
+            $params['height'] = $glideParams['height'] ?? $glideParams['h'];
+            unset($glideParams['height'], $glideParams['h']);
         }
+
+        $params = array_merge($glideParams, $params);
 
         return $params;
+    }
+
+    private function getWidth(): int|null
+    {
+        $width = null;
+
+        if (isset($this->parameters['glide:width']) || isset($this->parameters['glide:w'])) {
+            $width = $this->parameters['glide:width'] ?? $this->parameters['glide:w'];
+        }
+
+        if ($width === null && (isset($this->parameters['width']) || isset($this->parameters['w']))) {
+            $width = $this->parameters['width'] ?? $this->parameters['w'];
+        }
+
+        return $width;
     }
 
     private function getCropFocus($params): string|null
