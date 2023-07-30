@@ -324,8 +324,7 @@ class Breakpoint implements Arrayable
         return 'data:' . $assetMimeType . ';base64,' . base64_encode($assetContent);
     }
 
-    // TODO: rename
-    public function getRatioDimensions()
+    public function getResponsiveRatioDimensions()
     {
         return app(DimensionCalculator::class)->calculateForImgTag($this);
     }

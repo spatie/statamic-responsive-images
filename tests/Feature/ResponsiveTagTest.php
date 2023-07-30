@@ -55,6 +55,8 @@ function assertMatchesMinimalHtmlSnapshot($value)
 }
 
 beforeEach(function () {
+    config()->set('statamic.responsive-images.template', 'responsiveImageCLS');
+
     $this->asset = $this->uploadTestImageToTestContainer();
     $this->asset2 = $this->uploadTestImageToTestContainer($this->getTestJpg(), 'test2.jpg');
     $this->svgAsset = $this->uploadTestImageToTestContainer($this->getTestSvg(), 'test.svg');
