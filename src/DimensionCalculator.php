@@ -7,7 +7,8 @@ use Illuminate\Support\Collection;
 interface DimensionCalculator
 {
     /**
-     * Used to generate dimensions for breakpoints. Starting with the smallest dimensions and ending with largest.
+     * Used to generate dimensions for breakpoints/sources srcset attribute. Starting with the smallest dimensions
+     * and ending with largest.
      *
      * @param Source $source
      * @return Collection<Dimensions>
@@ -15,7 +16,7 @@ interface DimensionCalculator
     public function calculateForBreakpoint(Source $source): Collection;
 
     /**
-     * Specific dimension calculation for <img> tag. Important for cases where it is important to maintain
+     * Specific dimension calculation for <img> or <source> tag. Important for cases where it is important to maintain
      * aspect ratio, then browser (depending on provided CSS) can use `width` and `height` to maintain aspect ratio.
      * On other hand the returned values here are not as important if you plan to control <img> styling in other ways
      * e.g. with the following CSS: width: 100%, height 100%.

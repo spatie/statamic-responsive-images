@@ -134,29 +134,4 @@ class Source implements Arrayable
             'srcSet' => $this->getSrcSet(),
         ];
     }
-
-    private function getLastDimensionObjectFromCalculations(): Dimensions|null
-    {
-        $dimensions = $this->getDimensions();
-
-        if ($dimensions->count() > 0) {
-            return $dimensions->last();
-        }
-
-        return null;
-    }
-
-    public function getWidth(): int|null
-    {
-        $dimensions = $this->getLastDimensionObjectFromCalculations();
-
-        return $dimensions ? $dimensions->width : null;
-    }
-
-    public function getHeight(): int|null
-    {
-        $dimensions = $this->getLastDimensionObjectFromCalculations();
-
-        return $dimensions ? $dimensions->height : null;
-    }
 }
