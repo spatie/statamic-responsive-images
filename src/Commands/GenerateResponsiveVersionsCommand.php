@@ -28,7 +28,9 @@ class GenerateResponsiveVersionsCommand extends Command
         }
 
         $assets = $assets->all()->filter(function (Asset $asset) {
-            return $asset->isImage() && $asset->extension() !== 'svg';
+            return $asset->isImage()
+                && $asset->extension() !== 'svg'
+                && !in_array($asset->container(), config('statamic.responsive-images.excluded_containers', []));
         });
 
         $this->info("Generating responsive image versions for {$assets->count()} assets.");
