@@ -130,4 +130,15 @@ return [
 
     'breakpoint_unit' => 'px',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Excluded Containers
+    |--------------------------------------------------------------------------
+    |
+    | Define the containers which should be excluded from generation responsive variants
+    |
+    */
+
+    'excluded_containers' => [],
+
 ];

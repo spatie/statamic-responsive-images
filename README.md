@@ -180,6 +180,8 @@ php please responsive:regenerate
 If you are using a service, like Horizon, for queues then jobs will be queued to handle the image resizing.
 By default, the job is queued under the 'default' queue. This can be changed via the `queue` config key under `responsive-images.php`
 
+It is also possible to exclude certain containers from generation responsive variants. You can exclude these containers by adding the handle of the container to the `excluded_containers` array in `responsive-images.php`.
+
 ## GraphQL
 
 This addon comes with 2 GraphQL goodies, it adds a `responsive` field to assets and responsive fieldtype, allowing you to use this addon like you would with the Antlers tag. Secondly you can just let responsive fieldtype augment itself without passing any arguments.
