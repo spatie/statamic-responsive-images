@@ -42,7 +42,8 @@ class ResponsiveTag extends Tags
         }
 
         if (in_array($responsive->asset->extension(), ['svg', 'gif'])) {
-            return view('responsive-images::responsiveImage', [
+            return view('responsive-images::' . $this->getResponsiveImageBladeTemplateFilename(), [
+                'uniqueId' => $this->uniqueFrontendId(),
                 'attributeString' => $this->getAttributeString(),
                 'src' => $responsive->asset->url(),
                 'width' => $responsive->asset->width(),
@@ -67,7 +68,8 @@ class ResponsiveTag extends Tags
 
         $breakpoints = $responsive->breakPoints();
 
-        return view('responsive-images::responsiveImage', [
+        return view('responsive-images::' . $this->getResponsiveImageBladeTemplateFilename(), [
+            'uniqueId' => $this->uniqueFrontendId(),
             'attributeString' => $this->getAttributeString(),
             'includePlaceholder' => $includePlaceholder,
             'src' => $src,
@@ -79,6 +81,16 @@ class ResponsiveTag extends Tags
                 return $breakpoint->sources();
             })->flatten()->count() > 0,
         ])->render();
+    }
+
+    /**
+     * TODO: Remove this method when v5 major version has been released
+     *
+     * @return string
+     */
+    private function getResponsiveImageBladeTemplateFilename(): string
+    {
+        return config('statamic.responsive-images.template', 'responsiveImage');
     }
 
     private function getAttributeString(): string
@@ -108,5 +120,10 @@ class ResponsiveTag extends Tags
         return $this->params->has('placeholder')
             ? $this->params->get('placeholder')
             : config('statamic.responsive-images.placeholder', true);
+    }
+
+    protected function uniqueFrontendId(): string
+    {
+        return uniqid('sri__');
     }
 }

@@ -16,20 +16,52 @@
         });
     </script>
 
-<picture>
-                        
-                            <source
-                     type="image/webp"                                         srcset="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=237&amp;h=195 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=284&amp;h=234 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
-                                    >
-                                
-                            <source
-                     type="image/jpeg"                                         srcset="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=237&amp;h=195 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=284&amp;h=234 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
-                                    >
-                        
-    <img
-        
-        src="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=280"
-                alt="test.jpg"
-                 width="340"          height="280"                 data-statamic-responsive-images
-            >
-</picture>
+    <style>
+    .sri__container {
+        position: relative;
+    }
+
+    .sri__container:before {
+        display: block;
+        content: "";
+        width: 100%;
+        padding-top: calc((var(--height) / var(--width)) * 100%);
+    }
+
+    .sri__container img {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+    </style>
+
+<div class="sri__container unique-id">
+    <style>
+                                                        .unique-id:before {
+                        --width: 340;
+                        --height: 280;
+                    }
+                                        </style>
+    <picture>
+                                    
+                                    <source
+                         type="image/webp"                                                 srcset="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=237&amp;h=195 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=284&amp;h=234 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
+                                            >
+                                            
+                                    <source
+                         type="image/jpeg"                                                 srcset="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=237&amp;h=195 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=284&amp;h=234 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?q=90&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
+                                            >
+                                    
+        <img
+            
+            src="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=?w=340&amp;h=280"
+                        alt="test.jpg"
+                         width="340"              height="280"                         data-statamic-responsive-images
+                    >
+    </picture>
+</div>

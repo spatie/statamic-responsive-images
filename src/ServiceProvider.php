@@ -70,7 +70,8 @@ class ServiceProvider extends AddonServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'responsive-images');
 
         $this->publishes([
-            __DIR__.'/../resources/views' => resource_path('views/vendor/responsive-images'),
+            __DIR__.'/../resources/views/responsiveImage.blade.php' => resource_path('views/vendor/responsive-images/responsiveImage.blade.php'),
+            __DIR__.'/../resources/views/placeholderSvg.blade.php' => resource_path('views/vendor/responsive-images/placeholderSvg.blade.php'),
         ], 'responsive-images-views');
 
         return $this;
