@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         php: [8.0, 8.1, 8.2]
-        statamic: [4.0.*]
+        statamic: [4.0.*, v5.0.0-beta.2 as v5.0.0]
         include:
           - testbench: 7.*
     
