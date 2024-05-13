@@ -40,7 +40,7 @@
         {!! $attributeString ?? '' !!}
         src="{{ $src }}"
         @unless (\Illuminate\Support\Str::contains($attributeString, 'alt'))
-        alt="{{ $asset['alt'] ?? $asset['title'] }}"
+        alt="{{ (string) $asset['alt'] ?: (string) $asset['title'] }}"
         @endunless
         @isset($width) width="{{ $width }}" @endisset
         @isset($height) height="{{ $height }}" @endisset
