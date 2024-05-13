@@ -2,6 +2,15 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v5.0.0 - 2024-05-13
+
+### What's Changed
+
+* v5 support by @ncla in https://github.com/spatie/statamic-responsive-images/pull/243
+* Added option to exclude containers from generating responsive variants by @kevinmeijer97 in https://github.com/spatie/statamic-responsive-images/pull/240
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v4.1.1...v5.0.0
+
 ## v4.1.1 - 2023-07-23
 
 ### What's Changed
@@ -96,6 +105,7 @@ GraphQL improvements by @ncla in https://github.com/spatie/statamic-responsive-i
 
 - Extensible dimension calculators by @ncla in https://github.com/spatie/statamic-responsive-images/pull/193
 - - Developers now can customize the amount of images that get generated and their exact dimensions through a custom `DimensionCalculator` that developers bind in `ServiceProvider`. Calculations can be done for each breakpoint and source, and receive `Breakpoint` / `Source` in the calculation methods, which allows to access breakpoint parameters, original asset and more. For motivation and examples of this, please see the PR and the original issue associated with it.
+  
 - 
 - 
 - 
@@ -113,6 +123,7 @@ GraphQL improvements by @ncla in https://github.com/spatie/statamic-responsive-i
 - Empty `media` attributes will no longer be outputted
 - Properties have been renamed to be more descriptive:
 - - `value` to `minWidth`
+  
 - 
 - 
 - 
@@ -123,6 +134,7 @@ GraphQL improvements by @ncla in https://github.com/spatie/statamic-responsive-i
 - 
 - 
 - - `unit` to `widthUnit`
+  
 - 
 - 
 - 
