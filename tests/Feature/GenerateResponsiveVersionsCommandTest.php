@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
 use Spatie\ResponsiveImages\Commands\GenerateResponsiveVersionsCommand;
 use Spatie\ResponsiveImages\Jobs\GenerateGlideImageJob;
@@ -92,4 +91,18 @@ it('dispatches more jobs when avif and webp is enabled', function () {
     expect($webpFormatJobCount)->toBe(3);
     expect($avifFormatJobCount)->toBe(3);
     Queue::assertPushed(GenerateGlideImageJob::class, 9);
+});
+
+it('can skip excluded containers', function () {
+    Queue::fake();
+
+    config()->set('statamic.assets.image_manipulation.cache', true);
+    config()->set('statamic.responsive-images.excluded_containers', ['test_container']);
+
+    $this
+        ->artisan(GenerateResponsiveVersionsCommand::class)
+        ->expectsOutput("Generating responsive image versions for 0 assets.")
+        ->assertExitCode(0);
+
+    Queue::assertNotPushed(GenerateGlideImageJob::class);
 });
