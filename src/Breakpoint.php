@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use League\Flysystem\FilesystemException;
 use Statamic\Contracts\Assets\Asset;
+use Statamic\Exceptions\NotFoundHttpException;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Glide as GlideManager;
 use Statamic\Imaging\ImageGenerator;
@@ -265,7 +266,11 @@ class Breakpoint implements Arrayable
                 'cache' => Config::get('statamic.assets.image_manipulation.cache', false),
             ];
 
-            $manipulationPath = $imageGenerator->generateByAsset($this->asset, $params);
+            try {
+                $manipulationPath = $imageGenerator->generateByAsset($this->asset, $params);
+            } catch (NotFoundHttpException $e) {
+                return '';
+            }
 
             $base64Image = $this->readImageToBase64($manipulationPath);
 
