@@ -6,6 +6,7 @@ use Spatie\ResponsiveImages\AssetNotFoundException;
 use Spatie\ResponsiveImages\DimensionCalculator;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Spatie\ResponsiveImages\Responsive;
+use Statamic\Exceptions\NotFoundHttpException;
 use Statamic\Support\Str;
 use Statamic\Tags\Tags;
 
@@ -37,7 +38,7 @@ class ResponsiveTag extends Tags
     {
         try {
             $responsive = new Responsive($this->params->get('src'), $this->params);
-        } catch (AssetNotFoundException $e) {
+        } catch (AssetNotFoundException|NotFoundHttpException $e) {
             return '';
         }
 
