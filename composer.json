@@ -16,7 +16,7 @@
     "extra": {
         "statamic": {
             "name": "Responsive Images",
-            "description": "Responsive Images for Statamic 3"
+            "description": "Responsive Images for Statamic"
         },
         "laravel": {
             "providers": [
