@@ -2,7 +2,7 @@
     "name": "spatie/statamic-responsive-images",
     "license": "MIT",
     "type": "statamic-addon",
-    "description": "Responsive Images for Statamic 3",
+    "description": "Responsive Images for Statamic",
     "autoload": {
         "psr-4": {
             "Spatie\\ResponsiveImages\\": "src"
