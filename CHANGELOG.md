@@ -2,6 +2,19 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v5.0.1 - 2024-09-12
+
+### What's Changed
+
+* Return empty string when image is not found by @kevinmeijer97 in https://github.com/spatie/statamic-responsive-images/pull/242
+* Also return a empty string if HTTP Not found as this will throw a 404… by @BobWez98 in https://github.com/spatie/statamic-responsive-images/pull/249
+
+### New Contributors
+
+* @BobWez98 made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/249
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v5.0.0...v5.0.1
+
 ## v5.0.0 - 2024-05-13
 
 ### What's Changed
@@ -104,6 +117,7 @@ GraphQL improvements by @ncla in https://github.com/spatie/statamic-responsive-i
 ### What's Changed
 
 - Extensible dimension calculators by @ncla in https://github.com/spatie/statamic-responsive-images/pull/193
+  
 - - Developers now can customize the amount of images that get generated and their exact dimensions through a custom `DimensionCalculator` that developers bind in `ServiceProvider`. Calculations can be done for each breakpoint and source, and receive `Breakpoint` / `Source` in the calculation methods, which allows to access breakpoint parameters, original asset and more. For motivation and examples of this, please see the PR and the original issue associated with it.
   
 - 
@@ -117,11 +131,17 @@ GraphQL improvements by @ncla in https://github.com/spatie/statamic-responsive-i
 - 
 - 
 - Fix max widths config value or glide width param not being respected in some cases
+  
 - Fix floating numbers being output for width and height values for Glide endpoint, they are now rounded integers
+  
 - Placeholder now can be toggled per breakpoint
+  
 - `<img>` tag src will now go through Glide instead of pointing to the original asset file, due to `DimensionCalculators` ability to return specific widths and heights for `<img>` tag
+  
 - Empty `media` attributes will no longer be outputted
+  
 - Properties have been renamed to be more descriptive:
+  
 - - `value` to `minWidth`
   
 - 
@@ -146,7 +166,9 @@ GraphQL improvements by @ncla in https://github.com/spatie/statamic-responsive-i
 - 
 - 
 - Add `mimeType` property to explicitly help browsers determine what images does the `<source>` contain
+  
 - Housekeeping: add additional tests for dimension calculator and GraphQL
+  
 
 **Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v2.15.2...v3.0.0
 
