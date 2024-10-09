@@ -59,10 +59,10 @@ class ResponsiveTag extends Tags
         $width = $dimensions->getWidth();
         $height = $dimensions->getHeight();
 
-        $src = app(GenerateImageJob::class, ['asset' => $responsive->asset, 'params' => [
-            'width' => $width,
-            'height' => $height,
-        ]])->handle();
+        $src = app(GenerateImageJob::class, [
+            'asset' => $responsive->asset,
+            'params' => array_merge($this->getGlideParams(), ['width' => $width, 'height' => $height]),
+        ])->handle();
 
         $includePlaceholder = $this->includePlaceholder();
 
@@ -80,6 +80,14 @@ class ResponsiveTag extends Tags
                 return $breakpoint->sources();
             })->flatten()->count() > 0,
         ])->render();
+    }
+
+    private function getGlideParams(): array
+    {
+        return collect($this->params)
+            ->reject(fn ($value, $name) => ! str_starts_with($name, 'glide:'))
+            ->mapWithKeys(fn ($value, $name) => [str_replace('glide:', '', $name) => $value])
+            ->toArray();
     }
 
     private function getAttributeString(): string
