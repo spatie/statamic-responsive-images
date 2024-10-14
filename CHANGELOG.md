@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v5.1.0 - 2024-10-14
+
+### What's Changed
+
+* Apply glide params to src image by @aerni in https://github.com/spatie/statamic-responsive-images/pull/252
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v5.0.1...v5.1.0
+
 ## v5.0.1 - 2024-09-12
 
 ### What's Changed
