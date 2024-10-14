@@ -28,7 +28,7 @@
                         
     <img
         
-        src="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=/test.jpg?w=340&amp;h=280"
+        src="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=/test.jpg?blur=10&amp;w=340&amp;h=280"
                 alt="test.jpg"
                  width="340"          height="280"                 data-statamic-responsive-images
             >
