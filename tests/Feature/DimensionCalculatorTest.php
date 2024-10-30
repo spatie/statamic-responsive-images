@@ -130,6 +130,23 @@ it('can calculate the optimized widths for different dimensions', function () {
     ]);
 });
 
+it('can calculate the optimized widths for different dimensions with a custom threshold', function () {
+    config()->set('statamic.responsive-images.dimension_calculator_threshold', 0.25);
+
+    $stubbedAsset = stubAsset(2400, 1800, 3000 * 1024);
+    $breakpoint = new Breakpoint($stubbedAsset, 'default', 0, []);
+
+    $widths = getWidths($stubbedAsset, $breakpoint);
+
+    expect($widths)->toEqual([
+        0 => 2400,
+        1 => 1200,
+        2 => 600,
+        3 => 300,
+        4 => 150,
+    ]);
+});
+
 it('filters out widths to be less than max width specified in config', function() {
     config()->set('statamic.responsive-images.max_width', 300);
 

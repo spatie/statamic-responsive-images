@@ -77,7 +77,7 @@ class ResponsiveDimensionCalculator implements DimensionCalculator
         $pixelPrice = $predictedFileSize / $area;
 
         while (true) {
-            $predictedFileSize *= 0.7;
+            $predictedFileSize *= config('statamic.responsive-images.dimension_calculator_threshold', 0.7);
 
             $newWidth = (int) floor(sqrt(($predictedFileSize / $pixelPrice) / $ratioForFilesize));
 

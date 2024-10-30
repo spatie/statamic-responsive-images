@@ -36,7 +36,7 @@ return [
     |
     */
     'force_absolute_urls' => false,
-    
+
     /*
     |--------------------------------------------------------------------------
     | Queue
@@ -60,6 +60,20 @@ return [
     */
 
     'max_width' => null,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dimension Calculator Threshold
+    |--------------------------------------------------------------------------
+    |
+    | Define the file size threshold at which the default
+    | dimension calculator decides to generate a new
+    | variant. By default, this is 30% smaller.
+    | Must be a value: 0 < x < 1
+    |
+    */
+
+    'dimension_calculator_threshold' => 0.7,
 
     /*
     |--------------------------------------------------------------------------
