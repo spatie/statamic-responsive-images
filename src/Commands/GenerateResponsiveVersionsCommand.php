@@ -4,6 +4,8 @@ namespace Spatie\ResponsiveImages\Commands;
 
 use Illuminate\Console\Command;
 use Spatie\ResponsiveImages\Breakpoint;
+use Spatie\ResponsiveImages\DimensionCalculator;
+use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 use Spatie\ResponsiveImages\Responsive;
 use Spatie\ResponsiveImages\Source;
 use Statamic\Console\RunsInPlease;
@@ -41,6 +43,23 @@ class GenerateResponsiveVersionsCommand extends Command
         $assets->each(function (Asset $asset) {
             $responsive = new Responsive($asset, new Parameters());
 
+            /**
+             * Dispatch job for default src
+             */
+            $dimensions = app(DimensionCalculator::class)
+                ->calculateForImgTag($responsive->defaultBreakpoint());
+
+            $width = $dimensions->getWidth();
+            $height = $dimensions->getHeight();
+
+            dispatch(app(GenerateImageJob::class, [
+                'asset' => $responsive->asset,
+                'params' => array_merge(['width' => $width, 'height' => $height]),
+            ]));
+
+            /*
+             * Dispatch a job for each breakpoint
+             */
             $responsive->breakPoints()->each(function (Breakpoint $breakpoint) {
                 $breakpoint->sources()->each(function (Source $source) {
                     $source->dispatchImageJobs();
