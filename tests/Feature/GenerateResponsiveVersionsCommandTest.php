@@ -34,9 +34,9 @@ it('dispatches jobs for all assets that are images', function () {
         return isset($job->getParams()['fm']) && $job->getParams()['fm'] === 'webp';
     })->count();
 
-    expect($noFormatJobCount)->toBe(3);
+    expect($noFormatJobCount)->toBe(4);
     expect($webpFormatJobCount)->toBe(3);
-    Queue::assertPushed(GenerateGlideImageJob::class, 6);
+    Queue::assertPushed(GenerateGlideImageJob::class, 7);
 });
 
 it('dispatches less jobs when webp is disabled', function () {
@@ -58,9 +58,9 @@ it('dispatches less jobs when webp is disabled', function () {
         return isset($job->getParams()['fm']) && $job->getParams()['fm'] === 'webp';
     })->count();
 
-    expect($noFormatJobCount)->toBe(3);
+    expect($noFormatJobCount)->toBe(4);
     expect($webpFormatJobCount)->toBe(0);
-    Queue::assertPushed(GenerateGlideImageJob::class, 3);
+    Queue::assertPushed(GenerateGlideImageJob::class, 4);
 });
 
 it('dispatches more jobs when avif and webp is enabled', function () {
@@ -87,10 +87,10 @@ it('dispatches more jobs when avif and webp is enabled', function () {
         return isset($job->getParams()['fm']) && $job->getParams()['fm'] === 'avif';
     })->count();
 
-    expect($noFormatJobCount)->toBe(3);
+    expect($noFormatJobCount)->toBe(4);
     expect($webpFormatJobCount)->toBe(3);
     expect($avifFormatJobCount)->toBe(3);
-    Queue::assertPushed(GenerateGlideImageJob::class, 9);
+    Queue::assertPushed(GenerateGlideImageJob::class, 10);
 });
 
 it('can skip excluded containers', function () {
