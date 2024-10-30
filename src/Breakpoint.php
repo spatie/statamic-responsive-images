@@ -9,11 +9,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use League\Flysystem\FilesystemException;
+use Spatie\ResponsiveImages\Jobs\GeneratePlaceholderJob;
 use Statamic\Contracts\Assets\Asset;
-use Statamic\Exceptions\NotFoundHttpException;
 use Statamic\Facades\Blink;
 use Statamic\Facades\Glide as GlideManager;
-use Statamic\Imaging\ImageGenerator;
 use Statamic\Support\Str;
 
 /**
@@ -246,6 +245,11 @@ class Breakpoint implements Arrayable
         return $data;
     }
 
+    public function buildPlaceholderJob(): GeneratePlaceholderJob
+    {
+        return app(GeneratePlaceholderJob::class, ['asset' => $this->asset, 'breakpoint' => $this]);
+    }
+
     private function placeholder(): string
     {
         $dimensions = app(DimensionCalculator::class)
@@ -254,23 +258,7 @@ class Breakpoint implements Arrayable
         $blinkKey = "placeholder-{$this->asset->id()}-{$dimensions->width}-{$dimensions->height}";
 
         return Blink::once($blinkKey, function () use ($dimensions) {
-            $imageGenerator = app(ImageGenerator::class);
-
-            $params = [
-                'w' => $dimensions->getWidth(),
-                'h' => $dimensions->getHeight(),
-                'blur' => 5,
-                // Arbitrary parameter to change md5 hash for Glide manipulation cache key
-                // to force Glide to generate new manipulated image if cache setting changes.
-                // TODO: Remove this line once the issue has been resolved in statamic/cms package
-                'cache' => Config::get('statamic.assets.image_manipulation.cache', false),
-            ];
-
-            try {
-                $manipulationPath = $imageGenerator->generateByAsset($this->asset, $params);
-            } catch (NotFoundHttpException $e) {
-                return '';
-            }
+            $manipulationPath = $this->buildPlaceholderJob()->handle();
 
             $base64Image = $this->readImageToBase64($manipulationPath);
 

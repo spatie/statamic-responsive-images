@@ -51,9 +51,7 @@ class Source implements Arrayable
     public function getSrcSet(string $format = null, ?bool $includePlaceholder = null): ?string
     {
         // In order of importance: override (e.g. from GraphQL), breakpoint param, config
-        $includePlaceholder = $includePlaceholder
-            ?? $this->breakpoint->parameters['placeholder']
-            ?? config('statamic.responsive-images.placeholder', false);
+        $includePlaceholder = $includePlaceholder ?? $this->includePlaceholder();
 
         $dimensionsCollection = $this->getDimensions();
 
@@ -116,6 +114,16 @@ class Source implements Arrayable
         $this->getDimensions()->map(function (Dimensions $dimensions) use ($format) {
             dispatch($this->buildImageJob($dimensions->width, $dimensions->height, $format));
         });
+
+        if ($this->includePlaceholder()) {
+            dispatch($this->breakpoint->buildPlaceholderJob());
+        }
+    }
+
+    private function includePlaceholder(): bool
+    {
+        return $this->breakpoint->parameters['placeholder']
+            ?? config('statamic.responsive-images.placeholder', false);
     }
 
     public function toGql(array $args)
