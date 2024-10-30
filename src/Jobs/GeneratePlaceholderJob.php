@@ -3,16 +3,16 @@
 namespace Spatie\ResponsiveImages\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Statamic\Contracts\Assets\Asset;
-use Statamic\Imaging\ImageGenerator;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Config;
 use Spatie\ResponsiveImages\Breakpoint;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Statamic\Exceptions\NotFoundHttpException;
 use Spatie\ResponsiveImages\DimensionCalculator;
+use Statamic\Contracts\Assets\Asset;
+use Statamic\Exceptions\NotFoundHttpException;
+use Statamic\Imaging\ImageGenerator;
 
 class GeneratePlaceholderJob implements ShouldQueue
 {
