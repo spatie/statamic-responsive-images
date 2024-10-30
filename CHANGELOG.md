@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v5.2.1 - 2024-10-30
+
+### What's Changed
+
+* Move placeholder generation into job by @aerni in https://github.com/spatie/statamic-responsive-images/pull/255
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v5.2.0...v5.2.1
+
 ## v5.2.0 - 2024-10-30
 
 * Add a way to configure the dimension calculator threshold
