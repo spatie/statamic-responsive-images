@@ -2,6 +2,12 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v5.2.0 - 2024-10-30
+
+* Add a way to configure the dimension calculator threshold
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v5.1.1...v5.2.0
+
 ## v5.1.1 - 2024-10-30
 
 * Also dispatch a generate job for the default `src` when generating images
