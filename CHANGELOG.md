@@ -2,6 +2,18 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## v5.2.2 - 2025-02-11
+
+### What's Changed
+
+* Update AssetNotFoundException to handle $assetParam as array by @JeremyDunn in https://github.com/spatie/statamic-responsive-images/pull/256
+
+### New Contributors
+
+* @JeremyDunn made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/256
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v5.2.1...v5.2.2
+
 ## v5.2.1 - 2024-10-30
 
 ### What's Changed
