@@ -19,16 +19,16 @@
 <picture>
                         
                             <source
-                     type="image/webp"                                         srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=/test.jpg?fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=237&amp;h=195 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=/test.jpg?fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=284&amp;h=234 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=/test.jpg?fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
+                     type="image/webp"                                         srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc/test.jpg?fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=237&amp;h=195 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc/test.jpg?fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=284&amp;h=234 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc/test.jpg?fm=webp&amp;q=90&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
                      sizes="1px"                 >
                                 
                             <source
-                     type="image/jpeg"                                         srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=/test.jpg?q=90&amp;fit=crop-50-50&amp;w=237&amp;h=195 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=/test.jpg?q=90&amp;fit=crop-50-50&amp;w=284&amp;h=234 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=/test.jpg?q=90&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
+                     type="image/jpeg"                                         srcset=", /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc/test.jpg?q=90&amp;fit=crop-50-50&amp;w=237&amp;h=195 237w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc/test.jpg?q=90&amp;fit=crop-50-50&amp;w=284&amp;h=234 284w, /img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc/test.jpg?q=90&amp;fit=crop-50-50&amp;w=340&amp;h=280 340w"
                      sizes="1px"                 >
                         
     <img
         alt="Some alt tag"
-        src="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc=/test.jpg?w=340&amp;h=280"
+        src="/img/asset/dGVzdF9jb250YWluZXIvdGVzdC5qcGc/test.jpg?w=340&amp;h=280"
                  width="340"          height="280"                 data-statamic-responsive-images
             >
 </picture>
