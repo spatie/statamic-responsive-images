@@ -64,7 +64,7 @@ The configuration above can be used within Antlers using the responsive tag:
 {{ responsive:image }}
 ```
 
-The breakpoints are configured in the `breakpoints` array of the config file.
+The breakpoints are configured in the `breakpoints` array of the [config file](#configuration).
 
 ## Using Responsive Images
 
@@ -251,6 +251,21 @@ A responsive fieldtype has all the same fields as a normal responsive field from
   }
 }
 ```
+
+## Configuration
+
+To modify the configuration, you will first need to publish the configuration file by running the following command:
+
+```sh
+php artisan vendor:publish --tag=responsive-images-config
+```
+This will create a `responsive-images.php` file in the `config/statamic` directory where you can customize the breakpoints and other settings.
+
+### Available Configuration Options
+ 
+- **Breakpoints**: Define the responsive breakpoints used for image generation.
+- **Image Job**: Customize the job class used for image generation.
+- **Dimension Calculator**: Specify the class used to calculate image dimensions.
 
 ## Changelog
 
