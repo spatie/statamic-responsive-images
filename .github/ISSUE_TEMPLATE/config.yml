@@ -1,6 +1,8 @@
-blank_issues_enabled: false
-
+blank_issues_enabled: true
 contact_links:
-  - name: Feature Requests, Ideas, How-Tos, Questions
-    url: https://github.com/spatie/statamic-responsive-images/discussions
-    about: Please use issues only for bug reports
+    - name: Feature Request
+      url: https://github.com/spatie/statamic-responsive-images/discussions/new?category=ideas
+      about: Share ideas for new features
+    - name: Ask a Question
+      url: https://github.com/spatie/statamic-responsive-images/discussions/new?category=q-a
+      about: Ask the community for help
