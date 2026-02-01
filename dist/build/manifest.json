@@ -1,0 +1,8 @@
+{
+  "resources/js/responsive.js": {
+    "file": "assets/responsive-3MmKYngF.js",
+    "name": "responsive",
+    "src": "resources/js/responsive.js",
+    "isEntry": true
+  }
+}

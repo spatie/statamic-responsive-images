@@ -147,20 +147,25 @@ class ResponsiveFieldtype extends Fieldtype
         $data = $this->augment($data);
 
         if (! isset($data['src'])) {
-            return [];
+            return ['total' => 0, 'assets' => []];
         }
 
         try {
             $responsive = new Responsive($data['src'], Parameters::make($data, Context::make()));
         } catch (AssetNotFoundException | InvalidAssetException) {
-            return [];
+            return ['total' => 0, 'assets' => []];
         }
 
-        return $responsive->breakPoints()
+        $breakpoints = $responsive->breakPoints();
+        $total = $breakpoints->count();
+
+        $assets = $breakpoints
+            ->take(6)
             ->map(function (Breakpoint $breakpoint) {
                 $arr = [
                     'id' => $breakpoint->asset->id(),
                     'is_image' => $isImage = $breakpoint->asset->isImage(),
+                    'is_svg' => $breakpoint->asset->isSvg(),
                     'extension' => $breakpoint->asset->extension(),
                     'url' => $breakpoint->asset->url(),
                     'breakpoint' => $breakpoint->label,
@@ -175,6 +180,8 @@ class ResponsiveFieldtype extends Fieldtype
 
                 return $arr;
             });
+
+        return compact('total', 'assets');
     }
 
     public function process($data)

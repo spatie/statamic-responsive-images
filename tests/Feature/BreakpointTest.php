@@ -1,14 +1,11 @@
 <?php
 
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Spatie\ResponsiveImages\Breakpoint;
 use Statamic\Console\Commands\GlideClear;
 use Statamic\Facades\Stache;
-use Statamic\Facades\YAML;
 use Statamic\Facades\Blink;
 
 beforeEach(function () {
@@ -22,6 +19,7 @@ it('generates placeholder data url when toggling cache form on to off', function
      * Clear regular cache and both Glide path cache storages
      * @see: https://statamic.dev/image-manipulation#path-cache-store
      */
+    Config::set('statamic.assets.image_manipulation.cache_path', $this->getTempDirectory('glide'));
     Config::set('statamic.assets.image_manipulation.cache', false);
     $this->artisan(GlideClear::class);
     Config::set('statamic.assets.image_manipulation.cache', true);
