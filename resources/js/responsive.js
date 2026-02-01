@@ -1,5 +1,5 @@
-import ResponsiveFieldtype from "./ResponsiveFieldtype";
-import ResponsiveFieldtypeIndex from "./ResponsiveFieldtypeIndex";
+import ResponsiveFieldtype from "./ResponsiveFieldtype.vue";
+import ResponsiveFieldtypeIndex from "./ResponsiveFieldtypeIndex.vue";
 
 Statamic.booting(() => {
     Statamic.$components.register('responsive-fieldtype', ResponsiveFieldtype);

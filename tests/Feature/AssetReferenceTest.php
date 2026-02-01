@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\UploadedFile;
 use Statamic\Facades\Stache;
 use Statamic\Support\Arr;
 

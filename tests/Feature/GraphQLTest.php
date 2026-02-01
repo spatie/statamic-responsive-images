@@ -1,9 +1,6 @@
 <?php
 
 use Facades\Statamic\Fields\BlueprintRepository;
-use Illuminate\Support\Facades\Route;
-use Spatie\ResponsiveImages\AssetNotFoundException;
-use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
 use Statamic\Facades\Blueprint;
 use Spatie\ResponsiveImages\Tests\Factories\EntryFactory;
 use function Spatie\Snapshots\assertMatchesJsonSnapshot;
