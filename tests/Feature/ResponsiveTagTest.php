@@ -29,14 +29,17 @@ beforeEach(function () {
     Stache::clear();
 });
 
-it('generates responsive images')
-    ->tap(fn () => assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset)));
+it('generates responsive images', function () {
+    assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset));
+});
 
-it('generates no conversions for svgs')
-    ->tap(fn () => assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->svgAsset)));
+it('generates no conversions for svgs', function () {
+    assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->svgAsset));
+});
 
-it('generates no conversions for gifs')
-    ->tap(fn () => assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->gifAsset)));
+it('generates no conversions for gifs', function () {
+    assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->gifAsset));
+});
 
 it("returns an empty string if the asset isn't found")
     ->expect(fn () => ResponsiveTag::render('doesnt-exist'))
