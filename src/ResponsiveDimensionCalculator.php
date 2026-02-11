@@ -47,10 +47,29 @@ class ResponsiveDimensionCalculator implements DimensionCalculator
         $maxWidth = ($breakpoint->parameters['glide:width'] ?? config('statamic.responsive-images.max_width') ?? null);
 
         $ratio = $this->breakpointRatio($breakpoint->asset, $breakpoint);
+        $originalWidth = $breakpoint->asset->width();
+        $originalHeight = $breakpoint->asset->height();
 
-        $width = $maxWidth ?? $breakpoint->asset->width();
+        $width = $maxWidth ?? $originalWidth;
+        $height = round($width / $ratio);
 
-        return new Dimensions($width, round($width / $ratio));
+        // If the calculated dimensions exceed the original image dimensions,
+        // constrain them to fit within the original bounds
+        if ($height > $originalHeight) {
+            $height = $originalHeight;
+            $width = round($height * $ratio);
+            
+            // Ensure width doesn't exceed original width either
+            if ($width > $originalWidth) {
+                $width = $originalWidth;
+                $height = round($width / $ratio);
+            }
+        } elseif ($width > $originalWidth) {
+            $width = $originalWidth;
+            $height = round($width / $ratio);
+        }
+
+        return new Dimensions($width, $height);
     }
 
     public function calculateForPlaceholder(Breakpoint $breakpoint): Dimensions
@@ -67,7 +86,23 @@ class ResponsiveDimensionCalculator implements DimensionCalculator
     {
         $dimensions = collect();
 
-        $dimensions->push(new Dimensions($assetWidth, round($assetWidth / $ratio)));
+        // Calculate initial dimensions ensuring they don't exceed original image dimensions
+        $calculatedWidth = $assetWidth;
+        $calculatedHeight = round($calculatedWidth / $ratio);
+
+        // If calculated dimensions exceed original, constrain them appropriately
+        if ($calculatedHeight > $assetHeight) {
+            $calculatedHeight = $assetHeight;
+            $calculatedWidth = round($calculatedHeight * $ratio);
+            
+            // Ensure width doesn't exceed original width either
+            if ($calculatedWidth > $assetWidth) {
+                $calculatedWidth = $assetWidth;
+                $calculatedHeight = round($calculatedWidth / $ratio);
+            }
+        }
+
+        $dimensions->push(new Dimensions($calculatedWidth, $calculatedHeight));
 
         // For filesize calculations
         $ratioForFilesize = $assetHeight / $assetWidth;

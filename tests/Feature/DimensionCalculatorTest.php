@@ -221,3 +221,60 @@ test('ResponsiveDimensionCalculator returns correct height for img tag when spec
 
     expect($calculatedDimensions->getHeight())->toEqual(170);
 });
+
+test('ResponsiveDimensionCalculator does not exceed original image dimensions when switching aspect ratios', function () {
+    // Test case from GitHub issue #257
+    // Original image: 3000x1688px (landscape, ratio ≈ 1.78)
+    // Custom ratio: 9/16 = 0.5625 (portrait)
+    $stubbedAsset = stubAsset(3000, 1688, 5000 * 1024);
+    
+    $breakpoint = new Breakpoint($stubbedAsset, 'default', 0, ['ratio' => 9 / 16]);
+    
+    $calculatedDimensions = app(DimensionCalculator::class)->calculateForImgTag($breakpoint);
+    
+    // Dimensions should not exceed original image dimensions
+    expect($calculatedDimensions->getWidth())->toBeLessThanOrEqual(3000);
+    expect($calculatedDimensions->getHeight())->toBeLessThanOrEqual(1688);
+    
+    // With ratio 9/16, height should be constrained to 1688, width should be 1688 * (9/16) ≈ 950
+    expect($calculatedDimensions->getHeight())->toBe(1688);
+    expect($calculatedDimensions->getWidth())->toBe(950);
+});
+
+test('ResponsiveDimensionCalculator constrains dimensions correctly when switching from portrait to landscape', function () {
+    // Original image: 1688x3000px (portrait)
+    // Custom ratio: 16/9 = 1.78 (landscape)
+    $stubbedAsset = stubAsset(1688, 3000, 5000 * 1024);
+    
+    $breakpoint = new Breakpoint($stubbedAsset, 'default', 0, ['ratio' => 16 / 9]);
+    
+    $calculatedDimensions = app(DimensionCalculator::class)->calculateForImgTag($breakpoint);
+    
+    // Dimensions should not exceed original image dimensions
+    expect($calculatedDimensions->getWidth())->toBeLessThanOrEqual(1688);
+    expect($calculatedDimensions->getHeight())->toBeLessThanOrEqual(3000);
+    
+    // With ratio 16/9, width should be constrained to 1688, height should be 1688 / (16/9) ≈ 950
+    expect($calculatedDimensions->getWidth())->toBe(1688);
+    expect($calculatedDimensions->getHeight())->toBe(950);
+});
+
+test('ResponsiveDimensionCalculator calculateDimensions does not exceed original image dimensions', function () {
+    // Test the calculateDimensions method (used for breakpoints)
+    $stubbedAsset = stubAsset(3000, 1688, 5000 * 1024);
+    $breakpoint = new Breakpoint($stubbedAsset, 'default', 0, ['ratio' => 9 / 16]);
+    $source = new Source($breakpoint);
+    
+    $dimensions = app(DimensionCalculator::class)->calculateForBreakpoint($source);
+    
+    // The first (largest) dimension should not exceed original image dimensions
+    $firstDimension = $dimensions->first();
+    expect($firstDimension->getWidth())->toBeLessThanOrEqual(3000);
+    expect($firstDimension->getHeight())->toBeLessThanOrEqual(1688);
+    
+    // All dimensions should respect the constraint
+    $dimensions->each(function ($dimension) {
+        expect($dimension->getWidth())->toBeLessThanOrEqual(3000);
+        expect($dimension->getHeight())->toBeLessThanOrEqual(1688);
+    });
+});
