@@ -51,25 +51,9 @@ class ResponsiveDimensionCalculator implements DimensionCalculator
         $originalHeight = $breakpoint->asset->height();
 
         $width = $maxWidth ?? $originalWidth;
-        $height = round($width / $ratio);
+        $height = (int) round($width / $ratio);
 
-        // If the calculated dimensions exceed the original image dimensions,
-        // constrain them to fit within the original bounds
-        if ($height > $originalHeight) {
-            $height = $originalHeight;
-            $width = round($height * $ratio);
-            
-            // Ensure width doesn't exceed original width either
-            if ($width > $originalWidth) {
-                $width = $originalWidth;
-                $height = round($width / $ratio);
-            }
-        } elseif ($width > $originalWidth) {
-            $width = $originalWidth;
-            $height = round($width / $ratio);
-        }
-
-        return new Dimensions($width, $height);
+        return $this->constrainToOriginal($width, $height, $originalWidth, $originalHeight, $ratio);
     }
 
     public function calculateForPlaceholder(Breakpoint $breakpoint): Dimensions
@@ -86,23 +70,9 @@ class ResponsiveDimensionCalculator implements DimensionCalculator
     {
         $dimensions = collect();
 
-        // Calculate initial dimensions ensuring they don't exceed original image dimensions
-        $calculatedWidth = $assetWidth;
-        $calculatedHeight = round($calculatedWidth / $ratio);
+        $initialHeight = (int) round($assetWidth / $ratio);
 
-        // If calculated dimensions exceed original, constrain them appropriately
-        if ($calculatedHeight > $assetHeight) {
-            $calculatedHeight = $assetHeight;
-            $calculatedWidth = round($calculatedHeight * $ratio);
-            
-            // Ensure width doesn't exceed original width either
-            if ($calculatedWidth > $assetWidth) {
-                $calculatedWidth = $assetWidth;
-                $calculatedHeight = round($calculatedWidth / $ratio);
-            }
-        }
-
-        $dimensions->push(new Dimensions($calculatedWidth, $calculatedHeight));
+        $dimensions->push($this->constrainToOriginal($assetWidth, $initialHeight, $assetWidth, $assetHeight, $ratio));
 
         // For filesize calculations
         $ratioForFilesize = $assetHeight / $assetWidth;
@@ -120,8 +90,25 @@ class ResponsiveDimensionCalculator implements DimensionCalculator
                 return $dimensions;
             }
 
-            $dimensions->push(new Dimensions($newWidth, round($newWidth / $ratio)));
+            $newHeight = (int) round($newWidth / $ratio);
+
+            $dimensions->push($this->constrainToOriginal($newWidth, $newHeight, $assetWidth, $assetHeight, $ratio));
         }
+    }
+
+    protected function constrainToOriginal(int $width, int $height, int $maxWidth, int $maxHeight, float $ratio): Dimensions
+    {
+        if ($height > $maxHeight) {
+            $height = $maxHeight;
+            $width = (int) round($height * $ratio);
+        }
+
+        if ($width > $maxWidth) {
+            $width = $maxWidth;
+            $height = (int) round($width / $ratio);
+        }
+
+        return new Dimensions($width, $height);
     }
 
     protected function finishedCalculating(float $predictedFileSize, int $newWidth): bool
