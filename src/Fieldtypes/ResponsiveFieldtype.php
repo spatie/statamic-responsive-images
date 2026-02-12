@@ -6,7 +6,6 @@ use Illuminate\Support\Arr as IlluminateArr;
 use Spatie\ResponsiveImages\AssetNotFoundException;
 use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Exceptions\InvalidAssetException;
-use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFields;
 use Spatie\ResponsiveImages\GraphQL\ResponsiveFieldType as GraphQLResponsiveFieldtype;
 use Spatie\ResponsiveImages\Responsive;
 use Statamic\Facades\AssetContainer;
