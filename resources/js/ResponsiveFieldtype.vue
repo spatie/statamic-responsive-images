@@ -39,17 +39,19 @@ const errors = computed(() => {
 </script>
 
 <template>
-    <PublishContainer
-        :name="publishContainerName"
-        :blueprint="blueprint"
-        :model-value="props.value"
-        :meta="publishMeta"
-        :errors="errors"
-        :track-dirty-state="false"
-        @update:model-value="update"
-    >
-        <FieldsProvider :fields="fields">
-            <Fields />
-        </FieldsProvider>
-    </PublishContainer>
+    <div class="bg-white dark:bg-gray-800 dark:border-dark-900 rounded-lg border">
+        <PublishContainer
+            :name="publishContainerName"
+            :blueprint="blueprint"
+            :model-value="props.value"
+            :meta="publishMeta"
+            :errors="errors"
+            :track-dirty-state="false"
+            @update:model-value="update"
+        >
+            <FieldsProvider :fields="fields">
+                <Fields class="px-4 py-4" />
+            </FieldsProvider>
+        </PublishContainer>
+    </div>
 </template>
