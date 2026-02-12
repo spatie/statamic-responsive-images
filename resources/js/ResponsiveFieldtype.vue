@@ -1,6 +1,6 @@
 <script setup>
 import { Fieldtype } from '@statamic/cms';
-import { PublishContainer, PublishFieldsProvider as FieldsProvider, PublishFields as Fields } from '@statamic/cms/ui';
+import { PublishContainer, PublishFieldsProvider, PublishFields, injectPublishContext } from '@statamic/cms/ui';
 import { computed } from 'vue';
 import { generateId } from './helpers';
 
@@ -25,13 +25,17 @@ const blueprint = computed(() => ({
 
 const publishMeta = computed(() => props.meta.meta || {});
 
+const parentContext = injectPublishContext();
+
 const errors = computed(() => {
-    const storeErrors = Statamic.$store?.state?.publish?.base?.errors || {};
+    const allErrors = parentContext?.errors?.value || {};
+    const prefix = props.handle + '.';
     const result = {};
 
-    Object.keys(storeErrors).forEach(key => {
-        const newKey = key.replace(props.handle + '.', '');
-        result[newKey] = storeErrors[key];
+    Object.entries(allErrors).forEach(([key, value]) => {
+        if (key.startsWith(prefix)) {
+            result[key.slice(prefix.length)] = value;
+        }
     });
 
     return result;
@@ -49,9 +53,9 @@ const errors = computed(() => {
             :track-dirty-state="false"
             @update:model-value="update"
         >
-            <FieldsProvider :fields="fields">
-                <Fields class="px-4 py-4" />
-            </FieldsProvider>
+            <PublishFieldsProvider :fields="fields">
+                <PublishFields class="px-4 py-4" />
+            </PublishFieldsProvider>
         </PublishContainer>
     </div>
 </template>

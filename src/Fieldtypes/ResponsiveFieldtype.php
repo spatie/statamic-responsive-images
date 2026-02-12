@@ -6,9 +6,10 @@ use Illuminate\Support\Arr as IlluminateArr;
 use Spatie\ResponsiveImages\AssetNotFoundException;
 use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Exceptions\InvalidAssetException;
-use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFields as ResponsiveFields;
+use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFields;
 use Spatie\ResponsiveImages\GraphQL\ResponsiveFieldType as GraphQLResponsiveFieldtype;
 use Spatie\ResponsiveImages\Responsive;
+use Statamic\Facades\AssetContainer;
 use Statamic\Facades\GraphQL;
 use Statamic\Fields\Field;
 use Statamic\Fields\Fields as BlueprintFields;
@@ -33,69 +34,106 @@ class ResponsiveFieldtype extends Fieldtype
     protected function configFieldItems(): array
     {
         return [
-            'use_breakpoints' => [
-                'display' => __('Use breakpoints'),
-                'instructions' => __('Allow breakpoints to be added'),
-                'type' => 'toggle',
-                'default' => true,
-                'width' => 50,
-            ],
-            'allow_ratio' => [
-                'display' => __('Allow ratio'),
-                'instructions' => __('Allow ratio to be defined'),
-                'type' => 'toggle',
-                'default' => true,
-                'width' => 50,
-            ],
-            'allow_fit' => [
-                'display' => __('Allow fit'),
-                'instructions' => __('Allow fit to be defined'),
-                'type' => 'toggle',
-                'default' => true,
-                'width' => 50,
-                'if' => [
-                    'allow_ratio' => 'true',
+            [
+                'display' => __('Input Behavior'),
+                'fields' => [
+                    'container' => [
+                        'display' => __('Container'),
+                        'instructions' => __('statamic::fieldtypes.assets.config.container'),
+                        'type' => 'asset_container',
+                        'max_items' => 1,
+                        'mode' => 'select',
+                        'required' => true,
+                        'default' => AssetContainer::all()->count() == 1 ? AssetContainer::all()->first()->handle() : null,
+                        'force_in_config' => true,
+                        'width' => 50,
+                    ],
+                    'allow_uploads' => [
+                        'display' => __('Allow Uploads'),
+                        'instructions' => __('statamic::fieldtypes.assets.config.allow_uploads'),
+                        'type' => 'toggle',
+                        'default' => true,
+                        'width' => 50,
+                    ],
+                    'folder' => [
+                        'display' => __('Folder'),
+                        'instructions' => __('statamic::fieldtypes.assets.config.folder'),
+                        'type' => 'asset_folder',
+                        'max_items' => 1,
+                        'mode' => 'select',
+                        'if' => [
+                            'container' => 'not empty',
+                        ],
+                        'width' => 50,
+                    ],
+                    'dynamic' => [
+                        'display' => __('Dynamic Folder'),
+                        'instructions' => __('statamic::fieldtypes.assets.config.dynamic'),
+                        'type' => 'select',
+                        'clearable' => true,
+                        'options' => [
+                            'id' => __('ID'),
+                            'slug' => __('Slug'),
+                            'author' => __('Author'),
+                        ],
+                        'validate' => 'in:id,slug,author',
+                        'if' => [
+                            'container' => 'not empty',
+                        ],
+                        'width' => 50,
+                    ],
+                    'restrict' => [
+                        'display' => __('Restrict to Folder'),
+                        'instructions' => __('statamic::fieldtypes.assets.config.restrict'),
+                        'type' => 'toggle',
+                        'if' => [
+                            'container' => 'not empty',
+                            'dynamic' => 'not true',
+                        ],
+                        'width' => 50,
+                    ],
                 ],
             ],
-            'breakpoints' => [
-                'display' => __('Breakpoints'),
-                'instructions' => __('Which breakpoints can be chosen.'),
-                'type' => 'select',
-                'multiple' => true,
-                'default' => array_keys(config('statamic.responsive-images.breakpoints')),
-                'options' => array_keys(config('statamic.responsive-images.breakpoints')),
-                'width' => 100,
-                'if' => [
-                    'use_breakpoints' => 'true',
+            [
+                'display' => __('Appearance'),
+                'fields' => [
+                    'use_breakpoints' => [
+                        'display' => __('Use Breakpoints'),
+                        'instructions' => __('Enable breakpoint-specific image overrides.'),
+                        'type' => 'toggle',
+                        'default' => true,
+                        'width' => 50,
+                    ],
+                    'breakpoints' => [
+                        'display' => __('Breakpoints'),
+                        'instructions' => __('The breakpoints available for selection.'),
+                        'type' => 'select',
+                        'multiple' => true,
+                        'default' => array_keys(config('statamic.responsive-images.breakpoints')),
+                        'options' => array_keys(config('statamic.responsive-images.breakpoints')),
+                        'width' => 50,
+                        'if' => [
+                            'use_breakpoints' => 'true',
+                        ],
+                    ],
+                    'allow_ratio' => [
+                        'display' => __('Show Ratio Option'),
+                        'instructions' => __('Show a field for defining the image ratio.'),
+                        'type' => 'toggle',
+                        'default' => true,
+                        'width' => 50,
+                    ],
+                    'allow_fit' => [
+                        'display' => __('Show Fit Option'),
+                        'instructions' => __('Show a field for defining how the image fits its ratio.'),
+                        'type' => 'toggle',
+                        'default' => true,
+                        'width' => 50,
+                        'if' => [
+                            'allow_ratio' => 'true',
+                        ],
+                    ],
                 ],
-            ],
-            'container' => [
-                'display' => __('Container'),
-                'instructions' => __('statamic::fieldtypes.assets.config.container'),
-                'type' => 'asset_container',
-                'max_items' => 1,
-                'mode' => 'select',
-                'width' => 50,
-            ],
-            'folder' => [
-                'display' => __('Folder'),
-                'instructions' => __('statamic::fieldtypes.assets.config.folder'),
-                'type' => 'asset_folder',
-                'max_items' => 1,
-                'width' => 50,
-            ],
-            'restrict' => [
-                'display' => __('Restrict'),
-                'instructions' => __('statamic::fieldtypes.assets.config.restrict'),
-                'type' => 'toggle',
-                'width' => 50,
-            ],
-            'allow_uploads' => [
-                'display' => __('Allow Uploads'),
-                'instructions' => __('statamic::fieldtypes.assets.config.allow_uploads'),
-                'type' => 'toggle',
-                'default' => true,
-                'width' => 50,
             ],
         ];
     }
@@ -120,21 +158,13 @@ class ResponsiveFieldtype extends Fieldtype
 
     public function extraRules(): array
     {
-        $rules = collect($this->fieldConfig())->mapWithKeys(function ($field) {
-            if ($field['field']['required'] ?? false) {
-                $rules = ['required'];
-            } else {
-                $rules = ['nullable'];
-            }
-
-            $prefixedHandle = $this->field()->handle() . '.' . $field['handle'];
+        return collect($this->fieldConfig())->mapWithKeys(function ($field) {
+            $rules = ($field['field']['required'] ?? false) ? ['required'] : ['nullable'];
 
             return [
-                $prefixedHandle => array_merge($rules, $field['field']['validate'] ?? []),
+                $this->field()->handle() . '.' . $field['handle'] => array_merge($rules, $field['field']['validate'] ?? []),
             ];
-        });
-
-        return $rules->toArray();
+        })->toArray();
     }
 
     public function preProcess($data)

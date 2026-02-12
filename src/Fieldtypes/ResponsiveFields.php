@@ -45,6 +45,7 @@ class ResponsiveFields
                     'folder' => $this->config['folder'] ?? '/',
                     'allow_uploads' => $this->config['allow_uploads'],
                     'restrict' => $this->config['restrict'] ?? false,
+                    'dynamic' => $this->config['dynamic'] ?? null,
                     'max_files' => 1,
                     'show_set_alt' => false,
                     'mode' => 'list',
