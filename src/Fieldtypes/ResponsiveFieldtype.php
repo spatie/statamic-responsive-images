@@ -141,7 +141,7 @@ class ResponsiveFieldtype extends Fieldtype
     {
         return [
             'fields' => $this->fieldConfig(),
-            'meta' => $this->fields()->addValues($this->field()->value() ?? [])->meta(),
+            'meta' => $this->getFieldsWithValues($this->field()->value() ?? [])->meta(),
         ];
     }
 
