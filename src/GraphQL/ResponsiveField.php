@@ -31,11 +31,11 @@ class ResponsiveField extends Field
         return ResponsiveGraphqlArguments::args();
     }
 
-    protected function resolve(Asset|array $root, array $args)
+    protected function resolve(Asset|array $root, array $args): ?array
     {
-        $args = collect($args)->mapWithKeys(function ($value, $key) {
-            return [str_replace('_', ':', $key) => $value];
-        })->toArray();
+        $args = collect($args)
+            ->mapWithKeys(fn ($value, $key) => [str_replace('_', ':', $key) => $value])
+            ->toArray();
 
         try {
             $responsive = new Responsive($root, new Parameters($args));
@@ -45,8 +45,8 @@ class ResponsiveField extends Field
             return null;
         }
 
-        return $responsive->breakPoints()->map(function (Breakpoint $breakpoint) use ($args) {
-            return $breakpoint->toGql($args);
-        })->toArray();
+        return $responsive->breakPoints()
+            ->map(fn (Breakpoint $breakpoint) => $breakpoint->toGql($args))
+            ->toArray();
     }
 }

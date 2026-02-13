@@ -29,10 +29,9 @@ class GenerateResponsiveVersions
         }
 
         $responsive = new Responsive($event->asset, new Parameters());
+
         $responsive->breakPoints()->each(function (Breakpoint $breakpoint) {
-            $breakpoint->sources()->each(function (Source $source) {
-                $source->dispatchImageJobs();
-            });
+            $breakpoint->sources()->each(fn (Source $source) => $source->dispatchImageJobs());
         });
     }
 }

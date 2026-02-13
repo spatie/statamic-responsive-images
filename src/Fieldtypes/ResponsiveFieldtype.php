@@ -137,7 +137,7 @@ class ResponsiveFieldtype extends Fieldtype
         ];
     }
 
-    public function preload()
+    public function preload(): array
     {
         return [
             'fields' => $this->fieldConfig(),
@@ -145,23 +145,25 @@ class ResponsiveFieldtype extends Fieldtype
         ];
     }
 
-    protected function fields()
+    protected function fields(): BlueprintFields
     {
         return new BlueprintFields($this->fieldConfig());
     }
 
-    protected function fieldConfig()
+    protected function fieldConfig(): array
     {
         return ResponsiveFields::new($this->config())->getConfig();
     }
 
     public function extraRules(): array
     {
-        return collect($this->fieldConfig())->mapWithKeys(function ($field) {
+        $handle = $this->field()->handle();
+
+        return collect($this->fieldConfig())->mapWithKeys(function ($field) use ($handle) {
             $rules = ($field['field']['required'] ?? false) ? ['required'] : ['nullable'];
 
             return [
-                $this->field()->handle() . '.' . $field['handle'] => array_merge($rules, $field['field']['validate'] ?? []),
+                "{$handle}.{$field['handle']}" => array_merge($rules, $field['field']['validate'] ?? []),
             ];
         })->toArray();
     }
@@ -252,11 +254,11 @@ class ResponsiveFieldtype extends Fieldtype
 
     protected function getFieldsWithValues(array $values): BlueprintFields
     {
-        $fields = $this->fields()->all()->map(function (Field $field) use ($values) {
-            return IlluminateArr::has($values, $field->handle())
-                ? $field->newInstance()->setValue(IlluminateArr::get($values, $field->handle()))
-                : $field->newInstance();
-        });
+        $fields = $this->fields()->all()->map(
+            fn (Field $field) => IlluminateArr::has($values, $field->handle())
+            ? $field->newInstance()->setValue(IlluminateArr::get($values, $field->handle()))
+            : $field->newInstance()
+        );
 
         return $this->fields()->setFields($fields);
     }

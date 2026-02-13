@@ -104,22 +104,20 @@ trait ResponsiveGraphqlArguments
             ],
         ];
 
-        $defaultBreakpointArgs = array_merge($defaultBreakpointArgs, $glideArgs);
-
+        $allArgs = array_merge($defaultBreakpointArgs, $glideArgs);
         $additionalBreakpointArgs = [];
-
         $unit = config('statamic.responsive-images.breakpoint_unit');
 
         foreach (config('statamic.responsive-images.breakpoints') as $breakpoint => $width) {
-            foreach ($defaultBreakpointArgs as $argKey => $argConfig) {
+            foreach ($allArgs as $argKey => $argConfig) {
                 if (isset($argConfig['description'])) {
-                    $argConfig['description'] = $argConfig['description'] . " for the {$breakpoint} ({$width}{$unit}) breakpoint";
+                    $argConfig['description'] .= " for the {$breakpoint} ({$width}{$unit}) breakpoint";
                 }
 
                 $additionalBreakpointArgs["{$breakpoint}_{$argKey}"] = $argConfig;
             }
         }
 
-        return array_merge($defaultBreakpointArgs, $additionalBreakpointArgs);
+        return array_merge($allArgs, $additionalBreakpointArgs);
     }
 }

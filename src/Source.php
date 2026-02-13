@@ -7,29 +7,23 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Spatie\ResponsiveImages\Jobs\GenerateImageJob;
 
-/**
- * Representing <source> tag in HTML
- * @property-read Breakpoint $breakpoint
- */
 class Source implements Arrayable
 {
-    public Breakpoint $breakpoint;
-    protected string $format;
-    protected string $mediaWidthUnit;
+    protected readonly string $mediaWidthUnit;
 
-    public function __construct(Breakpoint $breakpoint, ?string $format = 'original')
-    {
-        $this->breakpoint = $breakpoint;
-        $this->format = $format;
+    public function __construct(
+        public Breakpoint $breakpoint,
+        protected string $format = 'original',
+    ) {
         $this->mediaWidthUnit = config('statamic.responsive-images.breakpoint_unit', 'px');
     }
 
-    public function __set($name, $value): void
+    public function __set(string $name, mixed $value): void
     {
-        throw new Exception(sprintf('Cannot modify property %s', $name));
+        throw new Exception("Cannot modify property {$name}");
     }
 
-    public function getMimeType(): string|null
+    public function getMimeType(): ?string
     {
         $mimeTypesBySetFormat = [
             'webp' => 'image/webp',
@@ -43,15 +37,9 @@ class Source implements Arrayable
         return $this->breakpoint->asset->mimeType();
     }
 
-    /**
-     * @param string|null $format
-     * @param bool|null $includePlaceholder
-     * @return string|null
-     */
-    public function getSrcSet(string $format = null, ?bool $includePlaceholder = null): ?string
+    public function getSrcSet(?string $format = null, ?bool $includePlaceholder = null): ?string
     {
-        // In order of importance: override (e.g. from GraphQL), breakpoint param, config
-        $includePlaceholder = $includePlaceholder ?? $this->includePlaceholder();
+        $includePlaceholder ??= $this->includePlaceholder();
 
         $dimensionsCollection = $this->getDimensions();
 
@@ -60,9 +48,7 @@ class Source implements Arrayable
         }
 
         return $dimensionsCollection
-            ->map(function (Dimensions $dimensions) use ($format) {
-                return "{$this->buildImageJob($dimensions->width, $dimensions->height, $this->format)->handle()} {$dimensions->width}w";
-            })
+            ->map(fn (Dimensions $dimensions) => "{$this->buildImageJob($dimensions->width, $dimensions->height, $this->format)->handle()} {$dimensions->width}w")
             ->when($includePlaceholder, function (Collection $dimensions) {
                 $placeholderSrc = $this->breakpoint->placeholderSrc();
 
@@ -75,7 +61,7 @@ class Source implements Arrayable
             ->implode(', ');
     }
 
-    public function buildImageJob(int $width, int $height = null, ?string $format = null): GenerateImageJob
+    public function buildImageJob(int $width, ?int $height = null, ?string $format = null): GenerateImageJob
     {
         $params = $this->breakpoint->getImageManipulationParams($format);
 
@@ -85,7 +71,7 @@ class Source implements Arrayable
         return app(GenerateImageJob::class, ['asset' => $this->breakpoint->asset, 'params' => $params]);
     }
 
-    public function getMediaString(): null|string
+    public function getMediaString(): ?string
     {
         if (! $this->breakpoint->minWidth) {
             return null;
@@ -94,9 +80,7 @@ class Source implements Arrayable
         return "(min-width: {$this->breakpoint->minWidth}{$this->mediaWidthUnit})";
     }
 
-    /**
-     * @return Collection<Dimensions>
-     */
+    /** @return Collection<int, Dimensions> */
     private function getDimensions(): Collection
     {
         return app(DimensionCalculator::class)->calculateForBreakpoint($this);
@@ -111,7 +95,7 @@ class Source implements Arrayable
     {
         $format = $this->format === 'original' ? null : $this->format;
 
-        $this->getDimensions()->map(function (Dimensions $dimensions) use ($format) {
+        $this->getDimensions()->each(function (Dimensions $dimensions) use ($format) {
             dispatch($this->buildImageJob($dimensions->width, $dimensions->height, $format));
         });
 
@@ -126,12 +110,12 @@ class Source implements Arrayable
             ?? config('statamic.responsive-images.placeholder', false);
     }
 
-    public function toGql(array $args)
+    public function toGql(array $args): array
     {
         return $this->toArray();
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'format' => $this->format,

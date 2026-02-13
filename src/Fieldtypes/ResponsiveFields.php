@@ -11,7 +11,7 @@ class ResponsiveFields
     {
     }
 
-    public static function new(?array $config): ResponsiveFields
+    public static function new(?array $config): static
     {
         return new static($config);
     }
@@ -20,9 +20,8 @@ class ResponsiveFields
     {
         $fields = [];
 
-        $breakpoints = collect($this->config['breakpoints'] ?? [])->sortBy(function ($breakpoint) {
-            return config("statamic.responsive-images.breakpoints.{$breakpoint}");
-        });
+        $breakpoints = collect($this->config['breakpoints'] ?? [])
+            ->sortBy(fn ($breakpoint) => config("statamic.responsive-images.breakpoints.{$breakpoint}"));
 
         $breakpoints = array_merge(['default'], $this->config['use_breakpoints'] ? $breakpoints->toArray() : []);
 
@@ -41,7 +40,7 @@ class ResponsiveFields
                     'instructions' => $index === 0 ? __('Choose an image to generate responsive versions from.') : '',
                     'type' => 'assets',
                     'localizable' => $this->config['localizable'] ?? false,
-                    'container' => $this->config['container'] ?? optional(AssetContainer::all()->first())->handle(),
+                    'container' => $this->config['container'] ?? AssetContainer::all()->first()?->handle(),
                     'folder' => $this->config['folder'] ?? '/',
                     'allow_uploads' => $this->config['allow_uploads'],
                     'restrict' => $this->config['restrict'] ?? false,
@@ -107,7 +106,7 @@ class ResponsiveFields
         }
 
         return __(':label Breakpoint (:breakpoint:unit)', [
-            'label' => strtoupper($breakpoint),
+            'label' => mb_strtoupper($breakpoint),
             'breakpoint' => config('statamic.responsive-images.breakpoints')[$breakpoint],
             'unit' => config('statamic.responsive-images.breakpoint_unit', 'px'),
         ]);

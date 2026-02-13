@@ -4,30 +4,10 @@ namespace Spatie\ResponsiveImages;
 
 class Dimensions
 {
-    /**
-     * @var int Width in pixels
-     */
-    public int $width;
-
-    /**
-     * @var int Height in pixels
-     */
-    public int $height;
-
-    public function __construct($width, $height)
-    {
-        $this->width = (int) $width;
-        $this->height = (int) $height;
-    }
-
-    public function setWidth(int $width)
-    {
-        $this->width = $width;
-    }
-
-    public function setHeight(int $height)
-    {
-        $this->height = $height;
+    public function __construct(
+        public int $width,
+        public int $height,
+    ) {
     }
 
     public function getWidth(): int
