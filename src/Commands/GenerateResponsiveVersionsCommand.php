@@ -21,7 +21,7 @@ class GenerateResponsiveVersionsCommand extends Command
 
     protected $description = 'Generate responsive images';
 
-    public function handle(AssetRepository $assets)
+    public function handle(AssetRepository $assets): void
     {
         if (! config('statamic.assets.image_manipulation.cache')) {
             $this->error('Caching is not enabled for image manipulations, generating them will have no benefit.');
@@ -29,47 +29,35 @@ class GenerateResponsiveVersionsCommand extends Command
             return;
         }
 
-        $assets = $assets->all()->filter(function (Asset $asset) {
-            return $asset->isImage()
-                && $asset->extension() !== 'svg'
-                && ! in_array($asset->container()->handle(), config('statamic.responsive-images.excluded_containers', []));
-        });
+        $excludedContainers = config('statamic.responsive-images.excluded_containers', []);
+
+        $assets = $assets->all()->filter(fn (Asset $asset) => $asset->isImage()
+            && $asset->extension() !== 'svg'
+            && ! in_array($asset->container()->handle(), $excludedContainers));
 
         $this->info("Generating responsive image versions for {$assets->count()} assets.");
 
         $this->getOutput()->progressStart($assets->count());
 
-        /** @var \Statamic\Assets\AssetCollection $assets */
         $assets->each(function (Asset $asset) {
             $responsive = new Responsive($asset, new Parameters());
 
-            /**
-             * Dispatch job for default src
-             */
             $dimensions = app(DimensionCalculator::class)
                 ->calculateForImgTag($responsive->defaultBreakpoint());
 
-            $width = $dimensions->getWidth();
-            $height = $dimensions->getHeight();
-
             dispatch(app(GenerateImageJob::class, [
                 'asset' => $responsive->asset,
-                'params' => array_merge(['width' => $width, 'height' => $height]),
+                'params' => ['width' => $dimensions->width, 'height' => $dimensions->height],
             ]));
 
-            /*
-             * Dispatch a job for each breakpoint
-             */
             $responsive->breakPoints()->each(function (Breakpoint $breakpoint) {
-                $breakpoint->sources()->each(function (Source $source) {
-                    $source->dispatchImageJobs();
-                });
+                $breakpoint->sources()->each(fn (Source $source) => $source->dispatchImageJobs());
             });
 
             $this->getOutput()->progressAdvance();
         });
 
         $this->getOutput()->progressFinish();
-        $this->info("All jobs dispatched.");
+        $this->info('All jobs dispatched.');
     }
 }

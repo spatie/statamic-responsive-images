@@ -5,7 +5,6 @@ namespace Spatie\ResponsiveImages\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Statamic\Console\RunsInPlease;
-use Statamic\Contracts\Assets\AssetRepository;
 
 class RegenerateResponsiveVersionsCommand extends Command
 {
@@ -15,7 +14,7 @@ class RegenerateResponsiveVersionsCommand extends Command
 
     protected $description = 'Regenerate responsive images';
 
-    public function handle(AssetRepository $assets)
+    public function handle(): void
     {
         if (! config('statamic.assets.image_manipulation.cache')) {
             $this->error('Caching is not enabled for image manipulations, generating them will have no benefit.');
@@ -23,10 +22,9 @@ class RegenerateResponsiveVersionsCommand extends Command
             return;
         }
 
-        $this->info("Clearing Glide cache...");
+        $this->info('Clearing Glide cache...');
 
         Artisan::call('statamic:glide:clear');
-
         Artisan::call('statamic:responsive:generate');
     }
 }

@@ -11,19 +11,15 @@ use Statamic\Contracts\Assets\Asset;
 
 abstract class GenerateImageJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    /** @var \Statamic\Contracts\Assets\Asset */
-    protected $asset;
-
-    /** @var array */
-    protected $params;
-
-    public function __construct(Asset $asset, array $params = [])
-    {
-        $this->asset = $asset;
-        $this->params = $params;
-
+    public function __construct(
+        protected Asset $asset,
+        protected array $params = [],
+    ) {
         $this->queue = config('statamic.responsive-images.queue', 'default');
     }
 

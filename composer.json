@@ -25,12 +25,12 @@
         }
     },
     "require": {
-        "statamic/cms": "^5.0"
+        "statamic/cms": "^6.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^6.9|^7.1|^8.0|^9.0|^10.0",
-        "pestphp/pest": "^1.22",
-        "spatie/pest-plugin-snapshots": "^1.1"
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^4.0",
+        "spatie/pest-plugin-snapshots": "^2.2"
     },
     "config": {
         "allow-plugins": {

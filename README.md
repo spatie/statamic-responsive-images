@@ -4,7 +4,7 @@
 
 # Responsive Images
 
-> Responsive Images for Statamic 3.
+> Responsive Images for Statamic CMS.
 
 <!-- /statamic:hide -->
 

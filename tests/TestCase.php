@@ -2,30 +2,28 @@
 
 namespace Spatie\ResponsiveImages\Tests;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
-use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Spatie\ResponsiveImages\ServiceProvider;
 use Statamic\Assets\AssetContainer;
 use Statamic\Console\Commands\GlideClear;
-use Statamic\Extend\Manifest;
 use Statamic\Facades\Blueprint;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Stache;
-use Statamic\Statamic;
+use Statamic\Testing\AddonTestCase;
+use Statamic\Testing\Concerns\PreventsSavingStacheItemsToDisk;
 
-class TestCase extends OrchestraTestCase
+class TestCase extends AddonTestCase
 {
-    use DatabaseMigrations;
+    use PreventsSavingStacheItemsToDisk;
+
+    protected string $addonServiceProvider = ServiceProvider::class;
 
     /** @var \Statamic\Assets\AssetContainer */
     public $assetContainer;
 
-    /**
-     * Setup the test environment.
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -60,63 +58,15 @@ class TestCase extends OrchestraTestCase
         parent::tearDown();
     }
 
-    protected function getPackageProviders($app)
-    {
-        return [
-            \Rebing\GraphQL\GraphQLServiceProvider::class,
-            \Statamic\Providers\StatamicServiceProvider::class,
-            \Wilderborn\Partyline\ServiceProvider::class,
-            \Spatie\ResponsiveImages\ServiceProvider::class,
-        ];
-    }
-
-    protected function getPackageAliases($app)
-    {
-        return [
-            'Statamic' => Statamic::class,
-        ];
-    }
-
-    protected function getEnvironmentSetUp($app)
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $app->make(Manifest::class)->manifest = [
-            'spatie/statamic-responsive-images' => [
-                'id' => 'spatie/statamic-responsive-images',
-                'namespace' => 'Spatie\\ResponsiveImages',
-            ],
-        ];
-    }
-
     protected function resolveApplicationConfiguration($app)
     {
         parent::resolveApplicationConfiguration($app);
-
-        $configs = [
-            'assets',
-            'cp',
-            'forms',
-            'routes',
-            'static_caching',
-            // 'sites',
-            'stache',
-            'system',
-            'users',
-        ];
-
-        foreach ($configs as $config) {
-            $app['config']->set("statamic.$config", require(__DIR__ . "/../vendor/statamic/cms/config/{$config}.php"));
-        }
-
-        // Setting the user repository to the default flat file system
-        $app['config']->set('statamic.users.repository', 'file');
 
         // Assume the pro edition within tests
         $app['config']->set('statamic.editions.pro', true);
 
         // Define config settings for all of our tests
-        $app['config']->set("statamic.responsive-images", require(__DIR__ . "/../config/responsive-images.php"));
+        $app['config']->set('statamic.responsive-images', require __DIR__.'/../config/responsive-images.php');
 
         $app['config']->set('statamic.assets.image_manipulation.driver', 'imagick');
 
@@ -129,18 +79,14 @@ class TestCase extends OrchestraTestCase
 
         $app['config']->set('statamic.stache.stores.collections.directory', $this->getTempDirectory('/content/collections'));
         $app['config']->set('statamic.stache.stores.entries.directory', $this->getTempDirectory('/content/collections'));
-        $app['config']->set('statamic.stache.stores.asset-containers.directory', $this->getTempDirectory( '/content/assets'));
-
-        Statamic::booted(function () {
-            Blueprint::setDirectory($this->getTempDirectory('/resources/blueprints'));
-        });
+        $app['config']->set('statamic.stache.stores.asset-containers.directory', $this->getTempDirectory('/content/assets'));
     }
 
     protected function setUpTempTestFiles()
     {
-        $this->initializeDirectory(__DIR__ . '/TestSupport/tmp');
+        $this->initializeDirectory(__DIR__.'/TestSupport/tmp');
         $this->initializeDirectory($this->getTestFilesDirectory());
-        File::copyDirectory(__DIR__ . '/TestSupport/TestFiles', $this->getTestFilesDirectory());
+        File::copyDirectory(__DIR__.'/TestSupport/TestFiles', $this->getTestFilesDirectory());
     }
 
     protected function initializeDirectory($directory)
@@ -154,12 +100,12 @@ class TestCase extends OrchestraTestCase
 
     public function getTempDirectory($suffix = ''): string
     {
-        return __DIR__ . '/TestSupport/tmp' . ($suffix == '' ? '' : '/' . $suffix);
+        return __DIR__.'/TestSupport/tmp'.($suffix == '' ? '' : '/'.$suffix);
     }
 
     public function getTestFilesDirectory($suffix = ''): string
     {
-        return $this->getTempDirectory() . '/testfiles' . ($suffix == '' ? '' : '/' . $suffix);
+        return $this->getTempDirectory().'/testfiles'.($suffix == '' ? '' : '/'.$suffix);
     }
 
     public function getTestJpg(): string
@@ -215,11 +161,12 @@ class TestCase extends OrchestraTestCase
         }
 
         // Duplicate file because in Statamic 3.4 the source asset is deleted after upload
-        $duplicateImagePath = preg_replace('/(\.[^.]+)$/', '-' . Carbon::now()->timestamp . '$1', $testImagePath);
+        $duplicateImagePath = preg_replace('/(\.[^.]+)$/', '-'.Carbon::now()->timestamp.'$1', $testImagePath);
         File::copy($testImagePath, $duplicateImagePath);
 
         $file = new UploadedFile($duplicateImagePath, $filename);
-        $path = ltrim('/' . $file->getClientOriginalName(), '/');
+        $path = ltrim('/'.$file->getClientOriginalName(), '/');
+
         return $this->assetContainer->makeAsset($path)->upload($file);
     }
 }

@@ -1,13 +1,11 @@
 <?php
 
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Dimensions;
 use Spatie\ResponsiveImages\DimensionCalculator;
 use Spatie\ResponsiveImages\Responsive;
 use Spatie\ResponsiveImages\Source;
-use Spatie\ResponsiveImages\Tags\ResponsiveTag;
 use Statamic\Assets\Asset;
 use Statamic\Tags\Parameters;
 
@@ -20,7 +18,7 @@ function stubAsset(int $width, int $height, int $fileSize)
     return $stubbedAsset;
 }
 
-function getWidths(Asset $asset, Breakpoint $breakpoint): array
+function getWidths(Breakpoint $breakpoint): array
 {
     $source = new Source($breakpoint);
 
@@ -39,7 +37,7 @@ it('can calculate the optimized widths from an asset', function () {
 
     $breakpoint = new Breakpoint($asset, 'default', 0, []);
 
-    $widths = getWidths($asset, $breakpoint);
+    $widths = getWidths($breakpoint);
 
     expect($widths)->toEqual([
         0 => 340,
@@ -51,7 +49,7 @@ it('can calculate the optimized widths from an asset', function () {
 
     $breakpoint = new Breakpoint($smallAsset, 'default', 0, []);
 
-    $widths = getWidths($smallAsset, $breakpoint);
+    $widths = getWidths($breakpoint);
 
     expect($widths)->toEqual([
         0 => 150,
@@ -62,7 +60,7 @@ it('can calculate the optimized widths for different dimensions', function () {
     $stubbedAsset = stubAsset(300, 200, 300 * 1024);
     $breakpoint = new Breakpoint($stubbedAsset, 'default', 0, []);
 
-    $widths = getWidths($stubbedAsset, $breakpoint);
+    $widths = getWidths($breakpoint);
 
     expect($widths)->toEqual([
         0 => 300,
@@ -80,7 +78,7 @@ it('can calculate the optimized widths for different dimensions', function () {
     $stubbedAsset = stubAsset(2400, 1800, 3000 * 1024);
     $breakpoint = new Breakpoint($stubbedAsset, 'default', 0, []);
 
-    $widths = getWidths($stubbedAsset, $breakpoint);
+    $widths = getWidths($breakpoint);
 
     expect($widths)->toEqual([
         0 => 2400,
@@ -104,7 +102,7 @@ it('can calculate the optimized widths for different dimensions', function () {
     $stubbedAsset = stubAsset(8200, 5500, 12000 * 1024);
     $breakpoint = new Breakpoint($stubbedAsset, 'default', 0, []);
 
-    $widths = getWidths($stubbedAsset, $breakpoint);
+    $widths = getWidths($breakpoint);
 
     expect($widths)->toEqual([
         0 => 8200,
@@ -136,7 +134,7 @@ it('can calculate the optimized widths for different dimensions with a custom th
     $stubbedAsset = stubAsset(2400, 1800, 3000 * 1024);
     $breakpoint = new Breakpoint($stubbedAsset, 'default', 0, []);
 
-    $widths = getWidths($stubbedAsset, $breakpoint);
+    $widths = getWidths($breakpoint);
 
     expect($widths)->toEqual([
         0 => 2400,
@@ -154,7 +152,7 @@ it('filters out widths to be less than max width specified in config', function(
 
     $breakpoint = new Breakpoint($asset, 'default', 0, []);
 
-    expect(getWidths($asset, $breakpoint))->toEqualCanonicalizing([237, 284]);
+    expect(getWidths($breakpoint))->toEqualCanonicalizing([237, 284]);
 });
 
 it('filters out widths to be less than max width specified in glide width param', function() {
@@ -162,7 +160,7 @@ it('filters out widths to be less than max width specified in glide width param'
 
     $breakpoint = new Breakpoint($asset, 'default', 0, ['glide:width' => 300]);
 
-    expect(getWidths($asset, $breakpoint))->toEqualCanonicalizing([237, 284]);
+    expect(getWidths($breakpoint))->toEqualCanonicalizing([237, 284]);
 });
 
 test('max width from glide width param takes precedence over config when filtering widths', function() {
@@ -172,7 +170,7 @@ test('max width from glide width param takes precedence over config when filteri
 
     $breakpoint = new Breakpoint($asset, 'default', 0, ['glide:width' => 300]);
 
-    expect(getWidths($asset, $breakpoint))->toEqualCanonicalizing([237, 284]);
+    expect(getWidths($breakpoint))->toEqualCanonicalizing([237, 284]);
 });
 
 it('returns one dimension with equal width of max width when all dimensions have been filtered out', function () {
@@ -182,7 +180,7 @@ it('returns one dimension with equal width of max width when all dimensions have
 
     $breakpoint = new Breakpoint($asset, 'default', 0, []);
 
-    $widths = getWidths($asset, $breakpoint);
+    $widths = getWidths($breakpoint);
 
     expect($widths)->toHaveCount(1);
     expect($widths[0])->toBe(25);

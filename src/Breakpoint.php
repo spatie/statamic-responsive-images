@@ -15,88 +15,47 @@ use Statamic\Facades\Blink;
 use Statamic\Facades\Glide as GlideManager;
 use Statamic\Support\Str;
 
-/**
- * @property-read \Statamic\Assets\Asset $asset
- * @property-read string $label
- * @property-read int $minWidth
- * @property-read array $parameters
- * @property-read string $widthUnit
- */
 class Breakpoint implements Arrayable
 {
-    /** @var Asset */
-    public Asset $asset;
+    public readonly string $widthUnit;
 
-    /** @var string */
-    public string $label;
-
-    /**
-     * @var int The minimum width of when the breakpoint starts
-     */
-    public int $minWidth;
-
-    /** @var array */
-    public array $parameters;
-
-    /** @var string */
-    public string $widthUnit;
-
-    /** @var Collection<Source> */
+    /** @var Collection<int, Source> */
     private Collection $sources;
 
-    public function __construct(Asset $asset, string $label, int $breakpointMinWidth, array $breakpointParams)
-    {
-        $this->asset = $asset;
-        $this->label = $label;
-        $this->minWidth = $breakpointMinWidth;
-        $this->parameters = $breakpointParams;
+    public function __construct(
+        public Asset $asset,
+        public string $label,
+        public int $minWidth,
+        public array $parameters,
+    ) {
         $this->widthUnit = config('statamic.responsive-images.breakpoint_unit', 'px');
     }
 
-    public function __set($name, $value): void
+    public function __set(string $name, mixed $value): void
     {
-        throw new Exception(sprintf('Cannot modify property %s', $name));
+        throw new Exception("Cannot modify property {$name}");
     }
 
-    /**
-     * @return Collection<Source>
-     */
+    /** @return Collection<int, Source> */
     public function sources(): Collection
     {
         if (isset($this->sources)) {
             return $this->sources;
         }
 
-        $formats = collect(['avif', 'webp', 'original']);
+        return $this->sources = collect(['avif', 'webp', 'original'])
+            ->filter(function (string $format) {
+                if ($format === 'original') {
+                    return true;
+                }
 
-        $breakpointParams = $this->parameters;
-
-        return $this->sources = $formats->filter(function ($format) use ($breakpointParams) {
-            if ($format === 'original') {
-                return true;
-            }
-
-            if (isset($breakpointParams[$format])) {
-                return $breakpointParams[$format];
-            }
-
-            if (config('statamic.responsive-images.' . $format, false)) {
-                return true;
-            }
-
-            return false;
-        })->map(function ($format) {
-            return new Source($this, $format);
-        });
+                return $this->parameters[$format]
+                    ?? config("statamic.responsive-images.{$format}", false);
+            })
+            ->map(fn (string $format) => new Source($this, $format));
     }
 
-    /**
-     * Get only Glide params.
-     *
-     * @param string|null $format
-     * @return array
-     */
-    public function getImageManipulationParams(string $format = null): array
+    public function getImageManipulationParams(?string $format = null): array
     {
         $glideParams = $this->getGlideParams();
 
@@ -135,7 +94,7 @@ class Breakpoint implements Arrayable
         return $params;
     }
 
-    private function getWidth(): int|null
+    private function getWidth(): ?int
     {
         $width = null;
 
@@ -150,7 +109,7 @@ class Breakpoint implements Arrayable
         return $width;
     }
 
-    private function getCropFocus($params): string|null
+    private function getCropFocus(array $params): ?string
     {
         if (
             Config::get('statamic.assets.auto_crop') === false
@@ -159,40 +118,31 @@ class Breakpoint implements Arrayable
             return null;
         }
 
-        return "crop-" . $this->asset->get('focus', '50-50');
+        return "crop-{$this->asset->get('focus', '50-50')}";
     }
 
-    /**
-     * Get format quality by the following order: glide parameter, quality parameter and then config values.
-     *
-     * @param string|null $format
-     * @return int|null
-     */
-    private function getFormatQuality(string $format = null): int|null
+    private function getFormatQuality(?string $format = null): ?int
     {
         if ($format === 'original') {
             $format = null;
         }
 
-        // Backwards compatible if someone used glide:quality to adjust quality
         $glideParamsQualityValue = $this->parameters['glide:quality'] ?? $this->parameters['glide:q'] ?? null;
 
         if ($glideParamsQualityValue) {
-            return intval($glideParamsQualityValue);
+            return (int) $glideParamsQualityValue;
         }
 
-        if ($format === null) {
-            $format = $this->asset->extension();
+        $format ??= $this->asset->extension();
+
+        if (isset($this->parameters["quality:{$format}"])) {
+            return (int) $this->parameters["quality:{$format}"];
         }
 
-        if (isset($this->parameters['quality:' . $format])) {
-            return intval($this->parameters['quality:' . $format]);
-        }
-
-        $configQualityValue = config('statamic.responsive-images.quality.' . $format);
+        $configQualityValue = config("statamic.responsive-images.quality.{$format}");
 
         if ($configQualityValue !== null) {
-            return intval($configQualityValue);
+            return (int) $configQualityValue;
         }
 
         return null;
@@ -212,12 +162,8 @@ class Breakpoint implements Arrayable
     private function getGlideParams(): array
     {
         return collect($this->parameters)
-            ->filter(function ($value, $name) {
-                return Str::contains($name, 'glide:');
-            })
-            ->mapWithKeys(function ($value, $name) {
-                return [str_replace('glide:', '', $name) => $value];
-            })
+            ->filter(fn ($value, string $name) => Str::contains($name, 'glide:'))
+            ->mapWithKeys(fn ($value, string $name) => [str_replace('glide:', '', $name) => $value])
             ->toArray();
     }
 
@@ -228,18 +174,14 @@ class Breakpoint implements Arrayable
             'label' => $this->label,
             'minWidth' => $this->minWidth,
             'widthUnit' => $this->widthUnit,
-            'sources' => $this->sources()->map(function (Source $source) use ($args) {
-                return $source->toGql($args);
-            })->all(),
-            // TODO: There is no neat way to separate placeholder string from srcset string,
-            // TODO: cause placeholder argument affects both.
-            'placeholder' => (isset($args['placeholder']) && $args['placeholder'] === true) ? $this->placeholder() : null,
+            'sources' => $this->sources()->map(fn (Source $source) => $source->toGql($args))->all(),
+            'placeholder' => ($args['placeholder'] ?? false) === true ? $this->placeholder() : null,
         ];
 
-        // Check if DimensionCalculator is instance of ResponsiveDimensionCalculator
-        // as ratio is only property applicable only for this DimensionCalculator
-        if (app(DimensionCalculator::class) instanceof ResponsiveDimensionCalculator) {
-            $data['ratio'] = app(DimensionCalculator::class)->breakpointRatio($this->asset, $this);
+        $calculator = app(DimensionCalculator::class);
+
+        if ($calculator instanceof ResponsiveDimensionCalculator) {
+            $data['ratio'] = $calculator->breakpointRatio($this->asset, $this);
         }
 
         return $data;
@@ -267,8 +209,8 @@ class Breakpoint implements Arrayable
             }
 
             $placeholderSvg = view('responsive-images::placeholderSvg', [
-                'width' => $dimensions->getWidth(),
-                'height' => $dimensions->getHeight(),
+                'width' => $dimensions->width,
+                'height' => $dimensions->height,
                 'image' => $base64Image,
                 'asset' => $this->asset->toAugmentedArray(),
             ])->render();
@@ -285,17 +227,11 @@ class Breakpoint implements Arrayable
             return '';
         }
 
-        // TODO: 32w value is hardcoded, but it is possible with custom DimensionCalculator to have different width,
-        // TODO: replace with dynamic value.
-        return $placeholder . ' 32w';
+        return "{$placeholder} 32w";
     }
 
-    private function readImageToBase64($assetPath): string|null
+    private function readImageToBase64(string $assetPath): ?string
     {
-        /**
-         * Glide tag has undocumented method for generating data URL that we borrow from
-         * @see \Statamic\Tags\Glide::generateGlideDataUrl
-         */
         $cache = GlideManager::cacheDisk();
 
         try {
@@ -314,6 +250,6 @@ class Breakpoint implements Arrayable
             return null;
         }
 
-        return 'data:' . $assetMimeType . ';base64,' . base64_encode($assetContent);
+        return "data:{$assetMimeType};base64," . base64_encode($assetContent);
     }
 }

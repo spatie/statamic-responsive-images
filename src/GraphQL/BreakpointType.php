@@ -8,7 +8,7 @@ use Statamic\GraphQL\Types\AssetInterface;
 
 class BreakpointType extends Type
 {
-    const NAME = 'ResponsiveBreakpoint';
+    public const string NAME = 'ResponsiveBreakpoint';
 
     protected $attributes = [
         'name' => self::NAME,

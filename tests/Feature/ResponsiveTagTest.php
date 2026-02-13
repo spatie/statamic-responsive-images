@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Blade;
-use Intervention\Image\ImageManagerStatic;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
 use Spatie\ResponsiveImages\DimensionCalculator;
 use Spatie\ResponsiveImages\Dimensions;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
@@ -29,14 +29,17 @@ beforeEach(function () {
     Stache::clear();
 });
 
-it('generates responsive images')
-    ->tap(fn () => assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset)));
+it('generates responsive images', function () {
+    assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->asset));
+});
 
-it('generates no conversions for svgs')
-    ->tap(fn () => assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->svgAsset)));
+it('generates no conversions for svgs', function () {
+    assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->svgAsset));
+});
 
-it('generates no conversions for gifs')
-    ->tap(fn () => assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->gifAsset)));
+it('generates no conversions for gifs', function () {
+    assertMatchesSnapshotWithoutSvg(ResponsiveTag::render($this->gifAsset));
+});
 
 it("returns an empty string if the asset isn't found")
     ->expect(fn () => ResponsiveTag::render('doesnt-exist'))
@@ -94,10 +97,11 @@ it('generates inlined placeholder image with correct dimensions', function () {
     preg_match('/data:image\/jpeg;base64,(.*)" \/>/', $svgBase64Decoded, $jpgMatches);
 
     // Make image of it, so we can get the dimensions of encoded JPG
-    $placeholderImage = ImageManagerStatic::make($jpgMatches[1]);
+    $manager = new ImageManager(new Driver());
+    $placeholderImage = $manager->read(base64_decode($jpgMatches[1]));
 
-    expect($placeholderImage->getWidth())->toBe(32);
-    expect($placeholderImage->getHeight())->toBe(16);
+    expect($placeholderImage->width())->toBe(32);
+    expect($placeholderImage->height())->toBe(16);
 });
 
 it('generates inlined placeholder image with correct dimensions from custom dimension calculator', function () {
@@ -123,10 +127,11 @@ it('generates inlined placeholder image with correct dimensions from custom dime
     preg_match('/data:image\/jpeg;base64,(.*)" \/>/', $svgBase64Decoded, $jpgMatches);
 
     // Make image of it, so we can get the dimensions of encoded JPG
-    $placeholderImage = ImageManagerStatic::make($jpgMatches[1]);
+    $manager = new ImageManager(new Driver());
+    $placeholderImage = $manager->read(base64_decode($jpgMatches[1]));
 
-    expect($placeholderImage->getWidth())->toBe(10);
-    expect($placeholderImage->getHeight())->toBe(4);
+    expect($placeholderImage->width())->toBe(10);
+    expect($placeholderImage->height())->toBe(4);
 });
 
 it('generates responsive images without a placeholder', function () {

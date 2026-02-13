@@ -28,12 +28,10 @@ class ServiceProvider extends AddonServiceProvider
         ResponsiveFieldtype::class,
     ];
 
-    protected $stylesheets = [
-        __DIR__.'/../dist/css/responsive.css',
-    ];
-
-    protected $scripts = [
-        __DIR__.'/../dist/js/responsive.js',
+    protected $vite = [
+        'hotFile' => 'dist/vite.hot',
+        'input' => ['resources/js/responsive.js'],
+        'publicDirectory' => 'dist',
     ];
 
     protected $listen = [
@@ -51,12 +49,9 @@ class ServiceProvider extends AddonServiceProvider
         RegenerateResponsiveVersionsCommand::class,
     ];
 
-    public function boot()
+    public function bootAddon()
     {
-        parent::boot();
-
         $this
-            ->bootCommands()
             ->bootAddonViews()
             ->bootAddonConfig()
             ->bootDirectives()

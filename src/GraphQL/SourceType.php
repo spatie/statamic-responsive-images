@@ -2,11 +2,12 @@
 
 namespace Spatie\ResponsiveImages\GraphQL;
 
+use Rebing\GraphQL\Support\Type;
 use Statamic\Facades\GraphQL;
 
-class SourceType extends \Rebing\GraphQL\Support\Type
+class SourceType extends Type
 {
-    const NAME = 'ResponsiveBreakpointSource';
+    public const string NAME = 'ResponsiveBreakpointSource';
 
     protected $attributes = [
         'name' => self::NAME,

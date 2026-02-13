@@ -19,26 +19,26 @@ class ResponsiveTag extends Tags
         $asset = $arguments[0];
         $parameters = $arguments[1] ?? [];
 
-        /** @var \Spatie\ResponsiveImages\Tags\ResponsiveTag $responsive */
-        $responsive = app(ResponsiveTag::class);
+        /** @var self $responsive */
+        $responsive = app(self::class);
         $responsive->setContext(['url' => $asset]);
         $responsive->setParameters($parameters);
 
         return $responsive->wildcard('url');
     }
 
-    public function wildcard($tag)
+    public function wildcard(string $tag): string
     {
         $this->params->put('src', $this->context->get($tag));
 
         return $this->index();
     }
 
-    public function index()
+    public function index(): string
     {
         try {
             $responsive = new Responsive($this->params->get('src'), $this->params);
-        } catch (AssetNotFoundException|NotFoundHttpException $e) {
+        } catch (AssetNotFoundException|NotFoundHttpException) {
             return '';
         }
 
@@ -56,8 +56,8 @@ class ResponsiveTag extends Tags
         $dimensions = app(DimensionCalculator::class)
             ->calculateForImgTag($responsive->defaultBreakpoint());
 
-        $width = $dimensions->getWidth();
-        $height = $dimensions->getHeight();
+        $width = $dimensions->width;
+        $height = $dimensions->height;
 
         $src = app(GenerateImageJob::class, [
             'asset' => $responsive->asset,
@@ -76,9 +76,7 @@ class ResponsiveTag extends Tags
             'width' => round($width),
             'height' => round($height),
             'asset' => $responsive->asset->toAugmentedArray(),
-            'hasSources' => $breakpoints->map(function ($breakpoint) {
-                return $breakpoint->sources();
-            })->flatten()->count() > 0,
+            'hasSources' => $breakpoints->map(fn ($breakpoint) => $breakpoint->sources())->flatten()->isNotEmpty(),
         ])->render();
     }
 
@@ -93,23 +91,15 @@ class ResponsiveTag extends Tags
     private function getAttributeString(): string
     {
         $breakpointPrefixes = collect(array_keys(config('statamic.responsive-images.breakpoints')))
-            ->map(function ($breakpoint) {
-                return "{$breakpoint}:";
-            })->toArray();
+            ->map(fn ($breakpoint) => "{$breakpoint}:")
+            ->toArray();
 
         $attributesToExclude = ['src', 'placeholder', 'webp', 'avif', 'ratio', 'glide:', 'default:', 'quality:'];
 
         return collect($this->params)
-            ->reject(function ($value, $name) use ($breakpointPrefixes, $attributesToExclude) {
-                if (Str::contains($name, array_merge($attributesToExclude, $breakpointPrefixes))) {
-                    return true;
-                }
-
-                return false;
-            })
-            ->map(function ($value, $name) {
-                return $name . '="' . $value . '"';
-            })->implode(' ');
+            ->reject(fn ($value, $name) => Str::contains($name, array_merge($attributesToExclude, $breakpointPrefixes)))
+            ->map(fn ($value, $name) => "{$name}=\"{$value}\"")
+            ->implode(' ');
     }
 
     private function includePlaceholder(): bool

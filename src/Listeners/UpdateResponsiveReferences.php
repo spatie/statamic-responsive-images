@@ -12,11 +12,7 @@ class UpdateResponsiveReferences implements ShouldQueue
 {
     use GetsItemsContainingData;
 
-    /**
-     * @param $events
-     * @return void
-     */
-    public function subscribe($events)
+    public function subscribe($events): void
     {
         if (config('statamic.system.update_references') === false) {
             return;
@@ -26,46 +22,29 @@ class UpdateResponsiveReferences implements ShouldQueue
         $events->listen(AssetDeleted::class, [self::class, 'handleDeleted']);
     }
 
-    /**
-     * Handle asset saved event.
-     *
-     * @param AssetSaved $event
-     */
-    public function handleSaved(AssetSaved $event)
+    public function handleSaved(AssetSaved $event): void
     {
         $asset = $event->asset;
 
-        $container = $asset->container()->handle();
-        $originalPath = $asset->getOriginal('path');
-        $newPath = $asset->path();
-
-        $this->replaceReferences($container, $originalPath, $newPath);
+        $this->replaceReferences(
+            $asset->container()->handle(),
+            $asset->getOriginal('path'),
+            $asset->path(),
+        );
     }
 
-    /**
-     * Handle asset deleted event.
-     *
-     * @param AssetDeleted $event
-     * @return void
-     */
-    public function handleDeleted(AssetDeleted $event)
+    public function handleDeleted(AssetDeleted $event): void
     {
         $asset = $event->asset;
 
-        $container = $asset->container()->handle();
-        $originalPath = $asset->getOriginal('path');
-        $newPath = null;
-
-        $this->replaceReferences($container, $originalPath, $newPath);
+        $this->replaceReferences(
+            $asset->container()->handle(),
+            $asset->getOriginal('path'),
+            null,
+        );
     }
 
-    /**
-     * @param $container
-     * @param $originalPath
-     * @param $newPath
-     * @return void
-     */
-    protected function replaceReferences($container, $originalPath, $newPath)
+    protected function replaceReferences(string $container, ?string $originalPath, ?string $newPath): void
     {
         if (! $originalPath || $originalPath === $newPath) {
             return;
@@ -76,7 +55,7 @@ class UpdateResponsiveReferences implements ShouldQueue
         $this->getItemsContainingData()->each(function ($item) use ($container, $originalPath, $newValue) {
             ResponsiveReferenceUpdater::item($item)
                 ->filterByContainer($container)
-                ->updateReferences($container . '::' . $originalPath, $newValue);
+                ->updateReferences("{$container}::{$originalPath}", $newValue);
         });
     }
 }

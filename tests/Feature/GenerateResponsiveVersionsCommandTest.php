@@ -7,14 +7,17 @@ use Statamic\Facades\Stache;
 
 beforeEach(function () {
     $this->asset = $this->uploadTestImageToTestContainer();
+    config()->set('statamic.assets.image_manipulation.cache_path', $this->getTempDirectory('glide'));
     Stache::clear();
 });
 
-it('requires caching to be set')
-    ->tap(fn () => config()->set('statamic.assets.image_manipulation.cache', false))
-    ->artisan(GenerateResponsiveVersionsCommand::class)
-    ->expectsOutput('Caching is not enabled for image manipulations, generating them will have no benefit.')
-    ->assertExitCode(0);
+it('requires caching to be set', function () {
+    config()->set('statamic.assets.image_manipulation.cache', false);
+
+    $this->artisan(GenerateResponsiveVersionsCommand::class)
+        ->expectsOutput('Caching is not enabled for image manipulations, generating them will have no benefit.')
+        ->assertExitCode(0);
+});
 
 it('dispatches jobs for all assets that are images', function () {
     Queue::fake();

@@ -15,22 +15,14 @@ use Statamic\Tags\Parameters;
 
 class Responsive
 {
-    /** @var Asset */
     public Asset $asset;
 
-    /** @var \Statamic\Tags\Parameters */
-    public $parameters;
+    public Parameters|Collection $parameters;
 
-    /** @var Collection<Breakpoint> */
+    /** @var Collection<int, Breakpoint> */
     private Collection $breakpoints;
 
-    /**
-     * @param $assetParam
-     * @param Parameters $parameters
-     * @throws AssetNotFoundException
-     * @throws InvalidAssetException
-     */
-    public function __construct($assetParam, Parameters $parameters)
+    public function __construct(mixed $assetParam, Parameters $parameters)
     {
         $this->parameters = $parameters;
 
@@ -39,9 +31,10 @@ class Responsive
         }
 
         if (is_array($assetParam) && isset($assetParam['src'])) {
-            $this->parameters = collect($assetParam)->map(function ($value) {
-                return $value instanceof Value ? $value->value() : $value;
-            })->merge($this->parameters->toArray())->except('src');
+            $this->parameters = collect($assetParam)
+                ->map(fn ($value) => $value instanceof Value ? $value->value() : $value)
+                ->merge($this->parameters->toArray())
+                ->except('src');
 
             $assetParam = $assetParam['src'];
         }
@@ -53,12 +46,7 @@ class Responsive
         }
     }
 
-    /**
-     * @param $assetParam
-     * @return Asset
-     * @throws AssetNotFoundException
-     */
-    private function retrieveAsset($assetParam): Asset
+    private function retrieveAsset(mixed $assetParam): Asset
     {
         if ($assetParam instanceof Asset) {
             return $assetParam;
@@ -103,9 +91,7 @@ class Responsive
         return $asset;
     }
 
-    /**
-     * @return Collection<Breakpoint>
-     */
+    /** @return Collection<int, Breakpoint> */
     public function breakPoints(): Collection
     {
         if (isset($this->breakpoints)) {
@@ -115,11 +101,10 @@ class Responsive
         $parametersByBreakpoint = $this->parametersByBreakpoint();
 
         $defaultParams = $parametersByBreakpoint->get('default') ?? collect();
-        $currentParams = array_merge([
-            'src' => $this->asset,
-        ], $defaultParams->mapWithKeys(function ($param) {
-            return [$param['key'] => $param['value']];
-        })->toArray());
+        $currentParams = array_merge(
+            ['src' => $this->asset],
+            $defaultParams->mapWithKeys(fn ($param) => [$param['key'] => $param['value']])->toArray(),
+        );
 
         $breakpoints = $parametersByBreakpoint
             ->map(function (Collection $parameters, string $breakpoint) use (&$currentParams) {
@@ -160,9 +145,7 @@ class Responsive
             })
             ->filter();
 
-        $defaultBreakpoint = $breakpoints->first(function (Breakpoint $breakpoint) {
-            return $breakpoint->label === 'default';
-        });
+        $defaultBreakpoint = $breakpoints->first(fn (Breakpoint $breakpoint) => $breakpoint->label === 'default');
 
         if (! $defaultBreakpoint) {
             $breakpoints->prepend(new Breakpoint($this->asset, 'default', 0, [
@@ -177,9 +160,7 @@ class Responsive
 
     public function defaultBreakpoint(): Breakpoint
     {
-        return $this->breakPoints()->first(function (Breakpoint $breakpoint) {
-            return $breakpoint->label === 'default';
-        });
+        return $this->breakPoints()->first(fn (Breakpoint $breakpoint) => $breakpoint->label === 'default');
     }
 
     private function parametersByBreakpoint(): Collection
@@ -196,7 +177,7 @@ class Responsive
 
                 return [
                     'prefix' => $prefix,
-                    'key' => str_replace($prefix.':', '', $key),
+                    'key' => str_replace("{$prefix}:", '', $key),
                     'value' => $value,
                     'breakpoint' => $breakpoints->get($prefix) ?? 0,
                 ];

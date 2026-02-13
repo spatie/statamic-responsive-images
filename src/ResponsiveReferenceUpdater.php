@@ -7,48 +7,24 @@ use Statamic\Support\Arr;
 
 class ResponsiveReferenceUpdater extends AssetReferenceUpdater
 {
-    /**
-     * Recursively update fields.
-     *
-     * @param  \Illuminate\Support\Collection  $fields
-     * @param  null|string  $dottedPrefix
-     */
-    protected function recursivelyUpdateFields($fields, $dottedPrefix = null)
+    protected function recursivelyUpdateFields($fields, $dottedPrefix = null): void
     {
         $this
             ->updateResponsiveFieldValues($fields, $dottedPrefix)
             ->updateNestedFieldValues($fields, $dottedPrefix);
     }
 
-    /**
-     * Update assets field values.
-     *
-     * @param  \Illuminate\Support\Collection  $fields
-     * @param  null|string  $dottedPrefix
-     * @return $this
-     */
-    protected function updateResponsiveFieldValues($fields, $dottedPrefix)
+    protected function updateResponsiveFieldValues($fields, $dottedPrefix): static
     {
         $fields
-            ->filter(function ($field) {
-                return $field->type() === 'responsive'
-                    && $this->getConfiguredAssetsFieldContainer($field) === $this->container;
-            })
-            ->each(function ($field) use ($dottedPrefix) {
-                $this->updateResponsiveValue($field, $dottedPrefix);
-            });
+            ->filter(fn ($field) => $field->type() === 'responsive'
+                && $this->getConfiguredAssetsFieldContainer($field) === $this->container)
+            ->each(fn ($field) => $this->updateResponsiveValue($field, $dottedPrefix));
 
         return $this;
     }
 
-    /**
-     * Update responsive value on item.
-     *
-     * @see AssetReferenceUpdater::updateArrayValue()
-     * @param  \Statamic\Fields\Field  $field
-     * @param  null|string  $dottedPrefix
-     */
-    protected function updateResponsiveValue($field, $dottedPrefix)
+    protected function updateResponsiveValue($field, $dottedPrefix): void
     {
         $data = $this->item->data()->all();
 

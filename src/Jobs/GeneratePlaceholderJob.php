@@ -16,10 +16,15 @@ use Statamic\Imaging\ImageGenerator;
 
 class GeneratePlaceholderJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    public function __construct(protected Asset $asset, protected Breakpoint $breakpoint)
-    {
+    public function __construct(
+        protected Asset $asset,
+        protected Breakpoint $breakpoint,
+    ) {
         $this->queue = config('statamic.responsive-images.queue', 'default');
     }
 
@@ -29,20 +34,15 @@ class GeneratePlaceholderJob implements ShouldQueue
             ->calculateForPlaceholder($this->breakpoint);
 
         $params = [
-            'w' => $dimensions->getWidth(),
-            'h' => $dimensions->getHeight(),
+            'w' => $dimensions->width,
+            'h' => $dimensions->height,
             'blur' => 5,
-            /**
-             * Arbitrary parameter to change md5 hash for Glide manipulation cache key
-             * to force Glide to generate new manipulated image if cache setting changes.
-             * TODO: Remove this line once the issue has been resolved in statamic/cms package
-             */
             'cache' => Config::get('statamic.assets.image_manipulation.cache', false),
         ];
 
         try {
             return app(ImageGenerator::class)->generateByAsset($this->asset, $params);
-        } catch (NotFoundHttpException $e) {
+        } catch (NotFoundHttpException) {
             return '';
         }
     }

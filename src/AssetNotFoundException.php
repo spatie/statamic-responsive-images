@@ -6,7 +6,7 @@ use Exception;
 
 class AssetNotFoundException extends Exception
 {
-    public static function create($assetParam)
+    public static function create(mixed $assetParam): self
     {
         if (is_array($assetParam)) {
             $assetParam = $assetParam['url'] ?? '';

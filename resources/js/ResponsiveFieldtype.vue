@@ -1,95 +1,61 @@
-<template>
-  <div class="responsive-field">
-    <publish-container
-        :name="publishContainerName"
-        :values="value"
-        :meta="meta"
-        :errors="errors"
-        :trackDirtyState="false"
-        @updated="updated($event)"
-    >
-      <div slot-scope="{ setFieldValue, setFieldMeta }">
-        <publish-fields
-            :fields="fields"
-            :name-prefix="name"
-            @updated="setFieldValue"
-            @meta-updated="setFieldMeta"
-        />
-      </div>
-    </publish-container>
-  </div>
-</template>
+<script setup>
+import { Fieldtype } from '@statamic/cms';
+import { PublishContainer, PublishFieldsProvider, PublishFields, injectPublishContext } from '@statamic/cms/ui';
+import { computed } from 'vue';
+import { generateId } from './helpers';
 
-<script>
-import {generateId} from "./helpers";
+const emit = defineEmits(Fieldtype.emits);
+const props = defineProps(Fieldtype.props);
+const { expose, update } = Fieldtype.use(emit, props);
 
-export default {
-  mixins: [Fieldtype],
+defineExpose(expose);
 
-  computed: {
-    publishContainerName() {
-      return this.$props.handle + '.' + generateId(10)
-    },
+const publishContainerName = computed(() => props.handle + '.' + generateId(10));
 
-    fields() {
-      return _.chain(this.meta.fields)
-          .map(field => {
-            return {
-              handle: field.handle,
-              ...field.field
-            };
-          })
-          .values()
-          .value();
-    },
+const fields = computed(() => {
+    return Object.values(props.meta.fields).map(field => ({
+        handle: field.handle,
+        ...field.field
+    }));
+});
 
-    storeState() {
-      return this.$store.state.publish['base'] || {};
-    },
+const blueprint = computed(() => ({
+    tabs: [{ fields: fields.value }],
+}));
 
-    errors() {
-      let errors = this.storeState.errors || [];
+const publishMeta = computed(() => props.meta.meta || {});
 
-      Object.keys(errors).map((key) => {
-        const newKey = key.replace(this.handle + '.', '');
-        errors[newKey] = errors[key];
-        delete errors[key];
-      });
+const parentContext = injectPublishContext();
 
-      return Object.assign({}, errors);
-    },
-  },
+const errors = computed(() => {
+    const allErrors = parentContext?.errors?.value || {};
+    const prefix = props.handle + '.';
+    const result = {};
 
-  methods: {
-    updated(data) {
-      const value = Object.assign({}, data);
-      this.update(value);
-    },
-  },
-};
+    Object.entries(allErrors).forEach(([key, value]) => {
+        if (key.startsWith(prefix)) {
+            result[key.slice(prefix.length)] = value;
+        }
+    });
+
+    return result;
+});
 </script>
 
-<style scoped>
-@container (max-width: 125px)  {
-  .responsive-field >>> .assets-fieldtype .assets-fieldtype-picker {
-    flex-direction: row;
-  }
-
-  .responsive-field >>> .assets-fieldtype .assets-fieldtype-picker .btn.btn-with-icon {
-    white-space: nowrap;
-    overflow: hidden;
-  }
-}
-
-@container (max-width: 148px)  {
-  .responsive-field >>> .assets-fieldtype .assets-fieldtype-picker .btn.btn-with-icon svg {
-    display: none;
-  }
-}
-
-@container (max-width: 265px)  {
-  .responsive-field >>> .assets-fieldtype .assets-fieldtype-drag-container .asset-table-listing td.w-24 {
-    display: none;
-  }
-}
-</style>
+<template>
+    <div class="bg-white dark:bg-gray-800 dark:border-dark-900 rounded-lg border">
+        <PublishContainer
+            :name="publishContainerName"
+            :blueprint="blueprint"
+            :model-value="props.value"
+            :meta="publishMeta"
+            :errors="errors"
+            :track-dirty-state="false"
+            @update:model-value="update"
+        >
+            <PublishFieldsProvider :fields="fields">
+                <PublishFields class="px-4 py-4" />
+            </PublishFieldsProvider>
+        </PublishContainer>
+    </div>
+</template>

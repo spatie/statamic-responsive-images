@@ -7,15 +7,11 @@ use Statamic\Fieldtypes\Assets\ImageRule;
 
 class ResponsiveFields
 {
-    /** @var array|null */
-    protected $config;
-
-    public function __construct(?array $config = null)
+    public function __construct(protected ?array $config = null)
     {
-        $this->config = $config;
     }
 
-    public static function new(?array $config): ResponsiveFields
+    public static function new(?array $config): static
     {
         return new static($config);
     }
@@ -24,56 +20,35 @@ class ResponsiveFields
     {
         $fields = [];
 
-        $breakpoints = collect($this->config['breakpoints'] ?? [])->sortBy(function ($breakpoint) {
-            return config("statamic.responsive-images.breakpoints.{$breakpoint}");
-        });
+        $breakpoints = collect($this->config['breakpoints'] ?? [])
+            ->sortBy(fn ($breakpoint) => config("statamic.responsive-images.breakpoints.{$breakpoint}"));
 
-        $breakpoints = array_merge(['default'], $this->config['use_breakpoints']
-            ?  $breakpoints->toArray()
-            : []);
-
+        $breakpoints = array_merge(['default'], $this->config['use_breakpoints'] ? $breakpoints->toArray() : []);
 
         foreach ($breakpoints as $index => $breakpoint) {
             if (! isset(config('statamic.responsive-images.breakpoints')[$breakpoint]) && $breakpoint !== 'default') {
                 continue;
             }
 
-            if ($this->config['use_breakpoints']) {
-                $fields[] = [
-                    'handle' => "{$breakpoint}_section",
-                    'field' => [
-                        'display' => $index === 0
-                            ? __('Default')
-                            : __(':label Breakpoint (:breakpoint:unit)', [
-                                'label' => strtoupper($breakpoint),
-                                'breakpoint' => config('statamic.responsive-images.breakpoints')[$breakpoint],
-                                'unit' => config('statamic.responsive-images.breakpoint_unit', 'px'),
-                            ]),
-                        'instructions' => $index === 0 ? __('Set the default settings.') : __("Previous breakpoint’s choices will be used when empty."),
-                        'type' => 'section',
-                        'width' => $this->config['allow_fit'] ? 25 : 33,
-                    ],
-                ];
-            }
+            $isDefault = $breakpoint === 'default';
+            $prefix = $isDefault ? '' : "{$breakpoint}:";
 
             $fields[] = [
-                'handle' => $breakpoint === 'default' ? 'src' : "{$breakpoint}:src",
+                'handle' => "{$prefix}src",
                 'field' => [
-                    'display' => __('Image'),
-                    'instructions' => $index === 0
-                        ? __('Choose an image to generate responsive versions from.')
-                        : '',
+                    'display' => $this->imageDisplay($index, $breakpoint),
+                    'instructions' => $index === 0 ? __('Choose an image to generate responsive versions from.') : '',
                     'type' => 'assets',
                     'localizable' => $this->config['localizable'] ?? false,
-                    'container' => $this->config['container'] ?? optional(AssetContainer::all()->first())->handle(),
+                    'container' => $this->config['container'] ?? AssetContainer::all()->first()?->handle(),
                     'folder' => $this->config['folder'] ?? '/',
                     'allow_uploads' => $this->config['allow_uploads'],
                     'restrict' => $this->config['restrict'] ?? false,
+                    'dynamic' => $this->config['dynamic'] ?? null,
                     'max_files' => 1,
+                    'show_set_alt' => false,
                     'mode' => 'list',
-                    'width' => $this->config['use_breakpoints']
-                        ? ($this->config['allow_ratio'] ? ($this->config['allow_fit'] ? 25 : 33) : 66)
-                        : ($this->config['allow_ratio'] ? ($this->config['allow_fit'] ? 50 : 66) : 100),
+                    'width' => $this->config['allow_ratio'] ? ($this->config['allow_fit'] ? 50 : 66) : 100,
                     'required' => in_array('required', $this->config['validate'] ?? []) && $index === 0,
                     'validate' => array_filter([
                         new ImageRule(),
@@ -84,14 +59,10 @@ class ResponsiveFields
 
             if ($this->config['allow_ratio']) {
                 $fields[] = [
-                    'handle' => $breakpoint === 'default'
-                        ? 'ratio'
-                        : "{$breakpoint}:ratio",
+                    'handle' => "{$prefix}ratio",
                     'field' => [
                         'display' => __('Ratio'),
-                        'instructions' => $index === 0
-                            ? __('Accepts a float (`1.55`) or a basic fraction (`16/9`).')
-                            : '',
+                        'instructions' => $index === 0 ? __('Accepts float (`1.55`) or fraction (`16/9`).') : '',
                         'type' => 'text',
                         'width' => $this->config['allow_fit'] ? 25 : 33,
                     ],
@@ -99,15 +70,12 @@ class ResponsiveFields
 
                 if ($this->config['allow_fit']) {
                     $fields[] = [
-                        'handle' => $breakpoint === 'default'
-                            ? 'glide:fit'
-                            : "{$breakpoint}:glide:fit",
+                        'handle' => "{$prefix}glide:fit",
                         'field' => [
                             'display' => __('Fit'),
-                            'instructions' => $index === 0
-                                ? __('Sets how the image is fitted to its target ratio.')
-                                : '',
+                            'instructions' => $index === 0 ? __('Sets how the image is fitted to its target ratio.') : '',
                             'type' => 'select',
+                            'clearable' => true,
                             'default' => null,
                             'options' => [
                                 'crop_focal' => __('Focal crop'),
@@ -125,5 +93,22 @@ class ResponsiveFields
         }
 
         return $fields;
+    }
+
+    protected function imageDisplay(int $index, string $breakpoint): string
+    {
+        if (! $this->config['use_breakpoints']) {
+            return __('Image');
+        }
+
+        if ($index === 0) {
+            return __('Default Image');
+        }
+
+        return __(':label Breakpoint (:breakpoint:unit)', [
+            'label' => mb_strtoupper($breakpoint),
+            'breakpoint' => config('statamic.responsive-images.breakpoints')[$breakpoint],
+            'unit' => config('statamic.responsive-images.breakpoint_unit', 'px'),
+        ]);
     }
 }

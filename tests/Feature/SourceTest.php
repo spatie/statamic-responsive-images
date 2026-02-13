@@ -1,16 +1,11 @@
 <?php
 
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Spatie\ResponsiveImages\Breakpoint;
 use Spatie\ResponsiveImages\Source;
-use Statamic\Console\Commands\GlideClear;
 use Statamic\Facades\Stache;
 use Statamic\Facades\YAML;
-use Statamic\Facades\Blink;
 
 beforeEach(function () {
     Storage::disk('assets')->delete('*');
@@ -140,7 +135,7 @@ it('generates relative url when absolute urls are disabled through config', func
 
     expect(
         $source->buildImageJob(100)->handle()
-    )->toStartWith('/img/asset/');
+    )->toStartWith('/asset/');
 });
 
 it('determines mimetype from pre-determined source formats', function () {

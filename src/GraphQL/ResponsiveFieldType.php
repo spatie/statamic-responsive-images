@@ -13,7 +13,7 @@ use Statamic\Tags\Parameters;
 
 class ResponsiveFieldType extends Type
 {
-    const NAME = 'ResponsiveType';
+    public const string NAME = 'ResponsiveType';
 
     protected $attributes = [
         'name' => self::NAME,
@@ -29,13 +29,10 @@ class ResponsiveFieldType extends Type
                     )
                 ),
                 'resolve' => function (array $field, array $args, ?array $context, ResolveInfo $info) {
-                    $field = array_map(function ($value) {
-                        if ($value instanceof Value) {
-                            return $value->value();
-                        }
-
-                        return $value;
-                    }, $field);
+                    $field = array_map(
+                        fn ($value) => $value instanceof Value ? $value->value() : $value,
+                        $field,
+                    );
 
                     if (! isset($field['src'])) {
                         return null;
@@ -44,11 +41,9 @@ class ResponsiveFieldType extends Type
                     try {
                         $responsive = new Responsive($field['src'], new Parameters($field));
 
-                        return $responsive->breakPoints()->map(function (Breakpoint $breakpoint) {
-                            return $breakpoint->toGql([
-                                'placeholder' => config('statamic.responsive-images.placeholder'),
-                            ]);
-                        })->toArray();
+                        return $responsive->breakPoints()->map(fn (Breakpoint $breakpoint) => $breakpoint->toGql([
+                            'placeholder' => config('statamic.responsive-images.placeholder'),
+                        ]))->toArray();
                     } catch (AssetNotFoundException $e) {
                         logger()->error($e->getMessage());
 
