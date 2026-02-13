@@ -2,6 +2,23 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 6.0.0 - 2026-02-13
+
+### What's Changed
+
+* Laravel 12.x Compatibility by @laravel-shift in https://github.com/spatie/statamic-responsive-images/pull/259
+* Update issue template by @AlexVanderbist in https://github.com/spatie/statamic-responsive-images/pull/264
+* Fix incorrect dimensions when switching aspect ratios by @ranjith67 in https://github.com/spatie/statamic-responsive-images/pull/265
+* Statamic v6 Support by @heidkaemper in https://github.com/spatie/statamic-responsive-images/pull/266
+
+### New Contributors
+
+* @laravel-shift made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/259
+* @AlexVanderbist made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/264
+* @ranjith67 made their first contribution in https://github.com/spatie/statamic-responsive-images/pull/265
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/v5.2.2...6.0.0
+
 ## v5.2.2 - 2025-02-11
 
 ### What's Changed
