@@ -327,6 +327,16 @@ it('can render an art directed image as array with the directive', function () {
     ]));
 });
 
+it('includes MutationObserver script for live preview', function () {
+    Request::macro('isLivePreview', fn () => true);
+
+    expect(ResponsiveTag::render($this->asset))->toContain('MutationObserver');
+});
+
+it('does not include MutationObserver script outside of live preview', function () {
+    expect(ResponsiveTag::render($this->asset))->not->toContain('MutationObserver');
+});
+
 it('does not output <source> when no dimensions are returned from dimension calculator', function () {
     $this->mock(DimensionCalculator::class, function ($mock) {
         $mock->shouldReceive('calculateForBreakpoint')->andReturn(collect([]));
