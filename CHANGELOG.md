@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-responsive-images` will be documented in this file
 
+## 6.1.0 - 2026-04-27
+
+### What's Changed
+
+* Support for live preview hot reload by @heidkaemper in https://github.com/spatie/statamic-responsive-images/pull/268
+
+**Full Changelog**: https://github.com/spatie/statamic-responsive-images/compare/6.0.0...6.1.0
+
 ## 6.0.0 - 2026-02-13
 
 ### What's Changed
