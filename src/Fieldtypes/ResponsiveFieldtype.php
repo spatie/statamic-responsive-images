@@ -13,6 +13,7 @@ use Statamic\Facades\GraphQL;
 use Statamic\Fields\Field;
 use Statamic\Fields\Fields as BlueprintFields;
 use Statamic\Fields\Fieldtype;
+use Statamic\Fieldtypes\UpdatesReferences;
 use Statamic\Support\Arr;
 use Statamic\Tags\Context;
 use Statamic\Tags\Parameters;
@@ -20,6 +21,8 @@ use Throwable;
 
 class ResponsiveFieldtype extends Fieldtype
 {
+    use UpdatesReferences;
+
     protected static $handle = 'responsive';
 
     protected $categories = ['media', 'relationship'];
@@ -250,6 +253,65 @@ class ResponsiveFieldtype extends Fieldtype
     public function toGqlType()
     {
         return GraphQL::type(GraphQLResponsiveFieldtype::NAME);
+    }
+
+    public function replaceAssetReferences($data, ?string $newValue, string $oldValue, string $container)
+    {
+        if ($this->configuredContainerHandle() !== $container) {
+            return $data;
+        }
+
+        if (! is_array($data)) {
+            return $data;
+        }
+
+        $oldReference = "{$container}::{$oldValue}";
+        $newReference = $newValue !== null ? "{$container}::{$newValue}" : null;
+
+        $modified = false;
+
+        $result = collect($data)
+            ->map(function ($value, $key) use ($oldReference, $newReference, &$modified) {
+                if (! str_ends_with((string) $key, 'src')) {
+                    return $value;
+                }
+
+                if (is_string($value) && $value === $oldReference) {
+                    $modified = true;
+
+                    return $newReference;
+                }
+
+                if (is_array($value) && in_array($oldReference, $value, true)) {
+                    $modified = true;
+
+                    $transformed = array_map(
+                        fn ($item) => $item === $oldReference ? $newReference : $item,
+                        $value,
+                    );
+
+                    return array_values(array_filter($transformed, fn ($item) => $item !== null));
+                }
+
+                return $value;
+            })
+            ->filter(fn ($value) => $value !== null)
+            ->all();
+
+        return $modified ? $result : $data;
+    }
+
+    protected function configuredContainerHandle(): ?string
+    {
+        if ($container = $this->config('container')) {
+            return $container;
+        }
+
+        $containers = AssetContainer::all();
+
+        return $containers->count() === 1
+            ? $containers->first()->handle()
+            : null;
     }
 
     protected function getFieldsWithValues(array $values): BlueprintFields
