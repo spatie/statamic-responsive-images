@@ -12,7 +12,7 @@ This Addon provides responsive images inspired by [Our Medialibrary Package](htt
 
 ## Support us
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/statamic-responsive-images.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/statamic-responsive-images)
+[<img src="https://spatie.be/github-ad-image/statamic-responsive-images.jpg" width="419px" />](https://spatie.be/github-ad-click/statamic-responsive-images)
 
 We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
 
