@@ -27,6 +27,7 @@ function getWidths(Breakpoint $breakpoint): array
         ->map(function ($dimension) {
             return $dimension->width;
         })
+        ->values()
         ->toArray();
 }
 

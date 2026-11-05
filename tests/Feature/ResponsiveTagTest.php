@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Blade;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Imagick\Driver;
 use Spatie\ResponsiveImages\DimensionCalculator;
 use Spatie\ResponsiveImages\Dimensions;
 use Spatie\ResponsiveImages\Fieldtypes\ResponsiveFieldtype;
@@ -96,12 +94,10 @@ it('generates inlined placeholder image with correct dimensions', function () {
     // Find the base64 string of encoded JPG
     preg_match('/data:image\/jpeg;base64,(.*)" \/>/', $svgBase64Decoded, $jpgMatches);
 
-    // Make image of it, so we can get the dimensions of encoded JPG
-    $manager = new ImageManager(new Driver());
-    $placeholderImage = $manager->read(base64_decode($jpgMatches[1]));
+    $placeholderDimensions = getimagesizefromstring(base64_decode($jpgMatches[1]));
 
-    expect($placeholderImage->width())->toBe(32);
-    expect($placeholderImage->height())->toBe(16);
+    expect($placeholderDimensions[0])->toBe(32);
+    expect($placeholderDimensions[1])->toBe(16);
 });
 
 it('generates inlined placeholder image with correct dimensions from custom dimension calculator', function () {
@@ -126,12 +122,10 @@ it('generates inlined placeholder image with correct dimensions from custom dime
     // Find the base64 string of encoded JPG
     preg_match('/data:image\/jpeg;base64,(.*)" \/>/', $svgBase64Decoded, $jpgMatches);
 
-    // Make image of it, so we can get the dimensions of encoded JPG
-    $manager = new ImageManager(new Driver());
-    $placeholderImage = $manager->read(base64_decode($jpgMatches[1]));
+    $placeholderDimensions = getimagesizefromstring(base64_decode($jpgMatches[1]));
 
-    expect($placeholderImage->width())->toBe(10);
-    expect($placeholderImage->height())->toBe(4);
+    expect($placeholderDimensions[0])->toBe(10);
+    expect($placeholderDimensions[1])->toBe(4);
 });
 
 it('generates responsive images without a placeholder', function () {
