@@ -94,10 +94,11 @@ it('generates inlined placeholder image with correct dimensions', function () {
     // Find the base64 string of encoded JPG
     preg_match('/data:image\/jpeg;base64,(.*)" \/>/', $svgBase64Decoded, $jpgMatches);
 
-    $placeholderDimensions = getimagesizefromstring(base64_decode($jpgMatches[1]));
+    $placeholderImage = new Imagick();
+    $placeholderImage->readImageBlob(base64_decode($jpgMatches[1]));
 
-    expect($placeholderDimensions[0])->toBe(32);
-    expect($placeholderDimensions[1])->toBe(16);
+    expect($placeholderImage->getImageWidth())->toBe(32);
+    expect($placeholderImage->getImageHeight())->toBe(16);
 });
 
 it('generates inlined placeholder image with correct dimensions from custom dimension calculator', function () {
@@ -122,10 +123,11 @@ it('generates inlined placeholder image with correct dimensions from custom dime
     // Find the base64 string of encoded JPG
     preg_match('/data:image\/jpeg;base64,(.*)" \/>/', $svgBase64Decoded, $jpgMatches);
 
-    $placeholderDimensions = getimagesizefromstring(base64_decode($jpgMatches[1]));
+    $placeholderImage = new Imagick();
+    $placeholderImage->readImageBlob(base64_decode($jpgMatches[1]));
 
-    expect($placeholderDimensions[0])->toBe(10);
-    expect($placeholderDimensions[1])->toBe(4);
+    expect($placeholderImage->getImageWidth())->toBe(10);
+    expect($placeholderImage->getImageHeight())->toBe(4);
 });
 
 it('generates responsive images without a placeholder', function () {
