@@ -27,7 +27,6 @@ function getWidths(Breakpoint $breakpoint): array
         ->map(function ($dimension) {
             return $dimension->width;
         })
-        ->values()
         ->toArray();
 }
 
@@ -153,7 +152,7 @@ it('filters out widths to be less than max width specified in config', function(
 
     $breakpoint = new Breakpoint($asset, 'default', 0, []);
 
-    expect(getWidths($breakpoint))->toEqualCanonicalizing([237, 284]);
+    expect(array_values(getWidths($breakpoint)))->toEqualCanonicalizing([237, 284]);
 });
 
 it('filters out widths to be less than max width specified in glide width param', function() {
@@ -161,7 +160,7 @@ it('filters out widths to be less than max width specified in glide width param'
 
     $breakpoint = new Breakpoint($asset, 'default', 0, ['glide:width' => 300]);
 
-    expect(getWidths($breakpoint))->toEqualCanonicalizing([237, 284]);
+    expect(array_values(getWidths($breakpoint)))->toEqualCanonicalizing([237, 284]);
 });
 
 test('max width from glide width param takes precedence over config when filtering widths', function() {
@@ -171,7 +170,7 @@ test('max width from glide width param takes precedence over config when filteri
 
     $breakpoint = new Breakpoint($asset, 'default', 0, ['glide:width' => 300]);
 
-    expect(getWidths($breakpoint))->toEqualCanonicalizing([237, 284]);
+    expect(array_values(getWidths($breakpoint)))->toEqualCanonicalizing([237, 284]);
 });
 
 it('returns one dimension with equal width of max width when all dimensions have been filtered out', function () {
